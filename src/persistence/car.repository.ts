@@ -74,6 +74,22 @@ export class CarRepository implements ICarRepository {
     _tx: Transaction,
     _car: Except<CarProperties, 'id'>,
   ): Promise<Car> {
-    throw new Error('Not implemented')
+
+    const row: Row[] = await _tx.query(
+      `INSERT INTO cars (car_type_id, owner_id, state, name, fuel_type, horsepower, license_plate, info) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [
+        _car.carTypeId,
+        _car.ownerId,
+        _car.state,
+        _car.name,
+        _car.fuelType,
+        _car.horsepower,
+        _car.licensePlate,
+        _car.info,
+      ]
+    )
+
+    return row.map(rowToDomain)[0]
   }
 }
