@@ -4,7 +4,7 @@ import { type Except } from 'type-fest'
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 import { type UserID } from '../user'
 
-import { type Car, type CarID, type CarProperties } from './car'
+import { Car, type CarID, type CarProperties } from './car'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
 
@@ -39,10 +39,19 @@ export class CarService implements ICarService {
   }
 
   public async update(
-    _carId: CarID,
-    _updates: Partial<Except<CarProperties, 'id'>>,
-    _currentUserId: UserID,
+    carId: CarID,
+    updates: Partial<Except<CarProperties, 'id'>>,
+  _currentUserId: UserID,
   ): Promise<Car> {
-    throw new Error('Not implemented')
+    // throw new Error('Not implemented')
+    return this.databaseConnection.transactional(async tx => {
+      const car = await this.carRepository(tx, carId)
+
+      const carUpdate = new Car({
+        ...car,
+        ...updates,
+        id: carId,
+      })
+    })
   }
 }
