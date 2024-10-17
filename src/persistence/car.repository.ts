@@ -52,11 +52,13 @@ export class CarRepository implements ICarRepository {
   }
 
   public async get(_tx: Transaction, _id: CarID): Promise<Car> {
-    throw new Error('Not implemented')
+    const row: Row[]= await _tx.any(`SELECT * FROM cars WHERE id = ${String(_id)}`)
+    return row.map(rowToDomain)[0]
   }
 
   public async getAll(_tx: Transaction): Promise<Car[]> {
-    throw new Error('Not implemented')
+    const rows: Row[] = await _tx.any('SELECT * FROM cars')
+    return rows.map(rowToDomain)
   }
 
   public async findByLicensePlate(

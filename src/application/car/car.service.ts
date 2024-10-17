@@ -27,15 +27,31 @@ export class CarService implements ICarService {
   /* eslint-disable @typescript-eslint/require-await */
 
   public async create(_data: Except<CarProperties, 'id'>): Promise<Car> {
-    throw new Error('Not implemented')
+    throw new Error('Not implemented create')
   }
 
   public async getAll(): Promise<Car[]> {
-    throw new Error('Not implemented')
+    try {
+    const cars =  await this.databaseConnection.transactional(async tx => {
+      return await this.carRepository.getAll(tx)
+    })
+    return cars
+    } catch(error) {
+      this.logger.error(error)
+      throw error
+    }
   }
 
   public async get(_id: CarID): Promise<Car> {
-    throw new Error('Not implemented')
+    try {
+     const car = await this.databaseConnection.transactional(async(tx)=>{
+      return await this.carRepository.get(tx,_id)
+     }) 
+     return car
+    } catch (error) {
+      this.logger.error(error)
+      throw error
+    }
   }
 
   public async update(
@@ -43,6 +59,6 @@ export class CarService implements ICarService {
     _updates: Partial<Except<CarProperties, 'id'>>,
     _currentUserId: UserID,
   ): Promise<Car> {
-    throw new Error('Not implemented')
+    throw new Error('Not implemented update')
   }
 }
