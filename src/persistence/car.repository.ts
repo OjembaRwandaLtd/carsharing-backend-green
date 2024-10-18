@@ -74,7 +74,6 @@ export class CarRepository implements ICarRepository {
     tx: Transaction,
     car: Except<CarProperties, 'id'>,
   ): Promise<Car> {
-
     const row: Row[] = await tx.query(
       `INSERT INTO cars (car_type_id, owner_id, state, name, fuel_type, horsepower, license_plate, info) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
@@ -87,7 +86,7 @@ export class CarRepository implements ICarRepository {
         car.horsepower,
         car.licensePlate,
         car.info,
-      ]
+      ],
     )
 
     return row.map(rowToDomain)[0]

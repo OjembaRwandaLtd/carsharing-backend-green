@@ -22,7 +22,13 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { Car, type CarID, CarState, ICarService, type User } from '../../application'
+import {
+  Car,
+  type CarID,
+  CarState,
+  ICarService,
+  type User,
+} from '../../application'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
@@ -97,7 +103,7 @@ export class CarController {
     const carData = await this.carService.create({
       ...data,
       ownerId: owner.id,
-      state: CarState.LOCKED
+      state: CarState.LOCKED,
     })
     return CarDTO.fromModel(carData)
   }
