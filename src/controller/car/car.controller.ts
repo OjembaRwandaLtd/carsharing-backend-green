@@ -54,7 +54,7 @@ export class CarController {
   })
   @Get()
   public async getAll(): Promise<CarDTO[]> {
-   return this.carService.getAll()
+    return this.carService.getAll()
   }
 
   @ApiOperation({
