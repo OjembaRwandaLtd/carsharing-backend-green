@@ -52,7 +52,9 @@ export class CarRepository implements ICarRepository {
   }
 
   public async get(_tx: Transaction, _id: CarID): Promise<Car> {
-    const row: Row[]= await _tx.any(`SELECT * FROM cars WHERE id = ${String(_id)}`)
+    const row: Row[] = await _tx.any(
+      `SELECT * FROM cars WHERE id = ${String(_id)}`,
+    )
     return row.map(rowToDomain)[0]
   }
 

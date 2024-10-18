@@ -32,10 +32,10 @@ export class CarService implements ICarService {
 
   public async getAll(): Promise<Car[]> {
     try {
-    return await this.databaseConnection.transactional(async tx => {
-      return await this.carRepository.getAll(tx)
-    })
-    } catch(error) {
+      return await this.databaseConnection.transactional(async tx => {
+        return await this.carRepository.getAll(tx)
+      })
+    } catch (error) {
       this.logger.error(error)
       throw error
     }
@@ -43,9 +43,9 @@ export class CarService implements ICarService {
 
   public async get(_id: CarID): Promise<Car> {
     try {
-     return await this.databaseConnection.transactional(async(tx)=>{
-      return await this.carRepository.get(tx,_id)
-     }) 
+      return await this.databaseConnection.transactional(async tx => {
+        return await this.carRepository.get(tx, _id)
+      })
     } catch (error) {
       this.logger.error(error)
       throw error
