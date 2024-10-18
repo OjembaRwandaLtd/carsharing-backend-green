@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
+
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 import { type UserID } from '../user'
 
@@ -57,17 +58,17 @@ export class CarService implements ICarService {
   public async update(
     carId: CarID,
     updates: Partial<Except<CarProperties, 'id'>>,
-  _currentUserId: UserID,
+    _currentUserId: UserID,
   ): Promise<Car> {
-    // throw new Error('Not implemented')
     return this.databaseConnection.transactional(async tx => {
-      const car = await this.carRepository(tx, carId)
+      const car = await this.carRepository.get(tx, carId)
 
       const carUpdate = new Car({
         ...car,
         ...updates,
         id: carId,
       })
+      return this.carRepository.update(tx, carUpdate)
     })
   }
 }

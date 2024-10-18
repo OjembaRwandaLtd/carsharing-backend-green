@@ -73,10 +73,9 @@ export class CarRepository implements ICarRepository {
   public async update(tx: Transaction, car: Car): Promise<Car> {
     const row = await tx.oneOrNone<Row>(
       `
-      UPDATE car SET
-        car_type_id = $(carTypeId)
+      UPDATE cars SET
+        car_type_id = $(carTypeId),
         name = $(name),
-        image_url = $(imageUrl),
         state = $(state),
         owner_id = $(ownerId),
         fuel_type = $(fuelType),
