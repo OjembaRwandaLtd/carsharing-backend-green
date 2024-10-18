@@ -54,7 +54,7 @@ export class CarController {
   })
   @Get()
   public async getAll(): Promise<CarDTO[]> {
-    throw new NotImplementedException()
+    return this.carService.getAll()
   }
 
   @ApiOperation({
@@ -73,7 +73,7 @@ export class CarController {
   })
   @Get(':id')
   public async get(@Param('id', ParseIntPipe) _id: CarID): Promise<CarDTO> {
-    throw new NotImplementedException()
+    return this.carService.get(_id)
   }
 
   @ApiOperation({
