@@ -32,16 +32,20 @@ describe('CarService', () => {
       ).resolves.toEqual(updatedCar)
     })
 
-    it('should be able give all cars', async () => {
-      const cars = [new CarBuilder().build(), new CarBuilder().build()]
-      carRepositoryMock.getAll.mockResolvedValue(cars)
-      await expect(carService.getAll()).resolves.toEqual(cars)
-    })
+ it('should be able give all cars', async () => {
+  const cars =[ new CarBuilder().build(),new CarBuilder().build()]
+  carRepositoryMock.getAll.mockResolvedValue(cars)
+  await expect(
+    carService.getAll(),
+  ).resolves.toEqual(cars)
+})
 
-    it('should be able give a car', async () => {
-      const car = new CarBuilder().build()
-      carRepositoryMock.get.mockResolvedValue(car)
-      await expect(carService.get(car.id)).resolves.toEqual(car)
-    })
+it('should be able give a car', async () => {
+  const car = new CarBuilder().build()
+  carRepositoryMock.get.mockResolvedValue(car)
+  await expect(
+    carService.get(car.id),
+  ).resolves.toEqual(car)
+})
   })
 })
