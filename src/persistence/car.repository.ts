@@ -88,7 +88,7 @@ export class CarRepository implements ICarRepository {
       { ...car },
     )
     if (row === null) throw new CarNotFoundError(car.id)
-    
+
     return rowToDomain(row)
   }
 
