@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -21,6 +22,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+
+import { DuplicateLicensePlateError } from 'src/application/car/error'
 
 import {
   Car,
@@ -100,12 +103,21 @@ export class CarController {
     @CurrentUser() owner: User,
     @Body() data: CreateCarDTO,
   ): Promise<CarDTO> {
-    const carData = await this.carService.create({
-      ...data,
-      ownerId: owner.id,
-      state: CarState.LOCKED,
-    })
-    return CarDTO.fromModel(carData)
+    try {
+      const carData = await this.carService.create({
+        ...data,
+        ownerId: owner.id,
+        state: CarState.LOCKED,
+      })
+      return CarDTO.fromModel(carData)
+    } catch (error) {
+      if (error instanceof DuplicateLicensePlateError) {
+        throw ApiConflictResponse({
+          description: 'Car with license already exist',
+        })
+      }
+      throw new BadRequestException()
+    }
   }
 
   @ApiOperation({
