@@ -1,10 +1,9 @@
 import {
-  BadRequestException,
   Body,
   ConflictException,
   Controller,
   Get,
-  InternalServerErrorException,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -30,6 +29,7 @@ import {
   Car,
   type CarID,
   CarState,
+  CarTypeNotFoundError,
   ICarService,
   type User,
 } from '../../application'
@@ -114,6 +114,9 @@ export class CarController {
     } catch (error:unknown) {
       if (error instanceof DuplicateLicensePlateError) {
         throw new ConflictException(error.message)
+      }
+      if(error instanceof CarTypeNotFoundError){
+        throw new NotFoundException(error.message)
       }
       throw error
     }
