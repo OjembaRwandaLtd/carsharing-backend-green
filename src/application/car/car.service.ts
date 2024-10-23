@@ -61,9 +61,11 @@ export class CarService implements ICarService {
   ): Promise<Car> {
     return this.databaseConnection.transactional(async tx => {
       const car = await this.carRepository.get(tx, carId)
+      console.log(car);
+      
 
       if (currentUserId !== car.ownerId) {
-        throw new ForbiddenException('Unauthorized')
+        throw new ForbiddenException('You are not authorized to update this car')
       }
 
       const carUpdate = new Car({
