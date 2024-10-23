@@ -49,10 +49,11 @@ function rowToDomain(row: Row): Car {
 @Injectable()
 export class CarRepository implements ICarRepository {
   public async find(tx: Transaction, _id: CarID): Promise<Car | null> {
-    const row: Row[] = await tx.any(
+  
+    const car: Row[] = await tx.any(
       `SELECT * FROM cars WHERE id = ${String(_id)}`,
     )
-    return row.map(rowToDomain)[0]
+    return car.map(rowToDomain)[0]
   }
 
   public async get(tx: Transaction, id: CarID): Promise<Car> {
@@ -62,8 +63,8 @@ export class CarRepository implements ICarRepository {
   }
 
   public async getAll(tx: Transaction): Promise<Car[]> {
-    const rows: Row[] = await tx.any('SELECT * FROM cars')
-    return rows.map(rowToDomain)
+    const cars: Row[] = await tx.any('SELECT * FROM cars')
+    return cars.map(rowToDomain)
   }
 
   public async findByLicensePlate(
