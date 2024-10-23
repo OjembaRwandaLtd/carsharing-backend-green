@@ -28,7 +28,6 @@ type Row = {
 }
 
 // Please remove the next line when implementing this file.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function rowToDomain(row: Row): Car {
   return new Car({
     id: row.id as CarID,
@@ -44,26 +43,25 @@ function rowToDomain(row: Row): Car {
 }
 
 // Please remove the next line when implementing this file.
-/* eslint-disable @typescript-eslint/require-await */
 
 @Injectable()
 export class CarRepository implements ICarRepository {
-  public async find(tx: Transaction, _id: CarID): Promise<Car | null> {
   
-    const car: Row[] = await tx.any(
-      `SELECT * FROM cars WHERE id = ${String(_id)}`,
+  public async find(tx: Transaction, id: CarID): Promise<Car | null> {
+    const car: Row | null = await tx.oneOrNone<Row>(
+      `SELECT * FROM cars WHERE id = ${String(id)}`,
     )
-    return car.map(rowToDomain)[0]
+    return car? rowToDomain(car) : null
   }
 
   public async get(tx: Transaction, id: CarID): Promise<Car> {
     const car = await this.find(tx, id)
-    if (isNull(car)) throw new CarNotFoundError(id)
-    return car
+    if(car)  return car 
+    throw new CarNotFoundError(id)
   }
 
   public async getAll(tx: Transaction): Promise<Car[]> {
-    const cars: Row[] = await tx.any('SELECT * FROM cars')
+    const cars: Row[] = await tx.query('SELECT * FROM cars')
     return cars.map(rowToDomain)
   }
 
