@@ -7,6 +7,7 @@ import { type UserID } from '../user'
 import { type Car, type CarID, type CarProperties } from './car'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
+import { CarNotFoundError } from './car-not-found.error'
 
 @Injectable()
 export class CarService implements ICarService {
@@ -44,14 +45,12 @@ export class CarService implements ICarService {
   }
 
   public async get(_id: CarID): Promise<Car> {
-    try {
-      return await this.databaseConnection.transactional(async tx => {
-        return await this.carRepository.get(tx, _id)
-      })
-    } catch (error) {
-      this.logger.error(error)
-      throw error
-    }
+    const car =  await this.databaseConnection.transactional(async tx => {
+      return await this.carRepository.get(tx, _id)
+    })
+    if (car) return car
+    else throw new CarNotFoundError(_id) 
+  
   }
 
   public async update(

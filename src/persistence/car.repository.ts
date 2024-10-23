@@ -10,9 +10,10 @@ import {
   type ICarRepository,
   type UserID,
 } from '../application'
-import { Car } from '../application/car'
+import { Car, CarNotFoundError } from '../application/car'
 
 import { type Transaction } from './database-connection.interface'
+import { isNull } from 'class-validator-extended'
 
 type Row = {
   id: number
@@ -47,15 +48,17 @@ function rowToDomain(row: Row): Car {
 
 @Injectable()
 export class CarRepository implements ICarRepository {
-  public async find(_tx: Transaction, _id: CarID): Promise<Car | null> {
-    throw new Error('Not implemented')
-  }
-
-  public async get(tx: Transaction, _id: CarID): Promise<Car> {
+  public async find(tx: Transaction, _id: CarID): Promise<Car | null> {
     const row: Row[] = await tx.any(
       `SELECT * FROM cars WHERE id = ${String(_id)}`,
     )
     return row.map(rowToDomain)[0]
+  }
+
+  public async get(tx: Transaction, id: CarID): Promise<Car> {
+    const car = await this.find(tx, id)
+    if (isNull(car)) throw new CarNotFoundError(id)
+    return car
   }
 
   public async getAll(tx: Transaction): Promise<Car[]> {
