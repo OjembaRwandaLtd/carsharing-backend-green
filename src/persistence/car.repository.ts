@@ -10,7 +10,7 @@ import {
   type ICarRepository,
   type UserID,
 } from '../application'
-import { Car } from '../application/car'
+import { Car, CarNotFoundError } from '../application/car'
 
 import { type Transaction } from './database-connection.interface'
 
@@ -51,12 +51,16 @@ export class CarRepository implements ICarRepository {
     throw new Error('Not implemented')
   }
 
-  public async get(_tx: Transaction, _id: CarID): Promise<Car> {
-    throw new Error('Not implemented')
+  public async get(tx: Transaction, _id: CarID): Promise<Car> {
+    const row: Row[] = await tx.any(
+      `SELECT * FROM cars WHERE id = ${String(_id)}`,
+    )
+    return row.map(rowToDomain)[0]
   }
 
-  public async getAll(_tx: Transaction): Promise<Car[]> {
-    throw new Error('Not implemented')
+  public async getAll(tx: Transaction): Promise<Car[]> {
+    const rows: Row[] = await tx.any('SELECT * FROM cars')
+    return rows.map(rowToDomain)
   }
 
   public async findByLicensePlate(
@@ -72,8 +76,26 @@ export class CarRepository implements ICarRepository {
     return maybeRow ? rowToDomain(maybeRow) : null
   }
 
-  public async update(_tx: Transaction, _car: Car): Promise<Car> {
-    throw new Error('Not implemented')
+  public async update(tx: Transaction, car: Car): Promise<Car> {
+    const row = await tx.oneOrNone<Row>(
+      `
+      UPDATE cars SET
+        car_type_id = $(carTypeId),
+        name = $(name),
+        state = $(state),
+        owner_id = $(ownerId),
+        fuel_type = $(fuelType),
+        horsepower = $(horsepower),
+        license_plate = $(licensePlate),
+        info = $(info)
+      WHERE
+        id = $(id)
+       RETURNING *`,
+      { ...car },
+    )
+    if (row === null) throw new CarNotFoundError(car.id)
+
+    return rowToDomain(row)
   }
 
   public async insert(

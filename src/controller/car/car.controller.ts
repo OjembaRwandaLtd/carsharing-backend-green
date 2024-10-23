@@ -3,7 +3,6 @@ import {
   Body,
   Controller,
   Get,
-  NotImplementedException,
   Param,
   ParseIntPipe,
   Patch,
@@ -63,7 +62,7 @@ export class CarController {
   })
   @Get()
   public async getAll(): Promise<CarDTO[]> {
-    throw new NotImplementedException()
+    return this.carService.getAll()
   }
 
   @ApiOperation({
@@ -82,7 +81,7 @@ export class CarController {
   })
   @Get(':id')
   public async get(@Param('id', ParseIntPipe) _id: CarID): Promise<CarDTO> {
-    throw new NotImplementedException()
+    return this.carService.get(_id)
   }
 
   @ApiOperation({
@@ -135,10 +134,12 @@ export class CarController {
   })
   @Patch(':id')
   public async patch(
-    @CurrentUser() _user: User,
-    @Param('id', ParseIntPipe) _carId: CarID,
-    @Body() _data: PatchCarDTO,
+    @CurrentUser() user: User,
+    @Param('id', ParseIntPipe) carId: CarID,
+    @Body() data: PatchCarDTO,
   ): Promise<CarDTO> {
-    throw new NotImplementedException()
+    const car = await this.carService.update(carId, data, user.id)
+
+    return CarDTO.fromModel(car)
   }
 }

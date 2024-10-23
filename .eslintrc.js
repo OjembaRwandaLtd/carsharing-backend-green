@@ -33,6 +33,7 @@ module.exports = {
     'unicorn/no-array-reduce': 'off',
     'unicorn/no-null': 'off',
     'unicorn/prefer-module': 'off',
+
     'unicorn/prevent-abbreviations': 'off',
     '@typescript-eslint/no-unused-vars': [
       'error',
@@ -51,7 +52,7 @@ module.exports = {
         },
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling'],
       },
-    ],
+    ],'prettier/prettier': 0,
   },
   overrides: [
     {
