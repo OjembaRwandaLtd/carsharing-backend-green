@@ -23,7 +23,7 @@ export class CarService implements ICarService {
     databaseConnection: IDatabaseConnection,
   ) {
     this.carRepository = carRepository
-    this.carTypeRepository= carTypeRepository
+    this.carTypeRepository = carTypeRepository
     this.databaseConnection = databaseConnection
     this.logger = new Logger(CarService.name)
   }

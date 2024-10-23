@@ -111,11 +111,11 @@ export class CarController {
         state: CarState.LOCKED,
       })
       return CarDTO.fromModel(carData)
-    } catch (error:unknown) {
+    } catch (error: unknown) {
       if (error instanceof DuplicateLicensePlateError) {
         throw new ConflictException(error.message)
       }
-      if(error instanceof CarTypeNotFoundError){
+      if (error instanceof CarTypeNotFoundError) {
         throw new NotFoundException(error.message)
       }
       throw error
