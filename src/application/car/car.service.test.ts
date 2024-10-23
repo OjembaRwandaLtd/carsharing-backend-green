@@ -2,23 +2,30 @@ import {
   type CarRepositoryMock,
   type DatabaseConnectionMock,
   mockCarRepository,
+  mockCarTypeRepository,
   mockDatabaseConnection,
 } from '../../mocks'
 import { UserBuilder } from '../user/user.builder'
 
+import { CarTypeRepositoryMock } from './../car-type/car-type.repository.mock'
 import { CarBuilder } from './car.builder'
 import { CarService } from './car.service'
 
 describe('CarService', () => {
   let carService: CarService
+  let carTypeRepositoryMock: CarTypeRepositoryMock
   let carRepositoryMock: CarRepositoryMock
   let databaseConnectionMock: DatabaseConnectionMock
 
   beforeEach(() => {
     carRepositoryMock = mockCarRepository()
     databaseConnectionMock = mockDatabaseConnection()
-
-    carService = new CarService(carRepositoryMock, databaseConnectionMock)
+    carTypeRepositoryMock = mockCarTypeRepository()
+    carService = new CarService(
+      carRepositoryMock,
+      carTypeRepositoryMock,
+      databaseConnectionMock,
+    )
   })
 
   describe('update', () => {

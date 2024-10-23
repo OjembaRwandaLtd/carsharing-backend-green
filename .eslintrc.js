@@ -52,7 +52,7 @@ module.exports = {
         },
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling'],
       },
-    ],'prettier/prettier': 0,
+    ],
   },
   overrides: [
     {

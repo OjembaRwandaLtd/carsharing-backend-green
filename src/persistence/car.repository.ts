@@ -124,7 +124,6 @@ export class CarRepository implements ICarRepository {
       ) RETURNING *`,
       { ...car },
     )
-
     return rowToDomain(row)
   }
 }

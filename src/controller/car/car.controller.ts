@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -28,6 +29,7 @@ import {
   Car,
   type CarID,
   CarState,
+  CarTypeNotFoundError,
   ICarService,
   type User,
 } from '../../application'
@@ -109,13 +111,14 @@ export class CarController {
         state: CarState.LOCKED,
       })
       return CarDTO.fromModel(carData)
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof DuplicateLicensePlateError) {
-        throw ApiConflictResponse({
-          description: 'Car with license already exist',
-        })
+        throw new BadRequestException(error.message)
       }
-      throw new BadRequestException()
+      if (error instanceof CarTypeNotFoundError) {
+        throw new NotFoundException(error.message)
+      }
+      throw error
     }
   }
 

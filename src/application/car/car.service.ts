@@ -8,18 +8,22 @@ import { Car, type CarID, type CarProperties } from './car'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
 import { DuplicateLicensePlateError } from './error'
+import { ICarTypeRepository } from '../car-type'
 
 @Injectable()
 export class CarService implements ICarService {
   private readonly carRepository: ICarRepository
+  private readonly carTypeRepository: ICarTypeRepository
   private readonly databaseConnection: IDatabaseConnection
   private readonly logger: Logger
 
   public constructor(
     carRepository: ICarRepository,
+    carTypeRepository: ICarTypeRepository,
     databaseConnection: IDatabaseConnection,
   ) {
     this.carRepository = carRepository
+    this.carTypeRepository = carTypeRepository
     this.databaseConnection = databaseConnection
     this.logger = new Logger(CarService.name)
   }
@@ -29,11 +33,16 @@ export class CarService implements ICarService {
 
   public async create(data: Except<CarProperties, 'id'>): Promise<Car> {
     return this.databaseConnection.transactional(async tx => {
-      if (
-        data.licensePlate &&
-        this.carRepository.findByLicensePlate(tx, data.licensePlate) !== null
-      )
-        throw new DuplicateLicensePlateError(data.licensePlate)
+      if (data.licensePlate) {
+        const lincensePlate = await this.carRepository.findByLicensePlate(
+          tx,
+          data.licensePlate,
+        )
+        if (lincensePlate !== null) {
+          throw new DuplicateLicensePlateError(data.licensePlate)
+        }
+      }
+      await this.carTypeRepository.get(tx, data.carTypeId)
       return await this.carRepository.insert(tx, data)
     })
   }
