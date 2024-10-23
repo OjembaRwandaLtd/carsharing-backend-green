@@ -1,8 +1,10 @@
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Get,
+  InternalServerErrorException,
   Param,
   ParseIntPipe,
   Patch,
@@ -109,13 +111,11 @@ export class CarController {
         state: CarState.LOCKED,
       })
       return CarDTO.fromModel(carData)
-    } catch (error) {
+    } catch (error:unknown) {
       if (error instanceof DuplicateLicensePlateError) {
-        throw ApiConflictResponse({
-          description: 'Car with license already exist',
-        })
+        throw new ConflictException(error.message)
       }
-      throw new BadRequestException()
+      throw error
     }
   }
 

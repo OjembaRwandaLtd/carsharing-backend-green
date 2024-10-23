@@ -29,11 +29,12 @@ export class CarService implements ICarService {
 
   public async create(data: Except<CarProperties, 'id'>): Promise<Car> {
     return this.databaseConnection.transactional(async tx => {
-      if (
-        data.licensePlate &&
-        this.carRepository.findByLicensePlate(tx, data.licensePlate) !== null
-      )
-        throw new DuplicateLicensePlateError(data.licensePlate)
+      if (data.licensePlate) {
+        const lincensePlate = await this.carRepository.findByLicensePlate(tx, data.licensePlate)
+        if (lincensePlate !== null) {
+          throw new DuplicateLicensePlateError(data.licensePlate)          
+        }
+      }
       return await this.carRepository.insert(tx, data)
     })
   }
