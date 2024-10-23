@@ -64,10 +64,16 @@ export class CarRepository implements ICarRepository {
   }
 
   public async findByLicensePlate(
-    _tx: Transaction,
-    _licensePlate: string,
+    tx: Transaction,
+    licensePlate: string,
   ): Promise<Car | null> {
-    throw new Error('Not implemented')
+    const maybeRow = await tx.oneOrNone<Row>(
+      'SELECT * FROM cars WHERE license_plate = $(licensePlate)',
+      {
+        licensePlate,
+      },
+    )
+    return maybeRow ? rowToDomain(maybeRow) : null
   }
 
   public async update(tx: Transaction, car: Car): Promise<Car> {
@@ -96,21 +102,29 @@ export class CarRepository implements ICarRepository {
     tx: Transaction,
     car: Except<CarProperties, 'id'>,
   ): Promise<Car> {
-    const row: Row[] = await tx.query(
-      `INSERT INTO cars (car_type_id, owner_id, state, name, fuel_type, horsepower, license_plate, info) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-      [
-        car.carTypeId,
-        car.ownerId,
-        car.state,
-        car.name,
-        car.fuelType,
-        car.horsepower,
-        car.licensePlate,
-        car.info,
-      ],
+    const row: Row = await tx.one<Row>(
+      `INSERT INTO cars (
+        car_type_id,
+        owner_id, 
+        state, 
+        name,
+        fuel_type,
+        horsepower,
+        license_plate,
+        info
+      ) VALUES (
+        $(carTypeId),
+        $(ownerId),
+        $(state),
+        $(name),
+        $(fuelType),
+        $(horsepower),
+        $(licensePlate),
+        $(info)
+      ) RETURNING *`,
+      { ...car },
     )
 
-    return row.map(rowToDomain)[0]
+    return rowToDomain(row)
   }
 }

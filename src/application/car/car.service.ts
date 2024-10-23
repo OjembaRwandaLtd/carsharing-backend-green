@@ -7,6 +7,7 @@ import { type UserID } from '../user'
 import { Car, type CarID, type CarProperties } from './car'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
+import { DuplicateLicensePlateError } from './error'
 
 @Injectable()
 export class CarService implements ICarService {
@@ -27,9 +28,14 @@ export class CarService implements ICarService {
   /* eslint-disable @typescript-eslint/require-await */
 
   public async create(data: Except<CarProperties, 'id'>): Promise<Car> {
-    return this.databaseConnection.transactional(
-      async tx => await this.carRepository.insert(tx, data),
-    )
+    return this.databaseConnection.transactional(async tx => {
+      if (
+        data.licensePlate &&
+        this.carRepository.findByLicensePlate(tx, data.licensePlate) !== null
+      )
+        throw new DuplicateLicensePlateError(data.licensePlate)
+      return await this.carRepository.insert(tx, data)
+    })
   }
 
   public async getAll(): Promise<Car[]> {
