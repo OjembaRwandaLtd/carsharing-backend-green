@@ -1,6 +1,6 @@
 import {
+  BadRequestException,
   Body,
-  ConflictException,
   Controller,
   Get,
   NotFoundException,
@@ -113,7 +113,7 @@ export class CarController {
       return CarDTO.fromModel(carData)
     } catch (error: unknown) {
       if (error instanceof DuplicateLicensePlateError) {
-        throw new ConflictException(error.message)
+        throw new BadRequestException(error.message)
       }
       if (error instanceof CarTypeNotFoundError) {
         throw new NotFoundException(error.message)
