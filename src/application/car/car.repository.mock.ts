@@ -6,7 +6,7 @@ export function mockCarRepository(): CarRepositoryMock {
   return {
     findByLicensePlate: jest.fn(),
     get: jest.fn(),
-    find:jest.fn(),
+    find: jest.fn(),
     getAll: jest.fn(),
     insert: jest.fn(),
     update: jest.fn(),
