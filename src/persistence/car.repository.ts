@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { type Transaction } from './database-connection.interface'
 import { type Except } from 'type-fest'
 
 import {
@@ -12,8 +13,6 @@ import {
 } from '../application'
 import { Car, CarNotFoundError } from '../application/car'
 
-import { type Transaction } from './database-connection.interface'
-import { isNull } from 'class-validator-extended'
 
 type Row = {
   id: number
@@ -46,17 +45,16 @@ function rowToDomain(row: Row): Car {
 
 @Injectable()
 export class CarRepository implements ICarRepository {
-  
   public async find(tx: Transaction, id: CarID): Promise<Car | null> {
     const car: Row | null = await tx.oneOrNone<Row>(
       `SELECT * FROM cars WHERE id = ${String(id)}`,
     )
-    return car? rowToDomain(car) : null
+    return car ? rowToDomain(car) : null
   }
 
   public async get(tx: Transaction, id: CarID): Promise<Car> {
     const car = await this.find(tx, id)
-    if(car)  return car 
+    if (car) return car
     throw new CarNotFoundError(id)
   }
 
