@@ -73,6 +73,16 @@ export class CarService implements ICarService {
         )
       }
 
+      if (updates.licensePlate) {
+        const lincensePlate = await this.carRepository.findByLicensePlate(
+          tx,
+          updates.licensePlate,
+        )
+        if (lincensePlate !== null) {
+          throw new DuplicateLicensePlateError(updates.licensePlate)
+        }
+      }
+
       const carUpdate = new Car({
         ...car,
         ...updates,
