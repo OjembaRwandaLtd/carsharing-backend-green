@@ -23,7 +23,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { DuplicateLicensePlateError } from 'src/application/car/error/duplicate-license-plate.error'
+import { DuplicateLicensePlateError } from 'src/application/car/error'
 
 import {
   Car,
