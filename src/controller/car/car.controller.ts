@@ -82,7 +82,7 @@ export class CarController {
   })
   @Get(':id')
   public async get(@Param('id', ParseIntPipe) _id: CarID): Promise<CarDTO> {
-    return this.carService.get(_id)
+    return CarDTO.fromModel(await this.carService.get(_id))
   }
 
   @ApiOperation({
