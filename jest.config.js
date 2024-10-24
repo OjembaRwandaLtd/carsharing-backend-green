@@ -11,4 +11,7 @@ module.exports = {
     '!src/**/index.ts',
     '!src/**/*.(builder|config|error|interface|mock|module|dto|request-dto).ts',
   ],
+  moduleNameMapper: {
+    '^src/(.*)$': '<rootDir>/src/$1',
+  },
 }
