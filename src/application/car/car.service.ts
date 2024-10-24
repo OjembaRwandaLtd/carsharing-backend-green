@@ -1,6 +1,8 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
+import { up } from 'migrations/20230912080000000_init'
+
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
@@ -71,6 +73,16 @@ export class CarService implements ICarService {
         throw new ForbiddenException(
           'You are not authorized to update this car',
         )
+      }
+
+      if (updates.licensePlate) {
+        const lincensePlate = await this.carRepository.findByLicensePlate(
+          tx,
+          updates.licensePlate,
+        )
+        if (lincensePlate !== null) {
+          throw new DuplicateLicensePlateError(updates.licensePlate)
+        }
       }
 
       const carUpdate = new Car({
