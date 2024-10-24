@@ -41,6 +41,41 @@ export class CarService implements ICarService {
   public async get(_id: CarID): Promise<Car> {
     return await this.databaseConnection.transactional(async tx => {
       return await this.carRepository.get(tx, _id)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     })
   }
 
