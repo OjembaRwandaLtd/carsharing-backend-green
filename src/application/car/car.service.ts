@@ -1,8 +1,6 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
-import { up } from 'migrations/20230912080000000_init'
-
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
