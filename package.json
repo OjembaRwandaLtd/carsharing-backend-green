@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "0.0.1",
-  "description": "The MoniShare backend.",
+  "description": "The CarSharing backend.",
   "author": "Ojemba GmbH",
   "contributors": [
     {
@@ -20,10 +20,11 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
-    "db:start": "docker run --rm --detach --publish=5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=monishare --name monishare --mount type=bind,source=\"$(pwd)/fixture\",target=/fixture,readonly postgres:15-alpine",
+    "db:start": "docker run --rm --detach --publish=5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=carsharing --name carsharing --mount type=bind,source=\"$(pwd)/fixture\",target=/fixture,readonly postgres:15-alpine",
+    "db:start-win": "docker run --rm --detach --publish=5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=carsharing --name carsharing --mount type=bind,source=\"%cd%/fixture\",target=/fixture,readonly postgres:15-alpine",
     "db:migrate-up": "node-pg-migrate --config-file pgmigrate.config.json up",
-    "db:load-fixture": "docker exec monishare /bin/bash -c \"find /fixture -type f | sort | xargs -I {} psql --username=postgres --dbname monishare -f {}\"",
-    "db:stop": "docker rm -f monishare",
+    "db:load-fixture": "docker exec carsharing /bin/bash -c \"find /fixture -type f | sort | xargs -I {} psql --username=postgres --dbname carsharing -f {}\"",
+    "db:stop": "docker rm -f carsharing",
     "lint": "npm run lint:tsc && npm run lint:eslint && npm run lint:prettier",
     "lint:eslint": "eslint \"{src,migrations,test}/**/*.ts\"",
     "lint:prettier": "prettier --check '{src,migrations,test}/**/*.{ts,json}'",
@@ -57,7 +58,7 @@
     "@testcontainers/postgresql": "^10.2.1",
     "@types/express": "^4.17.17",
     "@types/glob": "^8.1.0",
-    "@types/jest": "^29.5.1",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20.4.8",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.2.0",

@@ -1,8 +1,9 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
-  NotImplementedException,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -22,7 +23,15 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { Car, type CarID, ICarService, type User } from '../../application'
+import {
+  Car,
+  type CarID,
+  CarState,
+  CarTypeNotFoundError,
+  ICarService,
+  type User,
+} from '../../application'
+import { DuplicateLicensePlateError } from '../../application/car/error/duplicate-license-plate.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
@@ -54,7 +63,7 @@ export class CarController {
   })
   @Get()
   public async getAll(): Promise<CarDTO[]> {
-    throw new NotImplementedException()
+    return this.carService.getAll()
   }
 
   @ApiOperation({
@@ -73,7 +82,7 @@ export class CarController {
   })
   @Get(':id')
   public async get(@Param('id', ParseIntPipe) _id: CarID): Promise<CarDTO> {
-    throw new NotImplementedException()
+    return CarDTO.fromModel(await this.carService.get(_id))
   }
 
   @ApiOperation({
@@ -91,10 +100,25 @@ export class CarController {
   })
   @Post()
   public async create(
-    @CurrentUser() _owner: User,
-    @Body() _data: CreateCarDTO,
+    @CurrentUser() owner: User,
+    @Body() data: CreateCarDTO,
   ): Promise<CarDTO> {
-    throw new NotImplementedException()
+    try {
+      const carData = await this.carService.create({
+        ...data,
+        ownerId: owner.id,
+        state: CarState.LOCKED,
+      })
+      return CarDTO.fromModel(carData)
+    } catch (error: unknown) {
+      if (error instanceof DuplicateLicensePlateError) {
+        throw new BadRequestException(error.message)
+      }
+      if (error instanceof CarTypeNotFoundError) {
+        throw new NotFoundException(error.message)
+      }
+      throw error
+    }
   }
 
   @ApiOperation({
@@ -112,10 +136,12 @@ export class CarController {
   })
   @Patch(':id')
   public async patch(
-    @CurrentUser() _user: User,
-    @Param('id', ParseIntPipe) _carId: CarID,
-    @Body() _data: PatchCarDTO,
+    @CurrentUser() user: User,
+    @Param('id', ParseIntPipe) carId: CarID,
+    @Body() data: PatchCarDTO,
   ): Promise<CarDTO> {
-    throw new NotImplementedException()
+    const car = await this.carService.update(carId, data, user.id)
+
+    return CarDTO.fromModel(car)
   }
 }

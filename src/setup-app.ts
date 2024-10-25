@@ -20,8 +20,8 @@ import {
 
 export function configureOpenAPI(app: INestApplication): INestApplication {
   const config = new DocumentBuilder()
-    .setTitle('MoniShare')
-    .setDescription('The MoniShare API')
+    .setTitle('CarSharing')
+    .setDescription('The CarSharing API')
     .setVersion('1.0')
     .addBearerAuth({
       type: 'http',
