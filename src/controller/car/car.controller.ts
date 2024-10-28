@@ -152,7 +152,6 @@ export class CarController {
       if (error instanceof DuplicateLicensePlateError) {
         throw new BadRequestException(error.message)
       }
-
       throw error
     }
   }
