@@ -32,8 +32,11 @@ describe('CarService', () => {
     it('should update a car', async () => {
       const owner = new UserBuilder().build()
       const car = new CarBuilder().withOwner(owner).withHorsepower(50).build()
-      const updatedCar = CarBuilder.from(car).withId(car.id).withHorsepower(555).build()
-       
+      const updatedCar = CarBuilder.from(car)
+        .withId(car.id)
+        .withHorsepower(555)
+        .build()
+
       carRepositoryMock.get.mockResolvedValue(car)
       carRepositoryMock.update.mockResolvedValue(updatedCar)
 
@@ -53,19 +56,12 @@ describe('CarService', () => {
       carRepositoryMock.get.mockResolvedValue(car)
       await expect(carService.get(car.id)).resolves.toEqual(car)
     })
-    
-    it("should create a new car", async () => {
+
+    it('should create a new car', async () => {
       const car = new CarBuilder().build()
       const newCar = new CarBuilder().build()
       carRepositoryMock.insert.mockResolvedValue(newCar)
       await expect(carService.create(car)).resolves.toEqual(newCar)
     })
-    
-    // it("should update an existing car", async () => {
-    //   const car = new CarBuilder().build()
-    //   const updatedCar = new CarBuilder().withHorsepower(555).build()
-    //   carRepositoryMock.update.mockResolvedValue(updatedCar)
-    //   await expect(carService.update(car.id, { horsepower: 555 }, car.ownerId)).resolves.toEqual(updatedCar)
-    // })
   })
 })
