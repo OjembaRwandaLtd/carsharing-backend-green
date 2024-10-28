@@ -72,17 +72,15 @@ export class CarService implements ICarService {
           'You are not authorized to update this car',
         )
       }
-
       if (updates.licensePlate) {
         const lincensePlate = await this.carRepository.findByLicensePlate(
           tx,
           updates.licensePlate,
         )
-        if (lincensePlate !== null) {
+        if (lincensePlate !== null && lincensePlate.ownerId !== car.ownerId) {
           throw new DuplicateLicensePlateError(updates.licensePlate)
         }
       }
-
       const carUpdate = new Car({
         ...car,
         ...updates,
