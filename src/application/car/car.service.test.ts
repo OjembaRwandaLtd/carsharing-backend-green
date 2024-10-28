@@ -29,10 +29,13 @@ describe('CarService', () => {
   })
 
   describe('update', () => {
-    xit('should update a car', async () => {
+    it('should update a car', async () => {
       const owner = new UserBuilder().build()
       const car = new CarBuilder().withOwner(owner).withHorsepower(50).build()
-      const updatedCar = CarBuilder.from(car).withHorsepower(555).build()
+      const updatedCar = CarBuilder.from(car).withId(car.id).withHorsepower(555).build()
+       
+      carRepositoryMock.get.mockResolvedValue(car)
+      carRepositoryMock.update.mockResolvedValue(updatedCar)
 
       await expect(
         carService.update(car.id, { horsepower: 555 }, owner.id),
