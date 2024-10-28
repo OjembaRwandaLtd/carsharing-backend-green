@@ -7,6 +7,7 @@ import { type UserID } from '../user'
 import { Car, type CarID, type CarProperties } from './car'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
+import { NotCarOwnerError } from './error'
 
 @Injectable()
 export class CarService implements ICarService {
@@ -63,10 +64,9 @@ export class CarService implements ICarService {
       const car = await this.carRepository.get(tx, carId)
 
       if (currentUserId !== car.ownerId) {
-        throw new ForbiddenException(
-          'You are not authorized to update this car',
-        )
+        throw new NotCarOwnerError()
       }
+      
 
       const carUpdate = new Car({
         ...car,

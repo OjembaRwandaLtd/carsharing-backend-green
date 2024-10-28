@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Param,
   ParseIntPipe,
@@ -20,6 +22,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+
+import { NotCarOwnerError } from 'src/application/car/error'
 
 import {
   Car,
@@ -126,8 +130,18 @@ export class CarController {
     @Param('id', ParseIntPipe) carId: CarID,
     @Body() data: PatchCarDTO,
   ): Promise<CarDTO> {
+   try {
     const car = await this.carService.update(carId, data, user.id)
-
     return CarDTO.fromModel(car)
+   } catch (error: unknown) {
+     if (error instanceof NotCarOwnerError) {
+      throw new ForbiddenException(
+        'You are not authorized to update this car',
+      )
+     } else {
+      const reason = (error as Error).message
+      throw new BadRequestException(reason)
+    }
+   }
   }
 }
