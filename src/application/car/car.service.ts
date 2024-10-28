@@ -37,11 +37,11 @@ export class CarService implements ICarService {
   public async create(data: Except<CarProperties, 'id'>): Promise<Car> {
     return this.databaseConnection.transactional(async tx => {
       if (data.licensePlate) {
-        const lincensePlate = await this.carRepository.findByLicensePlate(
+        const existingCar = await this.carRepository.findByLicensePlate(
           tx,
           data.licensePlate,
         )
-        if (lincensePlate !== null) {
+        if (existingCar !== null) {
           throw new DuplicateLicensePlateError(data.licensePlate)
         }
       }
@@ -85,17 +85,18 @@ export class CarService implements ICarService {
           'You are not authorized to update this car',
         )
       }
-
       if (updates.licensePlate) {
-        const lincensePlate = await this.carRepository.findByLicensePlate(
+        const existingCar = await this.carRepository.findByLicensePlate(
           tx,
           updates.licensePlate,
         )
-        if (lincensePlate !== null) {
+        if (existingCar !== null && existingCar.id !== car.id) {
           throw new DuplicateLicensePlateError(updates.licensePlate)
         }
+        if (updates.carTypeId) {
+          await this.carTypeRepository.get(tx, updates.carTypeId)
+        }
       }
-
       const carUpdate = new Car({
         ...car,
         ...updates,

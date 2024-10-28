@@ -145,8 +145,15 @@ export class CarController {
     @Param('id', ParseIntPipe) carId: CarID,
     @Body() data: PatchCarDTO,
   ): Promise<CarDTO> {
-    const car = await this.carService.update(carId, data, user.id)
+    try {
+      const car = await this.carService.update(carId, data, user.id)
+      return CarDTO.fromModel(car)
+    } catch (error) {
+      if (error instanceof DuplicateLicensePlateError) {
+        throw new BadRequestException(error.message)
+      }
 
-    return CarDTO.fromModel(car)
+      throw error
+    }
   }
 }
