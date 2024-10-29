@@ -35,6 +35,14 @@ export class CarService implements ICarService {
   /* eslint-disable @typescript-eslint/require-await */
 
   public async create(data: Except<CarProperties, 'id'>): Promise<Car> {
+    await this.cacheManager.set(
+      data.licensePlate ? data.licensePlate.toString() : '',
+      data,
+    )
+    const cacheCar = await this.cacheManager.get<Car>(data.licensePlate ? data.licensePlate.toString() : '')
+    if (cacheCar) {
+      return cacheCar
+    }
     return this.databaseConnection.transactional(async tx => {
       if (data.licensePlate) {
         const existingCar = await this.carRepository.findByLicensePlate(
@@ -62,9 +70,10 @@ export class CarService implements ICarService {
   }
 
   public async get(id: CarID): Promise<Car> {
-    const CacheKey = `car:${id}`
-    const cachedCar = await this.cacheManager.get<Car>(CacheKey)
+    // const CacheKey = `car:${id}`
+    const cachedCar = await this.cacheManager.get<Car>(id.toString())
     if (cachedCar) {
+      this.logger.log(`Cache hit for car ${id}`)
       return cachedCar
     }
     return await this.databaseConnection.transactional(async tx => {
