@@ -72,7 +72,6 @@ export class CarService implements ICarService {
   }
 
   public async get(id: CarID): Promise<Car> {
-    // const CacheKey = `car:${id}`
     const cachedCar = await this.cacheManager.get<Car>(id.toString())
     if (cachedCar) {
       this.logger.log(`Cache hit for car ${id}`)
