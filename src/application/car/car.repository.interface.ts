@@ -5,6 +5,8 @@ import { type Transaction } from '../../persistence/database-connection.interfac
 import { type Car, type CarID, type CarProperties } from './car'
 
 export abstract class ICarRepository {
+  public abstract find(tx: Transaction, id: CarID): Promise<Car | null>
+
   public abstract get(tx: Transaction, id: CarID): Promise<Car>
 
   public abstract getAll(tx: Transaction): Promise<Car[]>

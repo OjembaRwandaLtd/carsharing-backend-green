@@ -4,6 +4,7 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -29,9 +30,11 @@ import {
   Car,
   type CarID,
   CarState,
+  CarTypeNotFoundError,
   ICarService,
   type User,
 } from '../../application'
+import { DuplicateLicensePlateError } from '../../application/car/error/duplicate-license-plate.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
@@ -82,7 +85,7 @@ export class CarController {
   })
   @Get(':id')
   public async get(@Param('id', ParseIntPipe) _id: CarID): Promise<CarDTO> {
-    return this.carService.get(_id)
+    return CarDTO.fromModel(await this.carService.get(_id))
   }
 
   @ApiOperation({
@@ -103,12 +106,22 @@ export class CarController {
     @CurrentUser() owner: User,
     @Body() data: CreateCarDTO,
   ): Promise<CarDTO> {
-    const carData = await this.carService.create({
-      ...data,
-      ownerId: owner.id,
-      state: CarState.LOCKED,
-    })
-    return CarDTO.fromModel(carData)
+    try {
+      const carData = await this.carService.create({
+        ...data,
+        ownerId: owner.id,
+        state: CarState.LOCKED,
+      })
+      return CarDTO.fromModel(carData)
+    } catch (error: unknown) {
+      if (error instanceof DuplicateLicensePlateError) {
+        throw new BadRequestException(error.message)
+      }
+      if (error instanceof CarTypeNotFoundError) {
+        throw new NotFoundException(error.message)
+      }
+      throw error
+    }
   }
 
   @ApiOperation({
@@ -130,18 +143,18 @@ export class CarController {
     @Param('id', ParseIntPipe) carId: CarID,
     @Body() data: PatchCarDTO,
   ): Promise<CarDTO> {
-   try {
-    const car = await this.carService.update(carId, data, user.id)
-    return CarDTO.fromModel(car)
-   } catch (error: unknown) {
-     if (error instanceof NotCarOwnerError) {
-      throw new ForbiddenException(
-        'You are not authorized to update this car',
-      )
-     } else {
-      const reason = (error as Error).message
-      throw new BadRequestException(reason)
+    try {
+      const car = await this.carService.update(carId, data, user.id)
+      return CarDTO.fromModel(car)
+    } catch (error: unknown) {
+      if (error instanceof NotCarOwnerError) {
+        throw new ForbiddenException(
+          'You are not authorized to update this car',
+        )
+      } else {
+        const reason = (error as Error).message
+        throw new BadRequestException(reason)
+      }
     }
-   }
   }
 }
