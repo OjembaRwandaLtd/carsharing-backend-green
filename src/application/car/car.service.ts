@@ -39,7 +39,9 @@ export class CarService implements ICarService {
       data.licensePlate ? data.licensePlate.toString() : '',
       data,
     )
-    const cacheCar = await this.cacheManager.get<Car>(data.licensePlate ? data.licensePlate.toString() : '')
+    const cacheCar = await this.cacheManager.get<Car>(
+      data.licensePlate ? data.licensePlate.toString() : '',
+    )
     if (cacheCar) {
       return cacheCar
     }
