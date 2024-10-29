@@ -1,4 +1,5 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common'
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager'
+import { ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
@@ -21,11 +22,13 @@ export class CarService implements ICarService {
     carRepository: ICarRepository,
     carTypeRepository: ICarTypeRepository,
     databaseConnection: IDatabaseConnection,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     this.carRepository = carRepository
     this.carTypeRepository = carTypeRepository
     this.databaseConnection = databaseConnection
     this.logger = new Logger(CarService.name)
+    this.cacheManager = cacheManager
   }
 
   // Please remove the next line when implementing this file.
@@ -48,14 +51,24 @@ export class CarService implements ICarService {
   }
 
   public async getAll(): Promise<Car[]> {
+    const CacheKey = 'cars'
+    const cachedCars = await this.cacheManager.get<Car[]>(CacheKey)
+    if (cachedCars) {
+      return cachedCars
+    }
     return await this.databaseConnection.transactional(async tx => {
       return await this.carRepository.getAll(tx)
     })
   }
 
-  public async get(_id: CarID): Promise<Car> {
+  public async get(id: CarID): Promise<Car> {
+    const CacheKey = `car:${id}`
+    const cachedCar = await this.cacheManager.get<Car>(CacheKey)
+    if (cachedCar) {
+      return cachedCar
+    }
     return await this.databaseConnection.transactional(async tx => {
-      return await this.carRepository.get(tx, _id)
+      return await this.carRepository.get(tx, id)
     })
   }
 

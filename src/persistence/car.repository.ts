@@ -45,7 +45,7 @@ function rowToDomain(row: Row): Car {
 
 @Injectable()
 export class CarRepository implements ICarRepository {
-  public async find(tx: Transaction, id: CarID): Promise<Car | null> {
+  public find(_tx: Transaction, _id: CarID): Promise<Car | null> {
     throw new Error('Not implemented')
   }
 
