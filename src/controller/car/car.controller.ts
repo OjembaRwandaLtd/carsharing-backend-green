@@ -151,23 +151,17 @@ export class CarController {
     try {
       const car = await this.carService.update(carId, data, user.id)
       return CarDTO.fromModel(car)
-<<<<<<< HEAD
     } catch (error: unknown) {
       if (error instanceof NotCarOwnerError) {
         throw new ForbiddenException(
           'You are not authorized to update this car',
         )
+      } else if (error instanceof DuplicateLicensePlateError) {
+        throw new BadRequestException(error.message)
       } else {
         const reason = (error as Error).message
         throw new BadRequestException(reason)
       }
-=======
-    } catch (error) {
-      if (error instanceof DuplicateLicensePlateError) {
-        throw new BadRequestException(error.message)
-      }
-      throw error
->>>>>>> dev
     }
   }
 }
