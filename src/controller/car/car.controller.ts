@@ -26,8 +26,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { NotCarOwnerError } from 'src/application/car/error'
-
 import {
   Car,
   type CarID,
@@ -36,6 +34,7 @@ import {
   ICarService,
   type User,
 } from '../../application'
+import { NotCarOwnerError } from '../../application/car/error'
 import { DuplicateLicensePlateError } from '../../application/car/error/duplicate-license-plate.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
