@@ -7,6 +7,7 @@ import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
 
 import { Car, type CarID, type CarProperties } from './car'
+import { CarNotFoundError } from './car-not-found.error'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
 import { DuplicateLicensePlateError } from './error'
@@ -87,14 +88,19 @@ export class CarService implements ICarService {
     updates: Partial<Except<CarProperties, 'id'>>,
     currentUserId: UserID,
   ): Promise<Car> {
-    return this.databaseConnection.transactional(async tx => {
+    return await this.databaseConnection.transactional(async tx => {
       const car = await this.carRepository.get(tx, carId)
+
+      if (!car) {
+        throw new CarNotFoundError(carId)
+      }
 
       if (currentUserId !== car.ownerId) {
         throw new ForbiddenException(
           'You are not authorized to update this car',
         )
       }
+
       if (updates.licensePlate) {
         const existingCar = await this.carRepository.findByLicensePlate(
           tx,
@@ -103,16 +109,24 @@ export class CarService implements ICarService {
         if (existingCar !== null && existingCar.id !== car.id) {
           throw new DuplicateLicensePlateError(updates.licensePlate)
         }
-        if (updates.carTypeId) {
-          await this.carTypeRepository.get(tx, updates.carTypeId)
-        }
       }
+
+      if (updates.carTypeId) {
+        await this.carTypeRepository.get(tx, updates.carTypeId)
+      }
+
       const carUpdate = new Car({
         ...car,
         ...updates,
         id: carId,
       })
-      return this.carRepository.update(tx, carUpdate)
+
+      const updatedCar = await this.carRepository.update(tx, carUpdate)
+      if (!updatedCar) {
+        throw new CarNotFoundError(carId)
+      }
+
+      return updatedCar
     })
   }
 }
