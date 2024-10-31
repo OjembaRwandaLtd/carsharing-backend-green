@@ -148,7 +148,7 @@ export class CarController {
     try {
       const car = await this.carService.update(carId, data, user.id)
       return CarDTO.fromModel(car)
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof DuplicateLicensePlateError) {
         throw new BadRequestException(error.message)
       }

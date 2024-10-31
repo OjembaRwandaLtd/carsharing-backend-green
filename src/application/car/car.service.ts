@@ -1,12 +1,14 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager'
-import { ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
+import { AccessDeniedError } from '../access-denied.error'
 import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
 
 import { Car, type CarID, type CarProperties } from './car'
+import { CarNotFoundError } from './car-not-found.error'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
 import { DuplicateLicensePlateError } from './error'
@@ -90,10 +92,10 @@ export class CarService implements ICarService {
     return this.databaseConnection.transactional(async tx => {
       const car = await this.carRepository.get(tx, carId)
 
+      if (!car) throw new CarNotFoundError(carId)
+
       if (currentUserId !== car.ownerId) {
-        throw new ForbiddenException(
-          'You are not authorized to update this car',
-        )
+        throw new AccessDeniedError(car.name, carId)
       }
       if (updates.licensePlate) {
         const existingCar = await this.carRepository.findByLicensePlate(
