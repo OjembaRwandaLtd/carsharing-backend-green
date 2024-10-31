@@ -155,12 +155,12 @@ export class CarController {
         throw new ForbiddenException(
           'You are not authorized to update this car',
         )
-      } else if (error instanceof DuplicateLicensePlateError) {
-        throw new BadRequestException(error.message)
-      } else {
-        const reason = (error as Error).message
-        throw new BadRequestException(reason)
       }
+      if (error instanceof DuplicateLicensePlateError) {
+        throw new BadRequestException(error.message)
+      }
+      const reason = (error as Error).message
+      throw new BadRequestException(reason)
     }
   }
 }
