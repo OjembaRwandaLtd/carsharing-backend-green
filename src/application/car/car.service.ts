@@ -3,13 +3,15 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
+import { AccessDeniedError } from '../access-denied.error'
 import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
 
 import { Car, type CarID, type CarProperties } from './car'
+import { CarNotFoundError } from './car-not-found.error'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
-import { NotCarOwnerError, DuplicateLicensePlateError } from './error'
+import { DuplicateLicensePlateError } from './error'
 
 @Injectable()
 export class CarService implements ICarService {
@@ -90,8 +92,10 @@ export class CarService implements ICarService {
     return this.databaseConnection.transactional(async tx => {
       const car = await this.carRepository.get(tx, carId)
 
+      if (!car) throw new CarNotFoundError(carId)
+
       if (currentUserId !== car.ownerId) {
-        throw new NotCarOwnerError()
+        throw new AccessDeniedError(car.name, carId)
       }
       if (updates.licensePlate) {
         const existingCar = await this.carRepository.findByLicensePlate(

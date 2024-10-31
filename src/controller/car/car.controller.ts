@@ -34,7 +34,6 @@ import {
   ICarService,
   type User,
 } from '../../application'
-import { NotCarOwnerError } from '../../application/car/error'
 import { DuplicateLicensePlateError } from '../../application/car/error/duplicate-license-plate.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
@@ -151,11 +150,6 @@ export class CarController {
       const car = await this.carService.update(carId, data, user.id)
       return CarDTO.fromModel(car)
     } catch (error: unknown) {
-      if (error instanceof NotCarOwnerError) {
-        throw new ForbiddenException(
-          'You are not authorized to update this car',
-        )
-      }
       if (error instanceof DuplicateLicensePlateError) {
         throw new BadRequestException(error.message)
       }
