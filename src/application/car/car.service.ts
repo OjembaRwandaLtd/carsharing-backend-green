@@ -92,9 +92,7 @@ export class CarService implements ICarService {
     return await this.databaseConnection.transactional(async tx => {
       const car = await this.carRepository.get(tx, carId)
 
-      if (!car) {
-        throw new CarNotFoundError(carId)
-      }
+      if (!car) throw new CarNotFoundError(carId)
 
       if (currentUserId !== car.ownerId) {
         throw new AccessDeniedError(car.name, carId)
