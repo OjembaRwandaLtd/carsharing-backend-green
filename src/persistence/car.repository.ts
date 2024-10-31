@@ -10,7 +10,7 @@ import {
   type ICarRepository,
   type UserID,
 } from '../application'
-import { Car, CarNotFoundError } from '../application/car'
+import { Car } from '../application/car'
 
 import { type Transaction } from './database-connection.interface'
 
@@ -74,7 +74,7 @@ export class CarRepository implements ICarRepository {
     return maybeRow ? rowToDomain(maybeRow) : null
   }
 
-  public async update(tx: Transaction, car: Car): Promise<Car> {
+  public async update(tx: Transaction, car: Car): Promise<Car | null> {
     const row = await tx.oneOrNone<Row>(
       `
       UPDATE cars SET
@@ -91,9 +91,8 @@ export class CarRepository implements ICarRepository {
        RETURNING *`,
       { ...car },
     )
-    if (row === null) throw new CarNotFoundError(car.id)
 
-    return rowToDomain(row)
+    return row ? rowToDomain(row) : null
   }
 
   public async insert(

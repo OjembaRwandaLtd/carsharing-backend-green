@@ -28,6 +28,7 @@ import {
 import {
   Car,
   type CarID,
+  CarNotFoundError,
   CarState,
   CarTypeNotFoundError,
   ICarService,
@@ -120,6 +121,9 @@ export class CarController {
         throw new BadRequestException(error.message)
       }
       if (error instanceof CarTypeNotFoundError) {
+        throw new NotFoundException(error.message)
+      }
+      if (error instanceof CarNotFoundError) {
         throw new NotFoundException(error.message)
       }
       throw error
