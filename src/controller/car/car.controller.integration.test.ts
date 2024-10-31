@@ -1,5 +1,4 @@
 import { expect } from '@jest/globals'
-import { CacheModule } from '@nestjs/cache-manager'
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import request from 'supertest'
@@ -64,7 +63,7 @@ describe('CarController', () => {
     authenticationGuardMock = new AuthenticationGuardMock(user)
 
     const moduleReference = await Test.createTestingModule({
-      imports: [CacheModule.register()],
+      imports: [],
       controllers: [CarController],
       providers: [
         {

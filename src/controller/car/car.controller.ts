@@ -1,4 +1,3 @@
-import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager'
 import {
   BadRequestException,
   Body,
@@ -10,7 +9,6 @@ import {
   Patch,
   Post,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
@@ -50,7 +48,6 @@ import { CarDTO, CreateCarDTO, PatchCarDTO } from './car.dto'
 })
 @UseGuards(AuthenticationGuard)
 @Controller('/cars')
-@UseInterceptors(CacheInterceptor)
 export class CarController {
   private readonly carService: ICarService
 
@@ -65,7 +62,6 @@ export class CarController {
     summary: 'Retrieve all cars.',
   })
   @Get()
-  @CacheKey('cars')
   public async getAll(): Promise<CarDTO[]> {
     return this.carService.getAll()
   }
@@ -85,7 +81,6 @@ export class CarController {
     description: 'No car with the given id was found.',
   })
   @Get(':id')
-  @CacheKey('car')
   public async get(@Param('id', ParseIntPipe) _id: CarID): Promise<CarDTO> {
     return CarDTO.fromModel(await this.carService.get(_id))
   }
