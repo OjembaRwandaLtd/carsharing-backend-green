@@ -1,8 +1,9 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager'
-import { ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
+import { AccessDeniedError } from '../access-denied.error'
 import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
 
@@ -96,9 +97,7 @@ export class CarService implements ICarService {
       }
 
       if (currentUserId !== car.ownerId) {
-        throw new ForbiddenException(
-          'You are not authorized to update this car',
-        )
+        throw new AccessDeniedError(car.name, carId)
       }
 
       if (updates.licensePlate) {
