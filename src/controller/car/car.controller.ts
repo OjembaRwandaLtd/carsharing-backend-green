@@ -26,6 +26,7 @@ import {
 import {
   Car,
   type CarID,
+  CarNotFoundError,
   CarState,
   CarTypeNotFoundError,
   ICarService,
@@ -117,6 +118,9 @@ export class CarController {
       if (error instanceof CarTypeNotFoundError) {
         throw new NotFoundException(error.message)
       }
+      if (error instanceof CarNotFoundError) {
+        throw new NotFoundException(error.message)
+      }
       throw error
     }
   }
@@ -140,8 +144,14 @@ export class CarController {
     @Param('id', ParseIntPipe) carId: CarID,
     @Body() data: PatchCarDTO,
   ): Promise<CarDTO> {
-    const car = await this.carService.update(carId, data, user.id)
-
-    return CarDTO.fromModel(car)
+    try {
+      const car = await this.carService.update(carId, data, user.id)
+      return CarDTO.fromModel(car)
+    } catch (error: unknown) {
+      if (error instanceof DuplicateLicensePlateError) {
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
 }
