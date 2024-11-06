@@ -7,7 +7,7 @@ import {
 import { DuplicateLicensePlateError } from 'src/application/car/error'
 import { DatabaseConnection } from 'src/persistence'
 
-import { CarRepository } from './../persistence/car.repository'
+import { CarRepository } from '../persistence/car.repository'
 
 export function IsUniqueLicensePlate(
   carRepository: CarRepository,
