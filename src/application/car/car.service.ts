@@ -96,9 +96,6 @@ export class CarService implements ICarService {
       })
 
       const updatedCar = await this.carRepository.update(tx, carUpdate)
-      if (!updatedCar) {
-        throw new CarNotFoundError(carId)
-      }
 
       return updatedCar
     })

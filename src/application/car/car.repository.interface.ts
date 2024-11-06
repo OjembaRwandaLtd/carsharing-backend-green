@@ -11,7 +11,7 @@ export abstract class ICarRepository {
 
   public abstract getAll(tx: Transaction): Promise<Car[]>
 
-  public abstract update(tx: Transaction, car: Car): Promise<Car | null>
+  public abstract update(tx: Transaction, car: Car): Promise<Car>
 
   public abstract insert(
     tx: Transaction,
