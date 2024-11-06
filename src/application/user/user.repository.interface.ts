@@ -14,3 +14,5 @@ export abstract class IUserRepository {
 
   public abstract getAll(tx: Transaction): Promise<User[]>
 }
+
+
