@@ -1,5 +1,3 @@
-import { Cache } from '@nestjs/cache-manager'
-
 import {
   type CarRepositoryMock,
   type DatabaseConnectionMock,
@@ -18,32 +16,16 @@ describe('CarService', () => {
   let carTypeRepositoryMock: CarTypeRepositoryMock
   let carRepositoryMock: CarRepositoryMock
   let databaseConnectionMock: DatabaseConnectionMock
-  let cacheManagerMock: Cache
 
   beforeEach(() => {
     carRepositoryMock = mockCarRepository()
     databaseConnectionMock = mockDatabaseConnection()
-    cacheManagerMock = {
-      get: jest.fn(),
-      set: jest.fn(),
-      del: jest.fn(),
-      reset: jest.fn(),
-      store: {
-        get: jest.fn(),
-        set: jest.fn(),
-        del: jest.fn(),
-        reset: jest.fn(),
-        keys: jest.fn(),
-        ttl: jest.fn(),
-      },
-    } as unknown as Cache
     carTypeRepositoryMock = mockCarTypeRepository()
 
     carService = new CarService(
       carRepositoryMock,
       carTypeRepositoryMock,
       databaseConnectionMock,
-      cacheManagerMock,
     )
   })
 

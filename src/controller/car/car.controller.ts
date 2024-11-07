@@ -1,4 +1,3 @@
-import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager'
 import {
   BadRequestException,
   Body,
@@ -10,7 +9,6 @@ import {
   Patch,
   Post,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
@@ -28,6 +26,7 @@ import {
 import {
   Car,
   type CarID,
+  CarNotFoundError,
   CarState,
   CarTypeNotFoundError,
   ICarService,
@@ -50,7 +49,6 @@ import { CarDTO, CreateCarDTO, PatchCarDTO } from './car.dto'
 })
 @UseGuards(AuthenticationGuard)
 @Controller('/cars')
-@UseInterceptors(CacheInterceptor)
 export class CarController {
   private readonly carService: ICarService
 
@@ -65,7 +63,6 @@ export class CarController {
     summary: 'Retrieve all cars.',
   })
   @Get()
-  @CacheKey('cars')
   public async getAll(): Promise<CarDTO[]> {
     return this.carService.getAll()
   }
@@ -85,7 +82,6 @@ export class CarController {
     description: 'No car with the given id was found.',
   })
   @Get(':id')
-  @CacheKey('car')
   public async get(@Param('id', ParseIntPipe) _id: CarID): Promise<CarDTO> {
     return CarDTO.fromModel(await this.carService.get(_id))
   }
@@ -122,6 +118,9 @@ export class CarController {
       if (error instanceof CarTypeNotFoundError) {
         throw new NotFoundException(error.message)
       }
+      if (error instanceof CarNotFoundError) {
+        throw new NotFoundException(error.message)
+      }
       throw error
     }
   }
@@ -148,7 +147,7 @@ export class CarController {
     try {
       const car = await this.carService.update(carId, data, user.id)
       return CarDTO.fromModel(car)
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof DuplicateLicensePlateError) {
         throw new BadRequestException(error.message)
       }
