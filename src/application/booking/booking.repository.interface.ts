@@ -1,0 +1,29 @@
+import { type Except } from 'type-fest'
+
+import { type Transaction } from '../../persistence/database-connection.interface'
+import { type Booking, type BookingID, type BookingProperties } from './booking'
+
+export abstract class IBookingRepository {
+  public abstract find(tx: Transaction, id: BookingID): Promise<Booking | null>
+
+  public abstract get(tx: Transaction, id: BookingID): Promise<Booking>
+
+  public abstract getAll(tx: Transaction): Promise<Booking[]>
+
+  public abstract update(tx: Transaction, booking: Booking): Promise<Booking | null>
+
+  public abstract insert(
+    tx: Transaction,
+    booking: Except<BookingProperties, 'id'>,
+  ): Promise<Booking>
+
+  public abstract findByCarId(
+    tx: Transaction,
+    carId: number,
+  ): Promise<Booking[] | null>
+
+  public abstract findByRenterId(
+    tx: Transaction,
+    renterId: number,
+  ): Promise<Booking[] | null>
+}
