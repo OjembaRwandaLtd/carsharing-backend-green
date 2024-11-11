@@ -13,17 +13,14 @@ import { IBookingRepository } from './booking.repository.interface';
 @Injectable()
 export class BookingService {
   private readonly bookingRepository: IBookingRepository;
-  private readonly carRepository: ICarRepository;
   private readonly databaseConnection: IDatabaseConnection;
   private readonly logger: Logger;
 
   public constructor(
     bookingRepository: IBookingRepository,
-    carRepository: ICarRepository,
     databaseConnection: IDatabaseConnection,
   ) {
     this.bookingRepository = bookingRepository;
-    this.carRepository = carRepository;
     this.databaseConnection = databaseConnection;
     this.logger = new Logger(BookingService.name);
   }
