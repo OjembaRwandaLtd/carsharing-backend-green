@@ -36,7 +36,7 @@ import { AuthenticationGuard } from '../authentication.guard'
 import { BookingDTO } from './booking.dto'
 
 @ApiTags(Booking.name)
-//@ApiBearerAuth()
+@ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description:
     'The request was not authorized because the JWT was missing, expired or otherwise invalid.',
