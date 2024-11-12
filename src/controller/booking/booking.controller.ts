@@ -10,11 +10,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiConflictResponse,
-  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -22,7 +21,6 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
-
 import {
   Booking,
   type BookingID,
@@ -32,8 +30,8 @@ import {
 } from 'src/application'
 
 import { AuthenticationGuard } from '../authentication.guard'
-
 import { BookingDTO } from './booking.dto'
+
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -53,8 +51,27 @@ export class BookingController {
     this.bookingService = bookingService
   }
 
+  @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Retrieve a specific booking.',
+    summary: 'Return all registered users.',
+  })
+  @ApiOkResponse({
+    description: 'The request was successful.',
+    type: BookingDTO,
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'The request was not authorized because the JWT was missing, expired or otherwise invalid.',
+  })
+  @Get()
+  public async getAll(): Promise<BookingDTO> {
+    console.log('getAll')
+   throw new Error('Not implemented')
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Retrieve a specific user.',
   })
   @ApiOkResponse({
     description: 'The request was successful.',
@@ -65,12 +82,12 @@ export class BookingController {
       'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
   })
   @ApiNotFoundResponse({
-    description: 'No booking with the given id was found.',
+    description: 'No user with the given id was found.',
   })
   @Get(':id')
-  public async get(
-    @Param('id', ParseIntPipe) id: BookingID,
-  ): Promise<BookingDTO> {
+  public async get(@Param('id', ParseIntPipe) id: BookingID): Promise<BookingDTO> {
+    
     return BookingDTO.fromModel(await this.bookingService.get(id))
   }
 }
+
