@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { type Except } from 'type-fest'
+
 import {
   type BookingID,
   type BookingProperties,
@@ -9,6 +10,7 @@ import {
   type CarID,
 } from '../application'
 import { Booking } from '../application/booking'
+
 import { type Transaction } from './database-connection.interface'
 
 type Row = {
@@ -24,8 +26,8 @@ type Row = {
 function rowToDomain(row: Row): Booking {
   return new Booking({
     id: row.id as BookingID,
-    startDate: row.start_date as Date,
-    endDate: row.end_date as Date,
+    startDate: row.start_date,
+    endDate: row.end_date,
     carId: row.car_id as CarID,
     renterId: row.renter_id as UserID,
     ownerId: row.owner_id as UserID,
@@ -47,7 +49,9 @@ export class BookingRepository implements IBookingRepository {
   }
 
   public async getAll(tx: Transaction): Promise<Booking[]> {
-    throw new Error('Not implemented')
+    //const rows = await tx.any<Row>('SELECT * FROM car_types')
+    const bookings: Row[] = await tx.query('SELECT * FROM bookings')
+    return bookings.map(rowToDomain)
   }
 
   public async update(

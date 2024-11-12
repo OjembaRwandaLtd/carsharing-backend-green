@@ -5,10 +5,11 @@ import {
   IsNotEmpty,
   IsPositive,
   IsString,
-  IsDate
+  IsDate,
 } from 'class-validator'
 import { Nullable } from 'class-validator-extended'
 import { type Writable } from 'type-fest'
+
 import {
   type Booking,
   type BookingID,
@@ -16,8 +17,6 @@ import {
   CarID,
   type UserID,
 } from 'src/application'
-
-
 import { validate } from 'src/util'
 export class BookingDTO {
   @ApiProperty({
@@ -94,7 +93,6 @@ export class BookingDTO {
     renterId: UserID
     ownerId: UserID
     state: BookingState
-
   }): BookingDTO {
     const instance = new BookingDTO() as Writable<BookingDTO>
 
@@ -109,7 +107,7 @@ export class BookingDTO {
     return validate(instance)
   }
 
-  public static fromModel(booking:Booking): BookingDTO{
+  public static fromModel(booking: Booking): BookingDTO {
     return BookingDTO.create(booking)
   }
 }

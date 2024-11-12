@@ -65,10 +65,44 @@ export function up(pgm: MigrationBuilder): void {
       notNull: false,
     },
   })
+
+  pgm.createTable('bookings', {
+    id: {
+      type: 'serial',
+      primaryKey: true,
+    },
+    start_date: {
+      type: 'text',
+      notNull: false,
+      unique: true,
+    },
+    end_date: {
+      type: 'text',
+      notNull: false,
+      unique: true,
+    },
+    car_id: {
+      type: 'integer',
+      references: 'cars',
+    },
+    renter_id: {
+      type: 'integer',
+      references: 'cars',
+    },
+    owner_id: {
+      type: 'int',
+      references: 'users',
+      onDelete: 'CASCADE',
+    },
+    state: {
+      type: 'text',
+    },
+  })
 }
 
 export function down(pgm: MigrationBuilder): void {
   pgm.dropTable('cars')
   pgm.dropTable('car_types')
   pgm.dropTable('users')
+  pgm.dropTable('bookings')
 }
