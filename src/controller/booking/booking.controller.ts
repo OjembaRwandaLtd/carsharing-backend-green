@@ -10,7 +10,6 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
-
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -21,6 +20,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+
 import {
   Booking,
   type BookingID,
@@ -30,8 +30,8 @@ import {
 } from 'src/application'
 
 import { AuthenticationGuard } from '../authentication.guard'
-import { BookingDTO } from './booking.dto'
 
+import { BookingDTO } from './booking.dto'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -64,9 +64,9 @@ export class BookingController {
       'The request was not authorized because the JWT was missing, expired or otherwise invalid.',
   })
   @Get()
-  public async getAll(): Promise<BookingDTO> {
+  public async getAll(): Promise<BookingDTO[]> {
     console.log('getAll')
-   throw new Error('Not implemented')
+    return this.bookingService.getAll()
   }
 
   @ApiBearerAuth()
@@ -85,9 +85,9 @@ export class BookingController {
     description: 'No user with the given id was found.',
   })
   @Get(':id')
-  public async get(@Param('id', ParseIntPipe) id: BookingID): Promise<BookingDTO> {
-    
+  public async get(
+    @Param('id', ParseIntPipe) id: BookingID,
+  ): Promise<BookingDTO> {
     return BookingDTO.fromModel(await this.bookingService.get(id))
   }
 }
-
