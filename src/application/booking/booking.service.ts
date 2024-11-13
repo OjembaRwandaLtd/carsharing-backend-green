@@ -1,17 +1,8 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  NotImplementedException,
-} from '@nestjs/common'
-import { Except } from 'type-fest'
+import { Injectable, Logger, NotImplementedException } from '@nestjs/common'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
-import { AccessDeniedError } from '../access-denied.error'
-import { ICarRepository } from '../car/car.repository.interface'
-import { UserID } from '../user'
 
-import { Booking, BookingProperties, BookingID } from './booking'
+import { Booking, BookingID } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
 import { IBookingRepository } from './booking.repository.interface'
 
