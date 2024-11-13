@@ -1,26 +1,27 @@
-import { IsInt, IsPositive, IsEnum, IsNotEmpty, IsDate } from "class-validator";
-import {type Opaque} from 'type-fest'
-import { validate } from "src/util";
-import { type UserID } from "../user";
-import { type CarID } from "../car";
-import { BookingState } from "./booking-state";
+import { IsInt, IsPositive, IsEnum, IsNotEmpty, IsDate } from 'class-validator'
+import { type Opaque } from 'type-fest'
 
+import { validate } from 'src/util'
+
+import { type CarID } from '../car'
+import { type UserID } from '../user'
+
+import { BookingState } from './booking-state'
 
 export type BookingID = Opaque<number, 'booking-id'>
 
 export type BookingProperties = {
-    id: BookingID
-    startDate: Date
-    endDate: Date
-    carId: CarID
-    renterId: UserID
-    ownerId: UserID
-    state: BookingState
+  id: BookingID
+  startDate: Date
+  endDate: Date
+  carId: CarID
+  renterId: UserID
+  ownerId: UserID
+  state: BookingState
 }
 
-
 export class Booking {
-    @IsInt()
+  @IsInt()
   @IsPositive()
   public readonly id: BookingID
 
@@ -45,7 +46,7 @@ export class Booking {
   @IsEnum(BookingState)
   public readonly state: BookingState
 
-  public constructor(data: BookingProperties){
+  public constructor(data: BookingProperties) {
     this.id = data.id
     this.startDate = data.startDate
     this.endDate = data.endDate
@@ -53,7 +54,6 @@ export class Booking {
     this.renterId = data.renterId
     this.ownerId = data.ownerId
     this.state = data.state
-
 
     validate(this)
   }

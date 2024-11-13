@@ -16,14 +16,4 @@ export abstract class IBookingRepository {
     tx: Transaction,
     booking: Except<BookingProperties, 'id'>,
   ): Promise<Booking>
-
-  public abstract findByCarId(
-    tx: Transaction,
-    carId: number,
-  ): Promise<Booking[] | null>
-
-  public abstract findByRenterId(
-    tx: Transaction,
-    renterId: number,
-  ): Promise<Booking[] | null>
 }
