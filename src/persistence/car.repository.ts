@@ -74,8 +74,8 @@ export class CarRepository implements ICarRepository {
     return maybeRow ? rowToDomain(maybeRow) : null
   }
 
-  public async update(tx: Transaction, car: Car): Promise<Car | null> {
-    const row = await tx.oneOrNone<Row>(
+  public async update(tx: Transaction, car: Car): Promise<Car> {
+    const row = await tx.one<Row>(
       `
       UPDATE cars SET
         car_type_id = $(carTypeId),
@@ -92,7 +92,7 @@ export class CarRepository implements ICarRepository {
       { ...car },
     )
 
-    return row ? rowToDomain(row) : null
+    return rowToDomain(row)
   }
 
   public async insert(

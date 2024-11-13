@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
@@ -96,9 +96,6 @@ export class CarService implements ICarService {
       })
 
       const updatedCar = await this.carRepository.update(tx, carUpdate)
-      if (!updatedCar) {
-        throw new CarNotFoundError(carId)
-      }
 
       return updatedCar
     })
