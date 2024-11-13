@@ -30,9 +30,12 @@ export class BookingService {
     this.logger = new Logger(BookingService.name)
   }
 
-  public async create(): Promise<Booking> {
-    throw new NotImplementedException('Not implemented.')
-  }
+  public async create(data: Except<BookingProperties, 'id'>): Promise<Booking> {
+    return this.databaseConnection.transactional(async tx => {
+      await this.bookingRepository.get(tx, data.carId)
+      return await this.bookingRepository.insert(tx, data)
+    })
+  } 
 
   public async getAll(): Promise<Booking[]> {
     this.logger.verbose('Loading all bookings')

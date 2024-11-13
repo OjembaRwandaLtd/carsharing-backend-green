@@ -25,13 +25,19 @@ import {
   Booking,
   type BookingID,
   BookingNotFoundError,
+  BookingState,
+  CarNotFoundError,
+  CarTypeNotFoundError,
   IBookingService,
   type User,
+  UserID,
 } from 'src/application'
+import { DuplicateLicensePlateError } from 'src/application/car/error'
 
 import { AuthenticationGuard } from '../authentication.guard'
+import { CurrentUser } from '../current-user.decorator'
 
-import { BookingDTO } from './booking.dto'
+import { BookingDTO, CreateBookingDTO } from './booking.dto'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -89,5 +95,32 @@ export class BookingController {
     @Param('id', ParseIntPipe) id: BookingID,
   ): Promise<BookingDTO> {
     return BookingDTO.fromModel(await this.bookingService.get(id))
+  }
+  @Post()
+  public async create(
+    @CurrentUser() renter: User,
+    @CurrentUser() owner: User,
+    @Body() data: CreateBookingDTO,
+  ): Promise<BookingDTO> {
+    try {
+      const bookingData = await this.bookingService.create({
+        ...data,
+        renterId: renter.id,
+        ownerId: owner.id,
+        state: BookingState.PENDING,
+      })
+      return BookingDTO.fromModel(bookingData)
+    } catch (error: unknown) {
+      //   if (error instanceof DuplicateLicensePlateError) {
+      //     throw new BadRequestException(error.message)
+      //   }
+      //   if (error instanceof BookingTypeNotFoundError) {
+      //     throw new NotFoundException(error.message)
+      //   }
+      if (error instanceof BookingNotFoundError) {
+        throw new NotFoundException(error.message)
+      }
+      throw error
+    }
   }
 }
