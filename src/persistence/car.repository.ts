@@ -45,15 +45,23 @@ function rowToDomain(row: Row): Car {
 
 @Injectable()
 export class CarRepository implements ICarRepository {
-  public find(_tx: Transaction, _id: CarID): Promise<Car | null> {
-    throw new Error('Not implemented')
+  public async find(tx: Transaction, id: CarID): Promise<Car | null> {
+    const maybeRow = await tx.oneOrNone<Row>(
+      'SELECT * FROM cars WHERE id = $(id)',
+      { id }
+    );
+    return maybeRow ? rowToDomain(maybeRow) : null;
   }
 
-  public async get(tx: Transaction, _id: CarID): Promise<Car> {
-    const car: Row[] = await tx.any(
-      `SELECT * FROM cars WHERE id = ${String(_id)}`,
-    )
-    return car.map(rowToDomain)[0]
+  public async get(tx: Transaction, id: CarID): Promise<Car> {
+    const car: Row | null = await tx.oneOrNone(
+      'SELECT * FROM cars WHERE id = $(id)',
+      { id }
+    );
+    if (!car) {
+      throw new Error('Car not found');
+    }
+    return rowToDomain(car);
   }
 
   public async getAll(tx: Transaction): Promise<Car[]> {
@@ -67,11 +75,9 @@ export class CarRepository implements ICarRepository {
   ): Promise<Car | null> {
     const maybeRow = await tx.oneOrNone<Row>(
       'SELECT * FROM cars WHERE license_plate = $(licensePlate)',
-      {
-        licensePlate,
-      },
-    )
-    return maybeRow ? rowToDomain(maybeRow) : null
+      { licensePlate }
+    );
+    return maybeRow ? rowToDomain(maybeRow) : null;
   }
 
   public async update(tx: Transaction, car: Car): Promise<Car> {
