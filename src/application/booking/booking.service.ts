@@ -15,6 +15,8 @@ import { Booking, BookingProperties, BookingID } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
 import { IBookingRepository } from './booking.repository.interface'
 import { BookingDTO } from 'src/controller/booking'
+import { NotOwnerError } from '../not-owner.error'
+import { BookingState } from './booking-state'
 
 @Injectable()
 export class BookingService {
@@ -56,15 +58,24 @@ export class BookingService {
   public async update(
     bookingId: BookingID,
     updates: Partial<Except<BookingProperties, 'id'>>,
+    currentUserId: UserID,
   ): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
       const booking = await this.get(bookingId)
-      const updatedBooking = new Booking({
-        ...booking,
-        ...updates,
-        id: bookingId,
-      })
-      return await this.bookingRepository.update(tx, updatedBooking)
+
+      if (
+        booking.state === BookingState.PENDING &&
+        booking.ownerId === currentUserId
+      ) {
+        const updatedBooking = new Booking({
+          ...booking,
+          ...updates,
+          id: bookingId,
+        })
+
+        return await this.bookingRepository.update(tx, updatedBooking)
+      }
+      throw new NotOwnerError('Booking', 'UPDATE')
     })
   }
 }

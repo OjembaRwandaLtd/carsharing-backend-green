@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -16,8 +15,6 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOkResponse,
-  ApiOperation,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -40,7 +37,7 @@ import { DuplicateLicensePlateError } from 'src/application/car/error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
-import { BookingDTO, CreateBookingDTO } from './booking.dto'
+import { BookingDTO, CreateBookingDTO, PatchBookingDTO } from './booking.dto'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -143,10 +140,14 @@ export class BookingController {
   @Patch(':id')
   public async patch(
     @Param('id', ParseIntPipe) bookingId: BookingID,
-    @Body() data: PatchBooking,
+    @Body() data: PatchBookingDTO,
   ): Promise<BookingDTO> {
     try {
-      const updatedBooking = await this.bookingService.update(bookingId, data)
+      const updatedBooking = await this.bookingService.update(
+        bookingId,
+        data,
+        '',
+      )
       return BookingDTO.fromModel(updatedBooking)
     } catch (error) {
       throw error
