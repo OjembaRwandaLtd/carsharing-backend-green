@@ -72,7 +72,7 @@ export class BookingRepository implements IBookingRepository {
     return rowToDomain(row)
   }
 
-  public async insert(
+  public insert(
     _tx: Transaction,
     _booking: Except<BookingProperties, 'id'>,
   ): Promise<Booking> {
