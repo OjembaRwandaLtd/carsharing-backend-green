@@ -9,8 +9,6 @@ import {
 import { Nullable } from 'class-validator-extended'
 import { type Writable } from 'type-fest'
 
-import { IsUniqueLicensePlate } from 'src/validation'
-
 import {
   type Car,
   type CarID,
@@ -20,6 +18,7 @@ import {
   type UserID,
 } from '../../application'
 import { StrictPartialType, validate } from '../../util'
+import { IsUniqueLicensePlate } from '../../validation'
 
 export class CarDTO {
   @ApiProperty({
