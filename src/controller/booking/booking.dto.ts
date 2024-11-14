@@ -8,7 +8,7 @@ import {
   BookingState,
   CarID,
   type UserID,
-} from 'src/application'
+} from '../../../src/application'
 import { StrictPartialType, validate } from 'src/util'
 
 export class BookingDTO {

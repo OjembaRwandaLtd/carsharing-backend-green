@@ -33,8 +33,6 @@ export class BookingService {
   }
 
   public async getAll(): Promise<Booking[]> {
-    this.logger.verbose('Loading all bookings')
-
     return this.databaseConnection.transactional(async tx => {
       return await this.bookingRepository.getAll(tx)
     })
@@ -53,23 +51,15 @@ export class BookingService {
     updates: Partial<Except<BookingProperties, 'id'>>,
     currentUserId: UserID,
   ): Promise<Booking> {
-    this.logger.verbose(`Updating booking ${bookingId}`)
     return this.databaseConnection.transactional(async tx => {
       const booking = await this.bookingRepository.get(tx, bookingId)
-      if (!booking) throw new BookingNotFoundError(bookingId)
 
-      const validBooking: Booking = booking
-
-      if (
-        validBooking.state === BookingState.PENDING &&
-        validBooking.ownerId === currentUserId
-      ) {
+      if (booking.ownerId === currentUserId) {
         const updatedBooking = new Booking({
-          ...validBooking,
+          ...booking,
           ...updates,
           id: bookingId,
         })
-
         return await this.bookingRepository.update(tx, updatedBooking)
       }
       throw new NotOwnerError('Booking', 'UPDATE')
