@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -25,6 +24,7 @@ import {
   Booking,
   type BookingID,
   BookingNotFoundError,
+  BookingService,
   BookingState,
   CarNotFoundError,
   CarTypeNotFoundError,
@@ -37,7 +37,7 @@ import { DuplicateLicensePlateError } from 'src/application/car/error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
-import { BookingDTO, CreateBookingDTO } from './booking.dto'
+import { BookingDTO, CreateBookingDTO, PatchBookingDTO } from './booking.dto'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -120,6 +120,36 @@ export class BookingController {
       if (error instanceof BookingNotFoundError) {
         throw new NotFoundException(error.message)
       }
+      throw error
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Update an existing booking',
+  })
+  @ApiOkResponse({
+    description: 'The booking was updated',
+  })
+  @ApiBadRequestResponse({
+    description:
+      'The request was malformed, e.g missing or invalid credentials or preperty in the request body',
+  })
+  @ApiNotFoundResponse({
+    description: 'No booking with the given id was found',
+  })
+  @Patch(':id')
+  public async patch(
+    @Param('id', ParseIntPipe) bookingId: BookingID,
+    @Body() data: PatchBookingDTO,
+  ): Promise<BookingDTO> {
+    try {
+      const updatedBooking = await this.bookingService.update(
+        bookingId,
+        data,
+        '',
+      )
+      return BookingDTO.fromModel(updatedBooking)
+    } catch (error) {
       throw error
     }
   }

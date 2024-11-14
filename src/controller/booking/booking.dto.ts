@@ -17,7 +17,8 @@ import {
   CarID,
   type UserID,
 } from 'src/application'
-import { validate } from 'src/util'
+import { StrictPartialType, validate } from 'src/util'
+import { CarDTO } from '../car'
 export class BookingDTO {
   @ApiProperty({
     description: 'The id of the booking.',
@@ -114,3 +115,17 @@ export class CreateBookingDTO extends PickType(BookingDTO, [
   'startDate',
   'endDate',
 ] as const) {}
+
+export class PatchBookingDTO extends StrictPartialType(
+  PickType(CarDTO, [
+    'carTypeId',
+    'fuelType',
+    'horsepower',
+    'id',
+    'info',
+    'licensePlate',
+    'name',
+    'ownerId',
+    'state',
+  ] as const),
+) {}
