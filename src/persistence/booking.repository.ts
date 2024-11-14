@@ -19,7 +19,6 @@ type Row = {
   end_date: Date
   car_id: number
   renter_id: number
-  owner_id: number
   state: string
 }
 
@@ -30,7 +29,6 @@ function rowToDomain(row: Row): Booking {
     endDate: row.end_date,
     carId: row.car_id as CarID,
     renterId: row.renter_id as UserID,
-    ownerId: row.owner_id as UserID,
     state: row.state as BookingState,
   })
 }
@@ -49,7 +47,6 @@ export class BookingRepository implements IBookingRepository {
   }
 
   public async getAll(tx: Transaction): Promise<Booking[]> {
-    //const rows = await tx.any<Row>('SELECT * FROM car_types')
     const bookings: Row[] = await tx.query('SELECT * FROM bookings')
     return bookings.map(rowToDomain)
   }
@@ -67,18 +64,14 @@ export class BookingRepository implements IBookingRepository {
   ): Promise<Booking> {
     const row = await tx.one<Row>(
       `
-      INSERT INTO car_types (
-      id,
-        car_type_id,
-        owner_id, 
+      INSERT INTO bookings (
+        car_id,
         renter_id,
         state, 
         start_date,
         end_date
       ) VALUES (
-        $(id),
-        $(carTypeId),
-        $(ownerId),
+        $(carId),
         $(renterId),
         $(state),
         $(startDate),
@@ -88,6 +81,5 @@ export class BookingRepository implements IBookingRepository {
     )
 
     return rowToDomain(row)
-    // throw new Error('Not implemented')
   }
 }

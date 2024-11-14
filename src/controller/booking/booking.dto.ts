@@ -1,13 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
-import {
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsPositive,
-  IsString,
-  IsDate,
-} from 'class-validator'
-import { Nullable } from 'class-validator-extended'
+import { IsEnum, IsInt, IsPositive, IsDate } from 'class-validator'
 import { type Writable } from 'type-fest'
 
 import {
@@ -41,16 +33,6 @@ export class BookingDTO {
   @IsPositive()
   public readonly carId!: CarID
 
-  @ApiProperty({  
-    description: 'The id of the user who owns this car.',
-    type: 'integer',
-    minimum: 1,
-    example: 42,
-  })
-  @IsInt()
-  @IsPositive()
-  public readonly ownerId!: UserID
-
   @ApiProperty({
     description: 'The id of the user booked this car.',
     type: 'integer',
@@ -71,7 +53,7 @@ export class BookingDTO {
 
   @ApiProperty({
     description: 'The start date for booking.',
-    type: 'date',
+    type: 'date-time',
     example: '22-11-2024',
   })
   @IsDate()
@@ -79,7 +61,7 @@ export class BookingDTO {
 
   @ApiProperty({
     description: 'The start date for booking.',
-    type: 'date',
+    type: 'date-time',
     example: '22-12-2024',
   })
   @IsDate()

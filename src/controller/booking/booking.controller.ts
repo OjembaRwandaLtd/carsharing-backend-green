@@ -102,7 +102,6 @@ export class BookingController {
       const bookingData = await this.bookingService.create({
         ...data,
         renterId: renter.id,
-        ownerId: owner.id,
         state: BookingState.PENDING,
       })
       return BookingDTO.fromModel(bookingData)
