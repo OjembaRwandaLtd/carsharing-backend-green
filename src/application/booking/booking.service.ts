@@ -26,14 +26,13 @@ export class BookingService {
   }
 
   public async create(data: Except<BookingProperties, 'id'>): Promise<Booking> {
+    this.logger.verbose('Creating new booking')
     return this.databaseConnection.transactional(async tx => {
       return await this.bookingRepository.insert(tx, data)
     })
   }
 
   public async getAll(): Promise<Booking[]> {
-    this.logger.verbose('Loading all bookings')
-
     return this.databaseConnection.transactional(async tx => {
       return await this.bookingRepository.getAll(tx)
     })
@@ -53,18 +52,14 @@ export class BookingService {
     currentUserId: UserID,
   ): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
-      const booking = await this.get(bookingId)
+      const booking = await this.bookingRepository.get(tx, bookingId)
 
-      if (
-        booking.state === BookingState.PENDING &&
-        booking.ownerId === currentUserId
-      ) {
+      if (booking.ownerId === currentUserId) {
         const updatedBooking = new Booking({
           ...booking,
           ...updates,
           id: bookingId,
         })
-
         return await this.bookingRepository.update(tx, updatedBooking)
       }
       throw new NotOwnerError('Booking', 'UPDATE')
