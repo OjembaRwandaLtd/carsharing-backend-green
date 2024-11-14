@@ -24,15 +24,11 @@ import {
   Booking,
   type BookingID,
   BookingNotFoundError,
-  BookingService,
   BookingState,
-  CarNotFoundError,
-  CarTypeNotFoundError,
   IBookingService,
   type User,
   UserID,
 } from 'src/application'
-import { DuplicateLicensePlateError } from 'src/application/car/error'
 
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
