@@ -28,8 +28,7 @@ import {
   IBookingService,
   type User,
   UserID,
-} from 'src/application'
-
+} from '../../application'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
