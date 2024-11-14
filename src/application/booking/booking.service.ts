@@ -14,6 +14,7 @@ import { UserID } from '../user'
 import { Booking, BookingProperties, BookingID } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
 import { IBookingRepository } from './booking.repository.interface'
+import { BookingDTO } from 'src/controller/booking'
 
 @Injectable()
 export class BookingService {
@@ -52,7 +53,18 @@ export class BookingService {
     })
   }
 
-  public async update(): Promise<Booking> {
-    throw new NotImplementedException('Not implemented.')
+  public async update(
+    bookingId: BookingID,
+    updates: Partial<Except<BookingProperties, 'id'>>,
+  ): Promise<Booking> {
+    return this.databaseConnection.transactional(async tx => {
+      const booking = await this.get(bookingId)
+      const updatedBooking = new Booking({
+        ...booking,
+        ...updates,
+        id: bookingId,
+      })
+      return await this.bookingRepository.update(tx, updatedBooking)
+    })
   }
 }

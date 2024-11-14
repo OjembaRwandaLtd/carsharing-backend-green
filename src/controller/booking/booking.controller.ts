@@ -16,6 +16,8 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOkResponse,
+  ApiOperation,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -25,6 +27,7 @@ import {
   Booking,
   type BookingID,
   BookingNotFoundError,
+  BookingService,
   BookingState,
   CarNotFoundError,
   CarTypeNotFoundError,
@@ -120,6 +123,32 @@ export class BookingController {
       if (error instanceof BookingNotFoundError) {
         throw new NotFoundException(error.message)
       }
+      throw error
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Update an existing booking',
+  })
+  @ApiOkResponse({
+    description: 'The booking was updated',
+  })
+  @ApiBadRequestResponse({
+    description:
+      'The request was malformed, e.g missing or invalid credentials or preperty in the request body',
+  })
+  @ApiNotFoundResponse({
+    description: 'No booking with the given id was found',
+  })
+  @Patch(':id')
+  public async patch(
+    @Param('id', ParseIntPipe) bookingId: BookingID,
+    @Body() data: PatchBooking,
+  ): Promise<BookingDTO> {
+    try {
+      const updatedBooking = await this.bookingService.update(bookingId, data)
+      return BookingDTO.fromModel(updatedBooking)
+    } catch (error) {
       throw error
     }
   }
