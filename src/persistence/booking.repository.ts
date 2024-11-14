@@ -37,7 +37,7 @@ function rowToDomain(row: Row): Booking {
 
 @Injectable()
 export class BookingRepository implements IBookingRepository {
-  public find(tx: Transaction, id: BookingID): Promise<Booking | null> {
+  public find(_tx: Transaction, _id: BookingID): Promise<Booking | null> {
     throw new Error('Not implemented')
   }
 
@@ -72,9 +72,9 @@ export class BookingRepository implements IBookingRepository {
     return rowToDomain(row)
   }
 
-  public async insert(
-    tx: Transaction,
-    booking: Except<BookingProperties, 'id'>,
+  public insert(
+    _tx: Transaction,
+    _booking: Except<BookingProperties, 'id'>,
   ): Promise<Booking> {
     throw new Error('Not implemented')
   }
