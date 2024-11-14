@@ -1,14 +1,14 @@
-import { Injectable, Logger, NotImplementedException } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
+import { NotOwnerError } from '../not-owner.error'
+import { UserID } from '../user'
 
 import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
-import { IBookingRepository } from './booking.repository.interface'
-import { BookingDTO } from 'src/controller/booking'
-import { NotOwnerError } from '../not-owner.error'
 import { BookingState } from './booking-state'
+import { IBookingRepository } from './booking.repository.interface'
 
 @Injectable()
 export class BookingService {
