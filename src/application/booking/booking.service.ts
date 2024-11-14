@@ -49,20 +49,15 @@ export class BookingService {
   public async update(
     bookingId: BookingID,
     updates: Partial<Except<BookingProperties, 'id'>>,
-    currentUserId: UserID,
   ): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
-      const booking = await this.bookingRepository.get(tx, bookingId)
-
-      if (booking.ownerId === currentUserId) {
-        const updatedBooking = new Booking({
-          ...booking,
-          ...updates,
-          id: bookingId,
-        })
-        return await this.bookingRepository.update(tx, updatedBooking)
-      }
-      throw new NotOwnerError('Booking', 'UPDATE')
+      const booking = await this.get(bookingId)
+      const updatedBooking = new Booking({
+        ...booking,
+        ...updates,
+        id: bookingId,
+      })
+      return await this.bookingRepository.update(tx, updatedBooking)
     })
   }
 }
