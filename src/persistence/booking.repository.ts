@@ -19,7 +19,7 @@ type Row = {
   end_date: Date
   car_id: number
   renter_id: number
-  state: string
+  state: BookingState
 }
 
 function rowToDomain(row: Row): Booking {
