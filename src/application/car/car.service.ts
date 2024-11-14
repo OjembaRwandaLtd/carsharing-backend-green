@@ -10,7 +10,6 @@ import { Car, type CarID, type CarProperties } from './car'
 import { CarNotFoundError } from './car-not-found.error'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
-import { DuplicateLicensePlateError } from './error'
 
 @Injectable()
 export class CarService implements ICarService {
