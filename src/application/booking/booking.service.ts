@@ -1,8 +1,9 @@
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common'
+import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 
-import { Booking, BookingID } from './booking'
+import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
 import { IBookingRepository } from './booking.repository.interface'
 
