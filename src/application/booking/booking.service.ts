@@ -2,12 +2,14 @@ import { Injectable, Logger, NotImplementedException } from '@nestjs/common'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 
-import { Booking, BookingID } from './booking'
+import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
 import { IBookingRepository } from './booking.repository.interface'
 import { BookingDTO } from 'src/controller/booking'
 import { NotOwnerError } from '../not-owner.error'
 import { BookingState } from './booking-state'
+import { Except } from 'type-fest'
+import { UserID } from '../user'
 
 @Injectable()
 export class BookingService {
@@ -25,6 +27,7 @@ export class BookingService {
   }
 
   public async create(data: Except<BookingProperties, 'id'>): Promise<Booking> {
+    this.logger.verbose('Creating new booking')
     return this.databaseConnection.transactional(async tx => {
       return await this.bookingRepository.insert(tx, data)
     })
@@ -51,15 +54,19 @@ export class BookingService {
     updates: Partial<Except<BookingProperties, 'id'>>,
     currentUserId: UserID,
   ): Promise<Booking> {
+    this.logger.verbose(`Updating booking ${bookingId}`)
     return this.databaseConnection.transactional(async tx => {
-      const booking = await this.get(bookingId)
+      const booking = await this.bookingRepository.get(tx, bookingId)
+      if (!booking) throw new BookingNotFoundError(bookingId)
+
+      const validBooking: Booking = booking
 
       if (
-        booking.state === BookingState.PENDING &&
-        booking.ownerId === currentUserId
+        validBooking.state === BookingState.PENDING &&
+        validBooking.ownerId === currentUserId
       ) {
         const updatedBooking = new Booking({
-          ...booking,
+          ...validBooking,
           ...updates,
           id: bookingId,
         })
