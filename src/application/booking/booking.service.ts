@@ -7,7 +7,6 @@ import { UserID } from '../user'
 
 import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
-import { BookingState } from './booking-state'
 import { IBookingRepository } from './booking.repository.interface'
 
 @Injectable()

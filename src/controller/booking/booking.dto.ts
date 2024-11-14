@@ -8,8 +8,8 @@ import {
   BookingState,
   CarID,
   type UserID,
-} from '../../../src/application'
-import { StrictPartialType, validate } from 'src/util'
+} from '../../application'
+import { StrictPartialType, validate } from '../../util'
 
 export class BookingDTO {
   @ApiProperty({
