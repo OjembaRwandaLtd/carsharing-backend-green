@@ -11,10 +11,7 @@ export abstract class IBookingRepository {
 
   public abstract getAll(tx: Transaction): Promise<Booking[]>
 
-  public abstract update(
-    tx: Transaction,
-    booking: Booking,
-  ): Promise<Booking | null>
+  public abstract update(tx: Transaction, booking: Booking): Promise<Booking>
 
   public abstract insert(
     tx: Transaction,
