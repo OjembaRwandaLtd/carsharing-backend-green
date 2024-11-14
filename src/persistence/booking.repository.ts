@@ -20,7 +20,7 @@ type Row = {
   car_id: number
   renter_id: number
   owner_id: number
-  state: string
+  state: BookingState
 }
 
 function rowToDomain(row: Row): Booking {
@@ -31,7 +31,7 @@ function rowToDomain(row: Row): Booking {
     carId: row.car_id as CarID,
     renterId: row.renter_id as UserID,
     ownerId: row.owner_id as UserID,
-    state: row.state as BookingState,
+    state: row.state,
   })
 }
 
@@ -54,11 +54,22 @@ export class BookingRepository implements IBookingRepository {
     return bookings.map(rowToDomain)
   }
 
-  public async update(
-    tx: Transaction,
-    booking: Booking,
-  ): Promise<Booking | null> {
-    throw new Error('Not implemented')
+  public async update(tx: Transaction, booking: Booking): Promise<Booking> {
+    const row = await tx.one<Row>(
+      `
+      UPDATE bookings SET
+      car_id = $(carId),
+      start_date = $(startDate),
+      end_date = $(endDate),
+      renter_id = $(renterId),
+      owner_id = $(ownerId),
+      state = $(state)
+      WHERE
+      id = $(id)
+     RETURNING *`,
+      { ...booking },
+    )
+    return rowToDomain(row)
   }
 
   public async insert(

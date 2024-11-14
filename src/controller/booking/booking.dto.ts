@@ -11,7 +11,7 @@ import { Nullable } from 'class-validator-extended'
 import { type Writable } from 'type-fest'
 
 import {
-  type Booking,
+  Booking,
   type BookingID,
   BookingState,
   CarID,
@@ -91,7 +91,6 @@ export class BookingDTO {
     endDate: Date
     carId: CarID
     renterId: UserID
-    ownerId: UserID
     state: BookingState
   }): BookingDTO {
     const instance = new BookingDTO() as Writable<BookingDTO>
@@ -101,7 +100,6 @@ export class BookingDTO {
     instance.endDate = data.endDate
     instance.carId = data.carId
     instance.renterId = data.renterId
-    instance.ownerId = data.ownerId
     instance.state = data.state
 
     return validate(instance)
@@ -111,3 +109,8 @@ export class BookingDTO {
     return BookingDTO.create(booking)
   }
 }
+export class CreateBookingDTO extends PickType(BookingDTO, [
+  'carId',
+  'startDate',
+  'endDate',
+] as const) {}
