@@ -2,8 +2,6 @@ import { ApiProperty, PickType } from '@nestjs/swagger'
 import { IsEnum, IsInt, IsPositive, IsDate } from 'class-validator'
 import { type Writable } from 'type-fest'
 
-import { StrictPartialType, validate } from 'src/util'
-
 import {
   Booking,
   type BookingID,
@@ -11,6 +9,7 @@ import {
   CarID,
   type UserID,
 } from '../../application'
+import { StrictPartialType, validate } from '../../util'
 
 export class BookingDTO {
   @ApiProperty({
