@@ -4,7 +4,6 @@ import { type Opaque } from 'type-fest'
 import { validate } from '../../util'
 import { type CarID } from '../car'
 import { type UserID } from '../user'
-
 import { BookingState } from './booking-state'
 
 export type BookingID = Opaque<number, 'booking-id'>
