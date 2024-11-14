@@ -10,12 +10,7 @@ import {
   BookingState,
   CarID,
   type UserID,
-<<<<<<< HEAD
 } from '../../application'
-=======
-} from '../../../src/application'
-import { StrictPartialType, validate } from 'src/util'
->>>>>>> 4bf4d062688a1609493af187d0e80a73a2d10f28
 
 export class BookingDTO {
   @ApiProperty({
