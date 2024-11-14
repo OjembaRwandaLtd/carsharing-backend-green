@@ -26,13 +26,9 @@ import {
   type BookingID,
   BookingNotFoundError,
   BookingState,
-  CarNotFoundError,
-  CarTypeNotFoundError,
   IBookingService,
   type User,
-  UserID,
 } from 'src/application'
-import { DuplicateLicensePlateError } from 'src/application/car/error'
 
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
@@ -111,12 +107,6 @@ export class BookingController {
       })
       return BookingDTO.fromModel(bookingData)
     } catch (error: unknown) {
-      //   if (error instanceof DuplicateLicensePlateError) {
-      //     throw new BadRequestException(error.message)
-      //   }
-      //   if (error instanceof BookingTypeNotFoundError) {
-      //     throw new NotFoundException(error.message)
-      //   }
       if (error instanceof BookingNotFoundError) {
         throw new NotFoundException(error.message)
       }

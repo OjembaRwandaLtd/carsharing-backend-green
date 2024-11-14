@@ -65,6 +65,29 @@ export class BookingRepository implements IBookingRepository {
     tx: Transaction,
     booking: Except<BookingProperties, 'id'>,
   ): Promise<Booking> {
-    throw new Error('Not implemented')
+    const row = await tx.one<Row>(
+      `
+      INSERT INTO car_types (
+      id,
+        car_type_id,
+        owner_id, 
+        renter_id,
+        state, 
+        start_date,
+        end_date
+      ) VALUES (
+        $(id),
+        $(carTypeId),
+        $(ownerId),
+        $(renterId),
+        $(state),
+        $(startDate),
+        $(endDate)
+      ) RETURNING *`,
+      { ...booking },
+    )
+
+    return rowToDomain(row)
+    // throw new Error('Not implemented')
   }
 }

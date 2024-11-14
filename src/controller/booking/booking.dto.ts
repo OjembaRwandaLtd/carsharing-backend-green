@@ -41,7 +41,7 @@ export class BookingDTO {
   @IsPositive()
   public readonly carId!: CarID
 
-  @ApiProperty({
+  @ApiProperty({  
     description: 'The id of the user who owns this car.',
     type: 'integer',
     minimum: 1,
