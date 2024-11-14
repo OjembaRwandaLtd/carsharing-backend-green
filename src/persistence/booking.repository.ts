@@ -35,7 +35,7 @@ function rowToDomain(row: Row): Booking {
 
 @Injectable()
 export class BookingRepository implements IBookingRepository {
-  public find(tx: Transaction, id: BookingID): Promise<Booking | null> {
+  public find(_tx: Transaction, _id: BookingID): Promise<Booking | null> {
     throw new Error('Not implemented')
   }
 
@@ -51,11 +51,22 @@ export class BookingRepository implements IBookingRepository {
     return bookings.map(rowToDomain)
   }
 
-  public async update(
-    tx: Transaction,
-    booking: Booking,
-  ): Promise<Booking | null> {
-    throw new Error('Not implemented')
+  public async update(tx: Transaction, booking: Booking): Promise<Booking> {
+    const row = await tx.one<Row>(
+      `
+      UPDATE bookings SET
+      car_id = $(carId),
+      start_date = $(startDate),
+      end_date = $(endDate),
+      renter_id = $(renterId),
+      owner_id = $(ownerId),
+      state = $(state)
+      WHERE
+      id = $(id)
+     RETURNING *`,
+      { ...booking },
+    )
+    return rowToDomain(row)
   }
 
   public async insert(

@@ -1,17 +1,11 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  NotImplementedException,
-} from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
-import { AccessDeniedError } from '../access-denied.error'
-import { ICarRepository } from '../car/car.repository.interface'
+import { NotOwnerError } from '../not-owner.error'
 import { UserID } from '../user'
 
-import { Booking, BookingProperties, BookingID } from './booking'
+import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
 import { IBookingRepository } from './booking.repository.interface'
 
@@ -31,14 +25,13 @@ export class BookingService {
   }
 
   public async create(data: Except<BookingProperties, 'id'>): Promise<Booking> {
+    this.logger.verbose('Creating new booking')
     return this.databaseConnection.transactional(async tx => {
       return await this.bookingRepository.insert(tx, data)
     })
   }
 
   public async getAll(): Promise<Booking[]> {
-    this.logger.verbose('Loading all bookings')
-
     return this.databaseConnection.transactional(async tx => {
       return await this.bookingRepository.getAll(tx)
     })
@@ -52,7 +45,18 @@ export class BookingService {
     })
   }
 
-  public async update(): Promise<Booking> {
-    throw new NotImplementedException('Not implemented.')
+  public async update(
+    bookingId: BookingID,
+    updates: Partial<Except<BookingProperties, 'id'>>,
+  ): Promise<Booking> {
+    return this.databaseConnection.transactional(async tx => {
+      const booking = await this.get(bookingId)
+      const updatedBooking = new Booking({
+        ...booking,
+        ...updates,
+        id: bookingId,
+      })
+      return await this.bookingRepository.update(tx, updatedBooking)
+    })
   }
 }

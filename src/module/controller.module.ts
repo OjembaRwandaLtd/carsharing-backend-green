@@ -34,7 +34,7 @@ import { ServiceModule } from './service.module'
     CarController,
     CarTypeController,
     UserController,
-    BookingController
+    BookingController,
   ],
 })
 export class ControllerModule {}

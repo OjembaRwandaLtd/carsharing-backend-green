@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 
+import { BookingRepository } from 'src/persistence/booking.repository'
+
 import {
   IBookingRepository,
   ICarRepository,
@@ -11,7 +13,6 @@ import {
   CarTypeRepository,
   UserRepository,
 } from '../persistence'
-import { BookingRepository } from 'src/persistence/booking.repository'
 
 @Module({
   providers: [
@@ -32,6 +33,11 @@ import { BookingRepository } from 'src/persistence/booking.repository'
       useClass: BookingRepository,
     },
   ],
-  exports: [ICarRepository, ICarTypeRepository, IUserRepository, IBookingRepository],
+  exports: [
+    ICarRepository,
+    ICarTypeRepository,
+    IUserRepository,
+    IBookingRepository,
+  ],
 })
 export class RepositoryModule {}

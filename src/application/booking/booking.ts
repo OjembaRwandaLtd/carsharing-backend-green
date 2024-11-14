@@ -1,8 +1,7 @@
 import { IsInt, IsPositive, IsEnum, IsDate } from 'class-validator'
 import { type Opaque } from 'type-fest'
 
-import { validate } from 'src/util'
-
+import { validate } from '../../util'
 import { type CarID } from '../car'
 import { type UserID } from '../user'
 
