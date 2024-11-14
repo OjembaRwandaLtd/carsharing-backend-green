@@ -1,13 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
-import {
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsPositive,
-  IsString,
-  IsDate,
-} from 'class-validator'
-import { Nullable } from 'class-validator-extended'
+import { IsEnum, IsInt, IsPositive, IsDate } from 'class-validator'
 import { type Writable } from 'type-fest'
 
 import {
@@ -18,7 +10,7 @@ import {
   type UserID,
 } from 'src/application'
 import { StrictPartialType, validate } from 'src/util'
-import { CarDTO } from '../car'
+
 export class BookingDTO {
   @ApiProperty({
     description: 'The id of the booking.',
@@ -117,15 +109,12 @@ export class CreateBookingDTO extends PickType(BookingDTO, [
 ] as const) {}
 
 export class PatchBookingDTO extends StrictPartialType(
-  PickType(CarDTO, [
-    'carTypeId',
-    'fuelType',
-    'horsepower',
+  PickType(BookingDTO, [
     'id',
-    'info',
-    'licensePlate',
-    'name',
+    'renterId',
     'ownerId',
+    'startDate',
+    'endDate',
     'state',
   ] as const),
 ) {}

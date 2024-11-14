@@ -32,6 +32,11 @@ import { BookingRepository } from 'src/persistence/booking.repository'
       useClass: BookingRepository,
     },
   ],
-  exports: [ICarRepository, ICarTypeRepository, IUserRepository, IBookingRepository],
+  exports: [
+    ICarRepository,
+    ICarTypeRepository,
+    IUserRepository,
+    IBookingRepository,
+  ],
 })
 export class RepositoryModule {}

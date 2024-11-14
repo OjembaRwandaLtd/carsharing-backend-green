@@ -40,6 +40,12 @@ import { RepositoryModule } from './repository.module'
       useClass: BookingService,
     },
   ],
-  exports: [IAuthenticationService, ICarService, ICarTypeService, IUserService,IBookingService],
+  exports: [
+    IAuthenticationService,
+    ICarService,
+    ICarTypeService,
+    IUserService,
+    IBookingService,
+  ],
 })
 export class ServiceModule {}

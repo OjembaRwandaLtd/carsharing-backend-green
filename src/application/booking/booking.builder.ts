@@ -1,7 +1,6 @@
 import { type Except } from 'type-fest'
 
 import { CarID } from '../car'
-//import { type CarType, type CarTypeID } from '../car-type'
 import { User, type UserID } from '../user'
 
 import { Booking, BookingID, BookingProperties } from './booking'

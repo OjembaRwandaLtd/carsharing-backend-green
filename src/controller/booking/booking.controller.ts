@@ -140,13 +140,14 @@ export class BookingController {
   @Patch(':id')
   public async patch(
     @Param('id', ParseIntPipe) bookingId: BookingID,
-    @Body() data: PatchBookingDTO & { state?: BookingState },
+    @Param('id', ParseIntPipe) renterId: UserID,
+    @Body() data: PatchBookingDTO,
   ): Promise<BookingDTO> {
     try {
       const updatedBooking = await this.bookingService.update(
         bookingId,
-        { ...data, state: data.state },
-        1 as UserID,
+        data,
+        renterId,
       )
       return BookingDTO.fromModel(updatedBooking)
     } catch (error) {
