@@ -9,6 +9,8 @@ import {
 import { Nullable } from 'class-validator-extended'
 import { type Writable } from 'type-fest'
 
+import { IsUniqueLicensePlate } from 'src/validation'
+
 import {
   type Car,
   type CarID,
@@ -96,6 +98,7 @@ export class CarDTO {
   @Nullable()
   @IsString()
   @IsNotEmpty()
+  @IsUniqueLicensePlate()
   public readonly licensePlate!: string | null
 
   @ApiProperty({

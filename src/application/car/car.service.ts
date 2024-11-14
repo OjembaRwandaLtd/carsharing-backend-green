@@ -35,15 +35,6 @@ export class CarService implements ICarService {
 
   public async create(data: Except<CarProperties, 'id'>): Promise<Car> {
     return this.databaseConnection.transactional(async tx => {
-      if (data.licensePlate) {
-        const existingCar = await this.carRepository.findByLicensePlate(
-          tx,
-          data.licensePlate,
-        )
-        if (existingCar !== null) {
-          throw new DuplicateLicensePlateError(data.licensePlate)
-        }
-      }
       await this.carTypeRepository.get(tx, data.carTypeId)
       return await this.carRepository.insert(tx, data)
     })
@@ -73,20 +64,6 @@ export class CarService implements ICarService {
 
       if (currentUserId !== car.ownerId) {
         throw new AccessDeniedError(car.name, carId)
-      }
-
-      if (updates.licensePlate) {
-        const existingCar = await this.carRepository.findByLicensePlate(
-          tx,
-          updates.licensePlate,
-        )
-        if (existingCar !== null && existingCar.id !== car.id) {
-          throw new DuplicateLicensePlateError(updates.licensePlate)
-        }
-      }
-
-      if (updates.carTypeId) {
-        await this.carTypeRepository.get(tx, updates.carTypeId)
       }
 
       const carUpdate = new Car({

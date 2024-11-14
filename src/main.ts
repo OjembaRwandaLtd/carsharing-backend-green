@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
+import { useContainer } from 'class-validator'
 
 import { MainModule } from './main.module'
 import { configureGlobalEnhancers, configureOpenAPI } from './setup-app'
@@ -22,6 +23,11 @@ async function bootstrap() {
   const app = await NestFactory.create(MainModule, {
     cors: true,
   })
+
+  useContainer(app.select(MainModule), { fallbackOnErrors: true })
+
+  configureOpenAPI(app)
+  configureGlobalEnhancers(app)
 
   configureOpenAPI(app)
   configureGlobalEnhancers(app)
