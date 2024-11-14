@@ -8,7 +8,7 @@ import { BookingState } from './booking-state'
 
 type UntaggedBookingProperties = Except<
   BookingProperties,
-  'id' | 'carId' | 'ownerId' | 'renterId'
+  'id' | 'carId' | 'renterId'
 > & { id: number; carId: number; ownerId: number; renterId: number }
 
 export class BookingBuilder {
@@ -84,7 +84,6 @@ export class BookingBuilder {
       id: this.properties.id as BookingID,
       carId: this.properties.carId as CarID,
       renterId: this.properties.renterId as UserID,
-      ownerId: this.properties.ownerId as UserID,
     })
   }
 }
