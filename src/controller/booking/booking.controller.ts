@@ -97,7 +97,6 @@ export class BookingController {
   @Post()
   public async create(
     @CurrentUser() renter: User,
-    @CurrentUser() owner: User,
     @Body() data: CreateBookingDTO,
   ): Promise<BookingDTO> {
     try {
