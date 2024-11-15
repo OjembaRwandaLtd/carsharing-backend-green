@@ -1,4 +1,4 @@
-import { IsInt, IsPositive, IsEnum, IsDateString, IsDate } from 'class-validator'
+import { IsInt, IsPositive, IsEnum, IsDate } from 'class-validator'
 import { type Opaque } from 'type-fest'
 
 import { validate } from '../../util'
