@@ -67,7 +67,9 @@ export class BookingController {
   @Get()
   public async getAll(): Promise<BookingDTO[]> {
     console.log('getAll')
-    return this.bookingService.getAll()
+    return (await this.bookingService.getAll()).map(booking =>
+      BookingDTO.fromModel(booking),
+    )
   }
 
   @ApiBearerAuth()
@@ -102,6 +104,8 @@ export class BookingController {
         ...data,
         renterId: renter.id,
         state: BookingState.PENDING,
+        startDate: new Date(data.startDate),
+        endDate: new Date(data.endDate),
       })
       return BookingDTO.fromModel(bookingData)
     } catch (error: unknown) {
@@ -134,7 +138,11 @@ export class BookingController {
     try {
       const updatedBooking = await this.bookingService.update(
         bookingId,
-        data,
+        {
+          ...data,
+          startDate: data.startDate ? new Date(data.startDate) : undefined,
+          endDate: data.endDate ? new Date(data.endDate) : undefined,
+        },
         renterId,
       )
       return BookingDTO.fromModel(updatedBooking)

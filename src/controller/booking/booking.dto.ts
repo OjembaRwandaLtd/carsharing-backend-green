@@ -70,8 +70,8 @@ export class BookingDTO {
 
   public static create(data: {
     id: BookingID
-    startDate: string
-    endDate: string
+    startDate: Date
+    endDate: Date
     carId: CarID
     renterId: UserID
     state: BookingState
@@ -79,8 +79,8 @@ export class BookingDTO {
     const instance = new BookingDTO() as Writable<BookingDTO>
 
     instance.id = data.id
-    instance.startDate = data.startDate
-    instance.endDate = data.endDate
+    instance.startDate = data.startDate.toISOString()
+    instance.endDate = data.endDate.toISOString()
     instance.carId = data.carId
     instance.renterId = data.renterId
     instance.state = data.state

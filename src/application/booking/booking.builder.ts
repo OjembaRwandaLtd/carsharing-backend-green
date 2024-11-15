@@ -18,8 +18,8 @@ export class BookingBuilder {
     ownerId: 42 as UserID,
     renterId: 42 as UserID,
     state: BookingState.ACCEPTED,
-    startDate: '22-11-2024',
-    endDate: '22-11-2024',
+    startDate: new Date('22-11-2024'),
+    endDate: new Date('22-11-2024'),
   }
 
   public static from(
@@ -68,12 +68,12 @@ export class BookingBuilder {
     return this
   }
 
-  public withStartDate(startDate: string): this {
+  public withStartDate(startDate: Date): this {
     this.properties.startDate = startDate
     return this
   }
 
-  public withEndDate(endDate: string): this {
+  public withEndDate(endDate: Date): this {
     this.properties.endDate = endDate
     return this
   }

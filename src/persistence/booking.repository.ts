@@ -25,8 +25,8 @@ type Row = {
 function rowToDomain(row: Row): Booking {
   return new Booking({
     id: row.id as BookingID,
-    startDate: row.start_date,
-    endDate: row.end_date,
+    startDate: new Date(row.start_date),
+    endDate: new Date(row.end_date),
     carId: row.car_id as CarID,
     renterId: row.renter_id as UserID,
     state: row.state as BookingState,
