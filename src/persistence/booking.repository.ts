@@ -15,8 +15,8 @@ import { type Transaction } from './database-connection.interface'
 
 type Row = {
   id: number
-  start_date: Date
-  end_date: Date
+  start_date: string
+  end_date: string
   car_id: number
   renter_id: number
   state: BookingState
