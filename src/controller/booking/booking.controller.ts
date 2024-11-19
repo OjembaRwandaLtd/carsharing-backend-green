@@ -143,14 +143,19 @@ export class BookingController {
     @Body() data: PatchBookingDTO,
   ): Promise<BookingDTO> {
     try {
-      const updateObj: { endDate?: Date; startDate?: Date } = {}
-      if (data.endDate) updateObj.endDate = new Date(data.endDate)
-      if (data.startDate) updateObj.startDate = new Date(data.startDate)
+      const updates: {
+        endDate?: Date
+        startDate?: Date
+        state?: BookingState
+      } = {}
+      if (data.endDate) updates.endDate = new Date(data.endDate)
+      if (data.startDate) updates.startDate = new Date(data.startDate)
+      if (data.state) updates.state = data.state
 
       const updatedBooking = await this.bookingService.update(
         bookingId,
         {
-          ...updateObj,
+          ...updates,
         },
         renterId,
       )
