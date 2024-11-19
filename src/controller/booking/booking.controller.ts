@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -100,17 +101,27 @@ export class BookingController {
     @Body() data: CreateBookingDTO,
   ): Promise<BookingDTO> {
     try {
+      const { startDate, endDate } = data
+      if (
+        new Date(startDate) < new Date() ||
+        new Date(startDate) >= new Date(endDate)
+      ) {
+        throw new BadRequestException('End date must come after start date')
+      }
       const bookingData = await this.bookingService.create({
         ...data,
         renterId: renter.id,
         state: BookingState.PENDING,
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
       })
       return BookingDTO.fromModel(bookingData)
     } catch (error: unknown) {
       if (error instanceof BookingNotFoundError) {
         throw new NotFoundException(error.message)
+      }
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
       }
       throw error
     }

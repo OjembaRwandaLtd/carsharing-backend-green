@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
+import { CarID } from '../car'
 
 import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
@@ -21,10 +22,39 @@ export class BookingService {
     this.databaseConnection = databaseConnection
     this.logger = new Logger(BookingService.name)
   }
+  public async findCarId(carId: CarID): Promise<Booking[]> {
+    const existingBookings = await this.getAll()
+    const availableBookings = existingBookings.filter(
+      booking => booking.carId === carId,
+    )
+    return availableBookings
+  }
+
+  public async isCarAvailable(
+    carId: CarID,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<boolean> {
+    const bookings = await this.findCarId(carId)
+    for (const booking of bookings) {
+      if (
+        (startDate >= booking.startDate && startDate <= booking.endDate) ||
+        (endDate >= booking.startDate && endDate <= booking.endDate)
+      ) {
+        return false
+      }
+    }
+    return true
+  }
 
   public async create(data: Except<BookingProperties, 'id'>): Promise<Booking> {
     this.logger.verbose('Creating new booking')
     return this.databaseConnection.transactional(async tx => {
+      if (
+        !(await this.isCarAvailable(data.carId, data.startDate, data.endDate))
+      ) {
+        throw new BadRequestException('Car is not available')
+      }
       return await this.bookingRepository.insert(tx, data)
     })
   }
