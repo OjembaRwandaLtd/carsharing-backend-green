@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -19,6 +20,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+
+import { InvalidBookingStateTransitionError } from 'src/application/booking/errors/invalid-booking-state-transition.error'
 
 import {
   Booking,
@@ -154,6 +157,9 @@ export class BookingController {
       )
       return BookingDTO.fromModel(updatedBooking)
     } catch (error) {
+      if (error instanceof InvalidBookingStateTransitionError) {
+        throw new BadRequestException(error.message)
+      }
       throw error
     }
   }
