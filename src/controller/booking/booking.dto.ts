@@ -55,7 +55,7 @@ export class BookingDTO {
   @ApiProperty({
     description: 'The start date for booking.',
     type: 'date-time',
-    example: '22-11-2024',
+    example: '2024-12-12T00:00:00.000Z',
   })
   @IsDateString()
   public readonly startDate!: string
@@ -63,7 +63,7 @@ export class BookingDTO {
   @ApiProperty({
     description: 'The start date for booking.',
     type: 'date-time',
-    example: '22-12-2024',
+    example: '2024-12-12T00:00:00.000Z',
   })
   @IsDateString()
   public readonly endDate!: string
