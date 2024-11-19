@@ -59,7 +59,6 @@ export class BookingRepository implements IBookingRepository {
       start_date = $(startDate),
       end_date = $(endDate),
       renter_id = $(renterId),
-      owner_id = $(ownerId),
       state = $(state)
       WHERE
       id = $(id)

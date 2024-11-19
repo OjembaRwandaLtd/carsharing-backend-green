@@ -2,12 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -55,7 +57,7 @@ export class BookingController {
 
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Return all registered users.',
+    summary: 'Return all bookings.',
   })
   @ApiOkResponse({
     description: 'The request was successful.',
@@ -76,7 +78,7 @@ export class BookingController {
 
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Retrieve a specific user.',
+    summary: 'Retrieve a specific booking.',
   })
   @ApiOkResponse({
     description: 'The request was successful.',
@@ -87,12 +89,17 @@ export class BookingController {
       'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
   })
   @ApiNotFoundResponse({
-    description: 'No user with the given id was found.',
+    description: 'No booking with the given id was found.',
   })
   @Get(':id')
   public async get(
     @Param('id', ParseIntPipe) id: BookingID,
+    @CurrentUser() currentUser: User,
   ): Promise<BookingDTO> {
+    const booking = await this.bookingService.get(id);
+    if(booking.renterId !== currentUser.id){
+      throw new UnauthorizedException("You are not authorized to access this booking!");
+    }
     return BookingDTO.fromModel(await this.bookingService.get(id))
   }
   @Post()
@@ -147,12 +154,19 @@ export class BookingController {
     @Body() data: PatchBookingDTO,
   ): Promise<BookingDTO> {
     try {
+      const updates: {
+        endDate?: Date
+        startDate?: Date
+        state?: BookingState
+      } = {}
+      if (data.endDate) updates.endDate = new Date(data.endDate)
+      if (data.startDate) updates.startDate = new Date(data.startDate)
+      if (data.state) updates.state = data.state
+
       const updatedBooking = await this.bookingService.update(
         bookingId,
         {
-          ...data,
-          startDate: data.startDate ? new Date(data.startDate) : undefined,
-          endDate: data.endDate ? new Date(data.endDate) : undefined,
+          ...updates,
         },
         renterId,
       )
