@@ -116,7 +116,7 @@ export class CarController {
         throw new BadRequestException(error.message)
       }
       if (error instanceof CarTypeNotFoundError) {
-        throw new NotFoundException(error.message)
+        throw new BadRequestException(error.message)
       }
       if (error instanceof CarNotFoundError) {
         throw new NotFoundException(error.message)
@@ -155,7 +155,7 @@ export class CarController {
         throw new BadRequestException(error.message)
       }
       if (error instanceof CarTypeNotFoundError) {
-        throw new NotFoundException(error.message)
+        throw new BadRequestException(error.message)
       }
       throw error
     }
