@@ -75,6 +75,10 @@ export class CarService implements ICarService {
         throw new AccessDeniedError(car.name, carId)
       }
 
+      if (currentUserId !== car.ownerId) {
+        throw new AccessDeniedError(car.name, carId)
+      }
+
       if (updates.licensePlate) {
         const existingCar = await this.carRepository.findByLicensePlate(
           tx,

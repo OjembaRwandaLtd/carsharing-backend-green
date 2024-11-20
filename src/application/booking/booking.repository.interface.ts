@@ -1,6 +1,7 @@
 import { type Except } from 'type-fest'
 
 import { type Transaction } from '../../persistence/database-connection.interface'
+import { CarID } from '../car'
 
 import { type Booking, type BookingID, type BookingProperties } from './booking'
 
@@ -17,4 +18,9 @@ export abstract class IBookingRepository {
     tx: Transaction,
     booking: Except<BookingProperties, 'id'>,
   ): Promise<Booking>
+
+  public abstract getByCarId(
+    tx: Transaction,
+    id: CarID,
+  ): Promise<Booking | null>
 }
