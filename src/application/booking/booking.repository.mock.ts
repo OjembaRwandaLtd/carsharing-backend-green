@@ -9,5 +9,6 @@ export function mockBookingRepository(): BookingRepositoryMock {
     getAll: jest.fn(),
     insert: jest.fn(),
     update: jest.fn(),
+    getByCarId: jest.fn(),
   }
 }

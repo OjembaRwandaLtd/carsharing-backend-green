@@ -9,7 +9,7 @@ import {
   type UserID,
   type CarID,
 } from '../application'
-import { Booking } from '../application/booking'
+import { Booking, BookingNotFoundError } from '../application/booking'
 
 import { type Transaction } from './database-connection.interface'
 
@@ -29,7 +29,7 @@ function rowToDomain(row: Row): Booking {
     endDate: new Date(row.end_date),
     carId: row.car_id as CarID,
     renterId: row.renter_id as UserID,
-    state: row.state as BookingState,
+    state: row.state,
   })
 }
 
@@ -63,8 +63,19 @@ export class BookingRepository implements IBookingRepository {
       WHERE
       id = $(id)
      RETURNING *`,
-      { ...booking },
+      {
+        id: booking.id,
+        startDate: booking.startDate,
+        endDate: booking.endDate,
+        carId: booking.carId,
+        bookingState: booking.state,
+        renterId: booking.renterId,
+      },
     )
+    if (!row) {
+      throw new BookingNotFoundError(booking.id)
+    }
+
     return rowToDomain(row)
   }
 
@@ -91,5 +102,18 @@ export class BookingRepository implements IBookingRepository {
     )
 
     return rowToDomain(row)
+  }
+
+  public async getByCarId(
+    tx: Transaction,
+    carId: CarID,
+  ): Promise<Booking | null> {
+    const row = await tx.oneOrNone<Row>(
+      'SELECT * FROM bookings WHERE car_id = $(carId)',
+      {
+        carId,
+      },
+    )
+    return row ? rowToDomain(row) : null
   }
 }
