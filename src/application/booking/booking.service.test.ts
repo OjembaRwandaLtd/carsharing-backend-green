@@ -28,7 +28,7 @@ describe('BookingService', () => {
   })
 
   describe('update', () => {
-    xit('should update a booking', async () => {
+    xit('should update a booking', () => {
       const owner = new UserBuilder().build()
       const renter = new UserBuilder().build()
       const booking = new BookingBuilder()
