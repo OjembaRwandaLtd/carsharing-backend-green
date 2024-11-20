@@ -116,25 +116,4 @@ export class BookingRepository implements IBookingRepository {
     )
     return row ? rowToDomain(row) : null
   }
-  // public async update(tx: Transaction, booking: Booking): Promise<Booking> {
-  //   const row = await tx.oneOrNone<Row>(
-  //     `UPDATE bookings
-  //      SET start_date = $(startDate), end_date = $(endDate), car_id = $(carId), booking_state = $(bookingState), renter_id = $(renterId)
-  //      WHERE id = $(id)
-  //      RETURNING *`,
-  //     {
-  //       id: booking.id,
-  //       startDate: booking.startDate,
-  //       endDate: booking.endDate,
-  //       carId: booking.carId,
-  //       bookingState: booking.bookingState,
-  //       renterId: booking.renterId,
-  //     },
-  //   )
-
-  //   if (!row) {
-  //     throw new BookingNotFoundError({ type: 'booking', id: booking.id })
-  //   }
-  //   return rowToDomain(row)
-  // }
 }
