@@ -226,7 +226,7 @@ describe('CarController', () => {
       await request(app.getHttpServer())
         .post('/cars')
         .send(newCar)
-        .expect(HttpStatus.NOT_FOUND)
+        .expect(HttpStatus.BAD_REQUEST)
     })
   })
 
