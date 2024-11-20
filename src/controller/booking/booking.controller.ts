@@ -21,8 +21,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { InvalidBookingStateTransitionError } from 'src/application/booking/errors/invalid-booking-state-transition.error'
-
 import {
   Booking,
   type BookingID,
@@ -32,6 +30,7 @@ import {
   type User,
   UserID,
 } from '../../application'
+import { InvalidBookingStateTransitionError } from '../../application/booking/errors/invalid-booking-state-transition.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
