@@ -3,6 +3,7 @@ import { type Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 import { AccessDeniedError } from '../access-denied.error'
+import { IBookingRepository } from '../booking'
 import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
 
@@ -17,16 +18,19 @@ export class CarService implements ICarService {
   private readonly carRepository: ICarRepository
   private readonly carTypeRepository: ICarTypeRepository
   private readonly databaseConnection: IDatabaseConnection
+  private readonly bookingRepository: IBookingRepository
   private readonly logger: Logger
 
   public constructor(
     carRepository: ICarRepository,
     carTypeRepository: ICarTypeRepository,
     databaseConnection: IDatabaseConnection,
+    bookingRepository: IBookingRepository,
   ) {
     this.carRepository = carRepository
     this.carTypeRepository = carTypeRepository
     this.databaseConnection = databaseConnection
+    this.bookingRepository = bookingRepository
     this.logger = new Logger(CarService.name)
   }
 
@@ -71,12 +75,22 @@ export class CarService implements ICarService {
 
       if (!car) throw new CarNotFoundError(carId)
 
-      if (currentUserId !== car.ownerId) {
-        throw new AccessDeniedError(car.name, carId)
-      }
+      if (car.ownerId !== currentUserId) {
+        const booking = await this.databaseConnection.transactional(tx =>
+          this.bookingRepository.getByCarId(tx, carId),
+        )
 
-      if (currentUserId !== car.ownerId) {
-        throw new AccessDeniedError(car.name, carId)
+        if (!booking || booking.renterId !== currentUserId) {
+          throw new AccessDeniedError('car', carId)
+        }
+
+        const carState = updates.state
+        if (!carState) throw new AccessDeniedError('car', carId)
+        const updatedCar = new Car({
+          ...car,
+          state: carState,
+        })
+        return this.carRepository.update(tx, updatedCar)
       }
 
       if (updates.licensePlate) {
