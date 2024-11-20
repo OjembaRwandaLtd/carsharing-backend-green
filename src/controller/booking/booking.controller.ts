@@ -32,6 +32,7 @@ import {
   type User,
   UserID,
 } from '../../application'
+import { InvalidBookingStateTransitionError } from '../../application/booking/errors/invalid-booking-state-transition.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
@@ -172,6 +173,9 @@ export class BookingController {
       )
       return BookingDTO.fromModel(updatedBooking)
     } catch (error) {
+      if (error instanceof InvalidBookingStateTransitionError) {
+        throw new BadRequestException(error.message)
+      }
       throw error
     }
   }

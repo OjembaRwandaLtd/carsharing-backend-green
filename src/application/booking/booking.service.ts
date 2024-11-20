@@ -6,13 +6,23 @@ import { CarID } from '../car'
 
 import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
+import { BookingState } from './booking-state'
+import { validTransitions } from './booking-state-transitions'
 import { IBookingRepository } from './booking.repository.interface'
+import { InvalidBookingStateTransitionError } from './errors/invalid-booking-state-transition.error'
 
 @Injectable()
 export class BookingService {
   private readonly bookingRepository: IBookingRepository
   private readonly databaseConnection: IDatabaseConnection
   private readonly logger: Logger
+  private validateStateTransition(
+    currentState: BookingState,
+    newState: BookingState,
+  ): boolean {
+    const allowedTransitions = validTransitions[currentState]
+    return allowedTransitions.includes(newState)
+  }
 
   public constructor(
     bookingRepository: IBookingRepository,
@@ -79,6 +89,15 @@ export class BookingService {
   ): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
       const booking = await this.get(bookingId)
+      if (
+        updates.state &&
+        !this.validateStateTransition(booking.state, updates.state)
+      ) {
+        throw new InvalidBookingStateTransitionError(
+          booking.state,
+          updates.state,
+        )
+      }
       const updatedBooking = new Booking({
         ...booking,
         ...updates,
