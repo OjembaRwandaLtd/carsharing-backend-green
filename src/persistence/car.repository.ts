@@ -48,20 +48,20 @@ export class CarRepository implements ICarRepository {
   public async find(tx: Transaction, id: CarID): Promise<Car | null> {
     const maybeRow = await tx.oneOrNone<Row>(
       'SELECT * FROM cars WHERE id = $(id)',
-      { id }
-    );
-    return maybeRow ? rowToDomain(maybeRow) : null;
+      { id },
+    )
+    return maybeRow ? rowToDomain(maybeRow) : null
   }
 
   public async get(tx: Transaction, id: CarID): Promise<Car> {
     const car: Row | null = await tx.oneOrNone(
       'SELECT * FROM cars WHERE id = $(id)',
-      { id }
-    );
+      { id },
+    )
     if (!car) {
-      throw new Error('Car not found');
+      throw new Error('Car not found')
     }
-    return rowToDomain(car);
+    return rowToDomain(car)
   }
 
   public async getAll(tx: Transaction): Promise<Car[]> {
@@ -75,9 +75,9 @@ export class CarRepository implements ICarRepository {
   ): Promise<Car | null> {
     const maybeRow = await tx.oneOrNone<Row>(
       'SELECT * FROM cars WHERE license_plate = $(licensePlate)',
-      { licensePlate }
-    );
-    return maybeRow ? rowToDomain(maybeRow) : null;
+      { licensePlate },
+    )
+    return maybeRow ? rowToDomain(maybeRow) : null
   }
 
   public async update(tx: Transaction, car: Car): Promise<Car> {
