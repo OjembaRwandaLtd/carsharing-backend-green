@@ -13,6 +13,14 @@ export function up(pgm: MigrationBuilder): void {
     password: {
       type: 'text',
     },
+    created_at: {
+      type: 'timestamp',
+      default: pgm.func('current_timestamp'),
+    },
+    updated_at: {
+      type: 'timestamp',
+      default: pgm.func('current_timestamp'),
+    },
   })
 
   pgm.createTable('car_types', {
@@ -26,6 +34,14 @@ export function up(pgm: MigrationBuilder): void {
     image_url: {
       type: 'text',
       notNull: false,
+    },
+    created_at: {
+      type: 'timestamp',
+      default: pgm.func('current_timestamp'),
+    },
+    updated_at: {
+      type: 'timestamp',
+      default: pgm.func('current_timestamp'),
     },
   })
 
@@ -64,6 +80,14 @@ export function up(pgm: MigrationBuilder): void {
       type: 'text',
       notNull: false,
     },
+    created_at: {
+      type: 'timestamp',
+      default: pgm.func('current_timestamp'),
+    },
+    updated_at: {
+      type: 'timestamp',
+      default: pgm.func('current_timestamp'),
+    },
   })
 
   pgm.createTable('bookings', {
@@ -96,6 +120,14 @@ export function up(pgm: MigrationBuilder): void {
     },
     state: {
       type: 'text',
+    },
+    created_at: {
+      type: 'timestamp',
+      default: pgm.func('current_timestamp'),
+    },
+    updated_at: {
+      type: 'timestamp',
+      default: pgm.func('current_timestamp'),
     },
   })
 }
