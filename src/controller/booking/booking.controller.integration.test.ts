@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
 import {
   BookingID,
+  BookingNotFoundError,
   BookingState,
   CarID,
   IBookingService,
@@ -102,6 +103,95 @@ describe('Booking Controller', () => {
               startDate: '2024-11-22T00:00:00.000Z',
               endDate: '2024-11-23T00:00:00.000Z',
             }),
+          )
+        })
+    })
+    it('should return a 400 for invalid id', async () => {
+      await request(app.getHttpServer())
+        .get('/bookings/invalid')
+        .expect(HttpStatus.BAD_REQUEST)
+    })
+  })
+
+  describe('create', () => {
+    it('should create a new booking', async () => {
+      const newBooking = {
+        startDate: new Date('2024-11-22'),
+        endDate: new Date('2024-11-23'),
+        carId: 13 as CarID,
+      }
+
+      const createdBooking = {
+        ...newBooking,
+        id: 100 as BookingID,
+        renterId: user.id,
+        state: BookingState.PENDING,
+        startDate: new Date('2024-11-22'),
+        endDate: new Date('2024-11-23'),
+      }
+
+      bookingServiceMock.create.mockResolvedValue(createdBooking)
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(newBooking)
+        .expect(HttpStatus.CREATED)
+        .expect(response => {
+          expect(response.body).toEqual(
+            expect.objectContaining({ ...createdBooking }),
+          )
+        })
+    })
+
+    it('should return 400 for invalid date range', async () => {
+      const invalidBooking = {
+        startDate: new Date('2024-11-23T00:00:00.000Z'),
+        endDate: new Date('2024-11-22T00:00:00.000Z'),
+        carId: 13 as CarID,
+      }
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(invalidBooking)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(response => {
+          expect(response.body.message).toBe(
+            'End date must come after start date',
+          )
+        })
+    })
+
+    it('should return 400 for missing start date', async () => {
+      const invalidBooking = {
+        endDate: '2024-11-23T00:00:00.000Z',
+      }
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(invalidBooking)
+        .expect(HttpStatus.BAD_REQUEST)
+    })
+
+    it('should return 400 for car id not found error', async () => {
+      const newBooking = {
+        startDate: new Date('2024-11-23T00:00:00.000Z'),
+        endDate: new Date('2024-11-22T00:00:00.000Z'),
+      }
+
+      bookingServiceMock.create.mockRejectedValue(
+        new BookingNotFoundError(100 as BookingID),
+      )
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(newBooking)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(response => {
+          expect(response.body.message).toStrictEqual(
+            expect.arrayContaining([
+              'carId must be a positive number',
+              'carId must be an integer number',
+            ]),
           )
         })
     })
