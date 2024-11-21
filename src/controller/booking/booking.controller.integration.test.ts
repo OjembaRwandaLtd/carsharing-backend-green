@@ -10,14 +10,23 @@ import {
 } from '../../application'
 
 import { BookingBuilder } from '../../application/booking/booking.builder'
+
 import { BookingServiceMock } from '../../application/booking/booking.service.mock'
+
 import { UserBuilder } from '../../builders'
+
 import { AuthenticationGuardMock } from '../authentication.guard.mock'
+
 import { mockBookingService } from './booking.service.mock'
+
 import { Test } from '@nestjs/testing'
+
 import { BookingController } from './booking.controller'
+
 import { AuthenticationGuard } from '../authentication.guard'
+
 import { configureGlobalEnhancers } from '../../setup-app'
+
 import request from 'supertest'
 
 describe('Booking Controller', () => {
@@ -242,9 +251,11 @@ describe('Booking Controller', () => {
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
         .expect(response => {
-          expect(response.body.message).toBe('End date must come after start date');
-        });
-    });
+          expect(response.body.message).toBe(
+            'End date must come after start date',
+          )
+        })
+    })
 
     it('should return 400 for end date not after start date', async () => {
       const invalidBooking = {
@@ -258,9 +269,11 @@ describe('Booking Controller', () => {
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
         .expect(response => {
-          expect(response.body.message).toBe('End date must come after start date');
-        });
-    });
+          expect(response.body.message).toBe(
+            'End date must come after start date',
+          )
+        })
+    })
 
     it('should return 404 for booking not found error', async () => {
       const newBooking = {
@@ -269,16 +282,18 @@ describe('Booking Controller', () => {
         carId: 13 as CarID,
       }
 
-      bookingServiceMock.create.mockRejectedValue(new BookingNotFoundError(100 as BookingID));
+      bookingServiceMock.create.mockRejectedValue(
+        new BookingNotFoundError(100 as BookingID),
+      )
 
       await request(app.getHttpServer())
         .post('/bookings')
         .send(newBooking)
         .expect(HttpStatus.NOT_FOUND)
         .expect(response => {
-          expect(response.body.message).toBe('Booking not found');
-        });
-    });
+          expect(response.body.message).toBe('Booking not found')
+        })
+    })
   })
 
   describe('patch', () => {
