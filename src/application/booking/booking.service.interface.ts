@@ -20,7 +20,5 @@ export abstract class IBookingService {
 
   public abstract get(id: BookingID): Promise<Booking>
 
-  public abstract getByCarId(carId: CarID): Promise<Booking[]>
-
   public abstract getByRenterId(renterId: UserID): Promise<Booking[]>
 }

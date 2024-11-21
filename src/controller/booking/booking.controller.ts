@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -7,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -29,6 +31,7 @@ import {
   type User,
   UserID,
 } from '../../application'
+import { InvalidBookingStateTransitionError } from '../../application/booking/errors/invalid-booking-state-transition.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
@@ -54,7 +57,7 @@ export class BookingController {
 
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Return all registered users.',
+    summary: 'Return all bookings.',
   })
   @ApiOkResponse({
     description: 'The request was successful.',
@@ -67,12 +70,15 @@ export class BookingController {
   @Get()
   public async getAll(): Promise<BookingDTO[]> {
     console.log('getAll')
-    return this.bookingService.getAll()
+    // eslint-disable-next-line unicorn/no-await-expression-member
+    return (await this.bookingService.getAll()).map(booking =>
+      BookingDTO.fromModel(booking),
+    )
   }
 
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Retrieve a specific user.',
+    summary: 'Retrieve a specific booking.',
   })
   @ApiOkResponse({
     description: 'The request was successful.',
@@ -83,30 +89,48 @@ export class BookingController {
       'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
   })
   @ApiNotFoundResponse({
-    description: 'No user with the given id was found.',
+    description: 'No booking with the given id was found.',
   })
   @Get(':id')
   public async get(
     @Param('id', ParseIntPipe) id: BookingID,
+    @CurrentUser() currentUser: User,
   ): Promise<BookingDTO> {
+    const booking = await this.bookingService.get(id)
+    if (booking.renterId !== currentUser.id) {
+      throw new UnauthorizedException(
+        'You are not authorized to access this booking!',
+      )
+    }
     return BookingDTO.fromModel(await this.bookingService.get(id))
   }
   @Post()
   public async create(
     @CurrentUser() renter: User,
-    @CurrentUser() owner: User,
     @Body() data: CreateBookingDTO,
   ): Promise<BookingDTO> {
     try {
+      const { startDate, endDate } = data
+      if (
+        new Date(startDate) < new Date() ||
+        new Date(startDate) >= new Date(endDate)
+      ) {
+        throw new BadRequestException('End date must come after start date')
+      }
       const bookingData = await this.bookingService.create({
         ...data,
         renterId: renter.id,
         state: BookingState.PENDING,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
       })
       return BookingDTO.fromModel(bookingData)
     } catch (error: unknown) {
       if (error instanceof BookingNotFoundError) {
         throw new NotFoundException(error.message)
+      }
+      if (error instanceof BadRequestException) {
+        throw new BadRequestException(error.message)
       }
       throw error
     }
@@ -132,13 +156,27 @@ export class BookingController {
     @Body() data: PatchBookingDTO,
   ): Promise<BookingDTO> {
     try {
+      const updates: {
+        endDate?: Date
+        startDate?: Date
+        state?: BookingState
+      } = {}
+      if (data.endDate) updates.endDate = new Date(data.endDate)
+      if (data.startDate) updates.startDate = new Date(data.startDate)
+      if (data.state) updates.state = data.state
+
       const updatedBooking = await this.bookingService.update(
         bookingId,
-        data,
+        {
+          ...updates,
+        },
         renterId,
       )
       return BookingDTO.fromModel(updatedBooking)
     } catch (error) {
+      if (error instanceof InvalidBookingStateTransitionError) {
+        throw new BadRequestException(error.message)
+      }
       throw error
     }
   }

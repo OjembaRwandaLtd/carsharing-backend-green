@@ -1,4 +1,4 @@
-import { IBookingService } from './booking.service.interface'
+import { IBookingService } from 'src/application'
 
 export type BookingServiceMock = jest.Mocked<IBookingService>
 
