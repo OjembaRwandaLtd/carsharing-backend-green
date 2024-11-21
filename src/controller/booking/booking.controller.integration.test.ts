@@ -229,6 +229,56 @@ describe('Booking Controller', () => {
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
     })
+
+    it('should return 400 for start date in the past', async () => {
+      const invalidBooking = {
+        startDate: new Date(Date.now() - 10000).toISOString(), // 10 seconds in the past
+        endDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
+        carId: 13 as CarID,
+      }
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(invalidBooking)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(response => {
+          expect(response.body.message).toBe('End date must come after start date');
+        });
+    });
+
+    it('should return 400 for end date not after start date', async () => {
+      const invalidBooking = {
+        startDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
+        endDate: new Date('2024-11-22T00:00:00.000Z').toISOString(),
+        carId: 13 as CarID,
+      }
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(invalidBooking)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(response => {
+          expect(response.body.message).toBe('End date must come after start date');
+        });
+    });
+
+    it('should return 404 for booking not found error', async () => {
+      const newBooking = {
+        startDate: new Date('2024-11-22T00:00:00.000Z').toISOString(),
+        endDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
+        carId: 13 as CarID,
+      }
+
+      bookingServiceMock.create.mockRejectedValue(new BookingNotFoundError(100 as BookingID));
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(newBooking)
+        .expect(HttpStatus.NOT_FOUND)
+        .expect(response => {
+          expect(response.body.message).toBe('Booking not found');
+        });
+    });
   })
 
   describe('patch', () => {
