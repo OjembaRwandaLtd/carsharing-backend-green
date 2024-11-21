@@ -16,6 +16,7 @@ import { BookingController } from './booking.controller'
 import { AuthenticationGuard } from '../authentication.guard'
 import { configureGlobalEnhancers } from '../../setup-app'
 import request from 'supertest'
+import { response } from 'express'
 
 describe('Booking Controller', () => {
   const user = UserBuilder.from({
@@ -79,6 +80,28 @@ describe('Booking Controller', () => {
                 endDate: '2024-11-23T00:00:00.000Z',
               }),
             ]),
+          )
+        })
+    })
+  })
+
+  describe('get', () => {
+    it('should return one booking', async () => {
+      bookingServiceMock.get.mockResolvedValue(booking1)
+
+      await request(app.getHttpServer())
+        .get(`/bookings/${booking1.id}`)
+        .expect(HttpStatus.OK)
+        .expect(response => {
+          expect(response.body).toEqual(
+            expect.objectContaining({
+              id: 10,
+              carId: 13,
+              renterId: 42,
+              state: BookingState.PENDING,
+              startDate: '2024-11-22T00:00:00.000Z',
+              endDate: '2024-11-23T00:00:00.000Z',
+            }),
           )
         })
     })
