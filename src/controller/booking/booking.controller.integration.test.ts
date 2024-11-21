@@ -138,7 +138,11 @@ describe('Booking Controller', () => {
         .expect(HttpStatus.CREATED)
         .expect(response => {
           expect(response.body).toEqual(
-            expect.objectContaining({ ...createdBooking }),
+            expect.objectContaining({
+              ...createdBooking,
+              startDate: new Date('2024-11-22T00:00:00.000Z').toISOString(),
+              endDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
+            }),
           )
         })
     })
@@ -200,16 +204,16 @@ describe('Booking Controller', () => {
   describe('patch', () => {
     it('should update a booking', async () => {
       const updates = {
-        startDate: new Date(Date.now() + 86400000).toISOString(), // 1 day later
-        endDate: new Date(Date.now() + 172800000).toISOString(), // 2 days later
+        startDate: new Date('2024-11-23T16:09:51.389Z').toISOString(),
+        endDate: new Date('2024-11-22T16:09:51.389Z').toISOString(),
         state: BookingState.ACCEPTED,
       }
 
       const updatedBooking = {
         ...booking1,
         ...updates,
-        startDate: new Date(updates.startDate),
-        endDate: new Date(updates.endDate),
+        startDate: new Date('2024-11-22T16:09:51.389Z'),
+        endDate: new Date('2024-11-23T16:09:51.389Z'),
       }
 
       bookingServiceMock.update.mockResolvedValue(updatedBooking)
@@ -219,7 +223,13 @@ describe('Booking Controller', () => {
         .send(updates)
         .expect(HttpStatus.OK)
         .expect(response => {
-          expect(response.body).toEqual(expect.objectContaining(updatedBooking))
+          expect(response.body).toEqual(
+            expect.objectContaining({
+              ...updatedBooking,
+              startDate: new Date('2024-11-22T16:09:51.389Z').toISOString(),
+              endDate: new Date('2024-11-23T16:09:51.389Z').toISOString(),
+            }),
+          )
         })
     })
 
