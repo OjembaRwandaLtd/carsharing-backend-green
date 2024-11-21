@@ -2,9 +2,12 @@ import {
   type DatabaseConnectionMock,
   mockDatabaseConnection,
 } from '../../mocks'
-//import { UserID } from '../user'
-import { UserBuilder } from '../user/user.builder'
+import { AccessDeniedError } from '../access-denied.error'
+import { UserID } from '../user'
 
+import { BookingID } from './booking'
+import { BookingNotFoundError } from './booking-not-found.error'
+import { BookingState } from './booking-state'
 import { BookingBuilder } from './booking.builder'
 import {
   BookingRepositoryMock,
@@ -28,46 +31,60 @@ describe('BookingService', () => {
   })
 
   describe('update', () => {
-    xit('should update a booking', () => {
-      const owner = new UserBuilder().build()
-      const renter = new UserBuilder().build()
+    it('should update a booking', async () => {
       const booking = new BookingBuilder()
-        .withOwner(owner)
-        .withRenter(renter)
-        .build()
-      const updatedBooking = BookingBuilder.from(booking)
-        .withId(booking.id)
-        .withRenter(booking.renterId)
+        .withState(BookingState.PENDING)
         .build()
 
       bookingRepositoryMock.get.mockResolvedValue(booking)
-      bookingRepositoryMock.update.mockResolvedValue(updatedBooking)
-
-      // await expect(
-      //   bookingService.update(booking.id, renter.id, owner.id),
-      // ).resolves.toEqual(updatedBooking)
+      bookingRepositoryMock.update.mockResolvedValue({
+        ...booking,
+        state: BookingState.ACCEPTED,
+      })
+      const updates = { state: BookingState.ACCEPTED }
+      await expect(bookingService.update(booking.id, updates)).resolves.toEqual(
+        {
+          ...booking,
+          state: BookingState.ACCEPTED,
+        },
+      )
     })
-
-    xit('should be able give all bookings', async () => {
+  })
+  describe('getAll', () => {
+    it('should be able give all bookings', async () => {
       const bookings = [
-        new BookingBuilder().build(),
-        new BookingBuilder().build(),
+        new BookingBuilder().withId(1).build(),
+        new BookingBuilder().withId(2).build(),
       ]
       bookingRepositoryMock.getAll.mockResolvedValue(bookings)
       await expect(bookingService.getAll()).resolves.toEqual(bookings)
     })
-
-    xit('should be able give a booking', async () => {
-      const booking = new BookingBuilder().build()
+    it('should return an empty array if there are no bookings', async () => {
+      bookingRepositoryMock.getAll.mockResolvedValue([])
+      await expect(bookingService.getAll()).resolves.toEqual([])
+    })
+  })
+  describe('get', () => {
+    it('should return a booking if it exists and user has access', async () => {
+      const userId = 1 as UserID
+      const booking = new BookingBuilder()
+        .withId(1)
+        .withRenterId(userId)
+        .build()
       bookingRepositoryMock.get.mockResolvedValue(booking)
-      await expect(bookingService.get(booking.id)).resolves.toEqual(booking)
+
+      const result = await bookingService.get(booking.id)
+      expect(result).toEqual(booking)
     })
 
-    xit('should create a new booking', async () => {
-      const booking = new BookingBuilder().build()
-      const newBooking = new BookingBuilder().build()
-      bookingRepositoryMock.insert.mockResolvedValue(newBooking)
-      await expect(bookingService.create(booking)).resolves.toEqual(newBooking)
+    it('should throw BookingNotFoundError when the booking does not exist', async () => {
+      const bookingId = 999 as BookingID
+
+      bookingRepositoryMock.get.mockResolvedValue(null)
+
+      await expect(bookingService.get(bookingId)).rejects.toThrow(
+        BookingNotFoundError,
+      )
     })
   })
 })
