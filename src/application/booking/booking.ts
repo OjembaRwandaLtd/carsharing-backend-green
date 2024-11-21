@@ -15,7 +15,6 @@ export type BookingProperties = {
   endDate: Date
   carId: CarID
   renterId: UserID
-  ownerId: UserID
   state: BookingState
 }
 
@@ -38,10 +37,6 @@ export class Booking {
   @IsPositive()
   public readonly renterId: UserID
 
-  @IsInt()
-  @IsPositive()
-  public readonly ownerId: UserID
-
   @IsEnum(BookingState)
   public readonly state: BookingState
 
@@ -51,7 +46,6 @@ export class Booking {
     this.endDate = data.endDate
     this.carId = data.carId
     this.renterId = data.renterId
-    this.ownerId = data.ownerId
     this.state = data.state
 
     validate(this)
