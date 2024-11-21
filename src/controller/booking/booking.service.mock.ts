@@ -8,7 +8,6 @@ export function mockBookingService(): BookingServiceMock {
     getAll: jest.fn(),
     get: jest.fn(),
     update: jest.fn(),
-    getByCarId: jest.fn(),
     getByRenterId: jest.fn(),
   }
 }
