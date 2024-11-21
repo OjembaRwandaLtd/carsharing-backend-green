@@ -1,8 +1,7 @@
 import { type Except } from 'type-fest'
 
 import { type Transaction } from '../../persistence/database-connection.interface'
-// eslint-disable-next-line import/no-cycle
-import { CarID } from '../car'
+import { CarID } from '../car/car'
 
 import { type Booking, type BookingID, type BookingProperties } from './booking'
 

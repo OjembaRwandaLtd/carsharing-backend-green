@@ -184,12 +184,12 @@ describe('CarController', () => {
       await request(app.getHttpServer())
         .post('/cars')
         .send(newCar)
-        .expect(HttpStatus.CREATED)
         .expect(response => {
           expect(response.body).toEqual(
             expect.objectContaining({ ...createdCar }),
           )
         })
+        .expect(HttpStatus.CREATED)
     })
 
     it('should return 400 for duplicate license plate', async () => {
