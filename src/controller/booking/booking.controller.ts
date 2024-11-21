@@ -91,9 +91,11 @@ export class BookingController {
     @Param('id', ParseIntPipe) id: BookingID,
     @CurrentUser() currentUser: User,
   ): Promise<BookingDTO> {
-    const booking = await this.bookingService.get(id);
-    if(booking.renterId !== currentUser.id){
-      throw new UnauthorizedException("You are not authorized to access this booking!");
+    const booking = await this.bookingService.get(id)
+    if (booking.renterId !== currentUser.id) {
+      throw new UnauthorizedException(
+        'You are not authorized to access this booking!',
+      )
     }
     return BookingDTO.fromModel(await this.bookingService.get(id))
   }
