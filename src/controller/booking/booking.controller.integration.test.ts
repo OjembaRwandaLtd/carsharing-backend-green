@@ -1,20 +1,21 @@
-import { INestApplication } from '@nestjs/common'
+import { HttpStatus, INestApplication } from '@nestjs/common'
 import {
   BookingID,
   BookingState,
   CarID,
   IBookingService,
   UserID,
-} from 'src/application'
-import { BookingBuilder } from 'src/application/booking/booking.builder'
-import { BookingServiceMock } from 'src/application/booking/booking.service.mock'
-import { UserBuilder } from 'src/builders'
+} from '../../application'
+import { BookingBuilder } from '../../application/booking/booking.builder'
+import { BookingServiceMock } from '../../application/booking/booking.service.mock'
+import { UserBuilder } from '../../builders'
 import { AuthenticationGuardMock } from '../authentication.guard.mock'
 import { mockBookingService } from './booking.service.mock'
 import { Test } from '@nestjs/testing'
 import { BookingController } from './booking.controller'
 import { AuthenticationGuard } from '../authentication.guard'
-import { configureGlobalEnhancers } from 'src/setup-app'
+import { configureGlobalEnhancers } from '../../setup-app'
+import request from 'supertest'
 
 describe('Booking Controller', () => {
   const user = UserBuilder.from({
@@ -27,9 +28,9 @@ describe('Booking Controller', () => {
     carId: 13 as CarID,
     ownerId: 42 as UserID,
     renterId: 42 as UserID,
-    state: BookingState.ACCEPTED,
-    startDate: new Date('22-11-2024'),
-    endDate: new Date('23-11-2024'),
+    state: BookingState.PENDING,
+    startDate: new Date('2024-11-22'),
+    endDate: new Date('2024-11-23'),
   }).build()
 
   let app: INestApplication
@@ -56,5 +57,30 @@ describe('Booking Controller', () => {
 
     app = moduleReference.createNestApplication()
     await configureGlobalEnhancers(app).init()
+  })
+  afterEach(() => app.close())
+
+  describe('getall', () => {
+    it('should return all bookings', async () => {
+      bookingServiceMock.getAll.mockResolvedValue([booking1])
+
+      await request(app.getHttpServer())
+        .get('/bookings')
+        .expect(HttpStatus.OK)
+        .expect(response => {
+          expect(response.body).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                id: 10,
+                carId: 13,
+                renterId: 42,
+                state: BookingState.PENDING,
+                startDate: '2024-11-22T00:00:00.000Z',
+                endDate: '2024-11-23T00:00:00.000Z',
+              }),
+            ]),
+          )
+        })
+    })
   })
 })
