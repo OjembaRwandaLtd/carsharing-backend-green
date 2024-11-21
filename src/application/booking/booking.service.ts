@@ -89,6 +89,7 @@ export class BookingService {
   ): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
       const booking = await this.get(bookingId)
+
       if (
         updates.state &&
         !this.validateStateTransition(booking.state, updates.state)

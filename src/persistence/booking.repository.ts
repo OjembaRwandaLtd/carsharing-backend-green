@@ -52,6 +52,8 @@ export class BookingRepository implements IBookingRepository {
   }
 
   public async update(tx: Transaction, booking: Booking): Promise<Booking> {
+    console.log(booking.state)
+
     const row = await tx.one<Row>(
       `
       UPDATE bookings SET
@@ -68,7 +70,7 @@ export class BookingRepository implements IBookingRepository {
         startDate: booking.startDate,
         endDate: booking.endDate,
         carId: booking.carId,
-        bookingState: booking.state,
+        state: booking.state,
         renterId: booking.renterId,
       },
     )
