@@ -28,7 +28,6 @@ describe('Booking Controller', () => {
   const booking1 = BookingBuilder.from({
     id: 10 as BookingID,
     carId: 13 as CarID,
-    ownerId: 42 as UserID,
     renterId: 42 as UserID,
     state: BookingState.PENDING,
     startDate: new Date('2024-11-22'),
