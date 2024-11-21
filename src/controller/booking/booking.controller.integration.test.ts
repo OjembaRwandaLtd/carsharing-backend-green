@@ -1,4 +1,5 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
+
 import {
   BookingID,
   BookingNotFoundError,
@@ -7,6 +8,7 @@ import {
   IBookingService,
   UserID,
 } from '../../application'
+
 import { BookingBuilder } from '../../application/booking/booking.builder'
 import { BookingServiceMock } from '../../application/booking/booking.service.mock'
 import { UserBuilder } from '../../builders'
@@ -17,7 +19,6 @@ import { BookingController } from './booking.controller'
 import { AuthenticationGuard } from '../authentication.guard'
 import { configureGlobalEnhancers } from '../../setup-app'
 import request from 'supertest'
-import { response } from 'express'
 
 describe('Booking Controller', () => {
   const user = UserBuilder.from({
@@ -198,6 +199,36 @@ describe('Booking Controller', () => {
           )
         })
     })
+
+    it('should return 400 for invalid start date', async () => {
+      const invalidBooking = {
+        startDate: new Date('2024-11-22T00:00:00.000Z'),
+        endDate: new Date('2024-11-21T00:00:00.000Z'),
+        carId: 13 as CarID,
+      }
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(invalidBooking)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(response => {
+          expect(response.body.message).toBe(
+            'End date must come after start date',
+          )
+        })
+    })
+
+    it('should return 400 for missing end date', async () => {
+      const invalidBooking = {
+        startDate: new Date('2024-11-22T00:00:00.000Z'),
+        carId: 13 as CarID,
+      }
+
+      await request(app.getHttpServer())
+        .post('/bookings')
+        .send(invalidBooking)
+        .expect(HttpStatus.BAD_REQUEST)
+    })
   })
 
   describe('patch', () => {
@@ -263,6 +294,42 @@ describe('Booking Controller', () => {
         .patch(`/bookings/${booking1.id}`)
         .send(updates)
         .expect(HttpStatus.BAD_REQUEST)
+    })
+
+    it('should return 400 for invalid booking state transition', async () => {
+      const updates = {
+        state: 'INVALID_STATE',
+      }
+
+      await request(app.getHttpServer())
+        .patch(`/bookings/${booking1.id}`)
+        .send(updates)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect(response => {
+          expect(response.body.message).toStrictEqual(
+            expect.arrayContaining([
+              'state must be one of the following values: ACCEPTED, PICKED_UP, RETURNED, DECLINED, PENDING',
+            ]),
+          )
+        })
+    })
+
+    it('should return 404 for non-existent booking during update', async () => {
+      const updates = {
+        state: BookingState.DECLINED,
+      }
+
+      bookingServiceMock.update.mockRejectedValue(
+        new BookingNotFoundError(999 as BookingID),
+      )
+
+      await request(app.getHttpServer())
+        .patch(`/bookings/999`)
+        .send(updates)
+        .expect(HttpStatus.NOT_FOUND)
+        .expect(response => {
+          expect(response.body.message).toBe('Booking not found')
+        })
     })
   })
 })
