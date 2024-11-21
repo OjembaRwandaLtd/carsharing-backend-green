@@ -3,7 +3,7 @@ import { type Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 import { AccessDeniedError } from '../access-denied.error'
-import { IBookingRepository } from '../booking'
+import { IBookingRepository } from '../booking/booking.repository.interface'
 import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
 

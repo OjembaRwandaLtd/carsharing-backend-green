@@ -111,7 +111,7 @@ export class BookingRepository implements IBookingRepository {
     carId: CarID,
   ): Promise<Booking | null> {
     const row = await tx.oneOrNone<Row>(
-      'SELECT * FROM bookings WHERE car_id = $(carId)',
+      "SELECT * FROM bookings WHERE car_id = $(carId) AND state = 'PICKED_UP' LIMIT 1",
       {
         carId,
       },

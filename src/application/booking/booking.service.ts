@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
-import { CarID } from '../car'
+import { CarID } from '../car/car'
 
 import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
