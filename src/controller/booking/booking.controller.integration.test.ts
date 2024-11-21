@@ -126,8 +126,8 @@ describe('Booking Controller', () => {
         id: 100 as BookingID,
         renterId: user.id,
         state: BookingState.PENDING,
-        startDate: new Date('2024-11-22'),
-        endDate: new Date('2024-11-23'),
+        startDate: new Date('2024-11-22T00:00:00.000Z'),
+        endDate: new Date('2024-11-23T00:00:00.000Z'),
       }
 
       bookingServiceMock.create.mockResolvedValue(createdBooking)
@@ -194,6 +194,66 @@ describe('Booking Controller', () => {
             ]),
           )
         })
+    })
+  })
+
+  describe('patch', () => {
+    it('should update a booking', async () => {
+      const updates = {
+        startDate: new Date(Date.now() + 86400000).toISOString(), // 1 day later
+        endDate: new Date(Date.now() + 172800000).toISOString(), // 2 days later
+        state: BookingState.ACCEPTED,
+      }
+
+      const updatedBooking = {
+        ...booking1,
+        ...updates,
+        startDate: new Date(updates.startDate),
+        endDate: new Date(updates.endDate),
+      }
+
+      bookingServiceMock.update.mockResolvedValue(updatedBooking)
+
+      await request(app.getHttpServer())
+        .patch(`/bookings/${booking1.id}`)
+        .send(updates)
+        .expect(HttpStatus.OK)
+        .expect(response => {
+          expect(response.body).toEqual(expect.objectContaining(updatedBooking))
+        })
+    })
+
+    it('should return 400 for invalid booking id', async () => {
+      await request(app.getHttpServer())
+        .patch('/bookings/invalid')
+        .send({ state: BookingState.ACCEPTED })
+        .expect(HttpStatus.BAD_REQUEST)
+    })
+
+    it('should return 404 for non-existent booking during update', async () => {
+      const updates = {
+        state: BookingState.DECLINED,
+      }
+
+      bookingServiceMock.update.mockRejectedValue(
+        new Error('Booking not found'),
+      )
+
+      await request(app.getHttpServer())
+        .patch(`/bookings/non-existing`)
+        .send(updates)
+        .expect(HttpStatus.BAD_REQUEST)
+    })
+
+    it('should return 400 for invalid update data', async () => {
+      const updates = {
+        endDate: 'invalid date',
+      }
+
+      await request(app.getHttpServer())
+        .patch(`/bookings/${booking1.id}`)
+        .send(updates)
+        .expect(HttpStatus.BAD_REQUEST)
     })
   })
 })
