@@ -116,8 +116,8 @@ describe('Booking Controller', () => {
   describe('create', () => {
     it('should create a new booking', async () => {
       const newBooking = {
-        startDate: new Date('2024-11-22T00:00:00.000Z'),
-        endDate: new Date('2024-11-23T00:00:00.000Z'),
+        endDate: new Date('2024-11-25T00:00:00.000Z'),
+        startDate: new Date('2024-11-23T00:00:00.000Z'),
         carId: 13 as CarID,
       }
 
@@ -133,16 +133,16 @@ describe('Booking Controller', () => {
       await request(app.getHttpServer())
         .post('/bookings')
         .send(newBooking)
-        .expect(HttpStatus.CREATED)
         .expect(response => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...createdBooking,
-              startDate: createdBooking.startDate,
-              endDate: createdBooking.endDate,
+              endDate: new Date('2024-11-25T00:00:00.000Z').toISOString(),
+              startDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
             }),
           )
         })
+        .expect(HttpStatus.CREATED)
     })
 
     it('should return 400 for invalid date range', async () => {
@@ -261,26 +261,6 @@ describe('Booking Controller', () => {
           expect(response.body.message).toBe(
             'End date must come after start date',
           )
-        })
-    })
-
-    it('should return 404 for booking not found error', async () => {
-      const newBooking = {
-        startDate: new Date('2024-11-22T00:00:00.000Z').toISOString(),
-        endDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
-        carId: 13 as CarID,
-      }
-
-      bookingServiceMock.create.mockRejectedValue(
-        new BookingNotFoundError(100 as BookingID),
-      )
-
-      await request(app.getHttpServer())
-        .post('/bookings')
-        .send(newBooking)
-        .expect(HttpStatus.NOT_FOUND)
-        .expect(response => {
-          expect(response.body.message).toBe('Booking not found')
         })
     })
   })

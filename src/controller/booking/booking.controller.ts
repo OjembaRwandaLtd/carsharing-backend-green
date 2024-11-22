@@ -36,6 +36,7 @@ import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
 import { BookingDTO, CreateBookingDTO, PatchBookingDTO } from './booking.dto'
+import dayjs from 'dayjs'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -112,8 +113,8 @@ export class BookingController {
     try {
       const { startDate, endDate } = data
       if (
-        new Date(startDate) < new Date() ||
-        new Date(startDate) >= new Date(endDate)
+        dayjs(startDate).isBefore(dayjs(new Date())) ||
+        dayjs(endDate).isBefore(dayjs(startDate))
       ) {
         throw new BadRequestException('End date must come after start date')
       }
