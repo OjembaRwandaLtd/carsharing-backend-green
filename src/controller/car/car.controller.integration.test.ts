@@ -249,7 +249,6 @@ describe('CarController', () => {
         .send(updates)
         .expect(HttpStatus.OK)
         .expect(response => {
-          console.log(response.body)
           expect(response.body).toEqual(expect.objectContaining(updatedCar))
         })
     })
