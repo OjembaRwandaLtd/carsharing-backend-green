@@ -1,4 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import request from 'supertest'
 
 import {
   BookingID,
@@ -8,26 +10,15 @@ import {
   IBookingService,
   UserID,
 } from '../../application'
-
 import { BookingBuilder } from '../../application/booking/booking.builder'
-
 import { BookingServiceMock } from '../../application/booking/booking.service.mock'
-
 import { UserBuilder } from '../../builders'
-
+import { configureGlobalEnhancers } from '../../setup-app'
+import { AuthenticationGuard } from '../authentication.guard'
 import { AuthenticationGuardMock } from '../authentication.guard.mock'
 
-import { mockBookingService } from './booking.service.mock'
-
-import { Test } from '@nestjs/testing'
-
 import { BookingController } from './booking.controller'
-
-import { AuthenticationGuard } from '../authentication.guard'
-
-import { configureGlobalEnhancers } from '../../setup-app'
-
-import request from 'supertest'
+import { mockBookingService } from './booking.service.mock'
 
 describe('Booking Controller', () => {
   const user = UserBuilder.from({
@@ -125,8 +116,8 @@ describe('Booking Controller', () => {
   describe('create', () => {
     it('should create a new booking', async () => {
       const newBooking = {
-        startDate: new Date('2024-11-22'),
-        endDate: new Date('2024-11-23'),
+        startDate: new Date('2024-11-22T00:00:00.000Z'),
+        endDate: new Date('2024-11-23T00:00:00.000Z'),
         carId: 13 as CarID,
       }
 
@@ -135,8 +126,6 @@ describe('Booking Controller', () => {
         id: 100 as BookingID,
         renterId: user.id,
         state: BookingState.PENDING,
-        startDate: new Date('2024-11-22T00:00:00.000Z'),
-        endDate: new Date('2024-11-23T00:00:00.000Z'),
       }
 
       bookingServiceMock.create.mockResolvedValue(createdBooking)
@@ -149,8 +138,8 @@ describe('Booking Controller', () => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...createdBooking,
-              startDate: new Date('2024-11-22T00:00:00.000Z').toISOString(),
-              endDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
+              startDate: createdBooking.startDate,
+              endDate: createdBooking.endDate,
             }),
           )
         })
@@ -241,7 +230,7 @@ describe('Booking Controller', () => {
 
     it('should return 400 for start date in the past', async () => {
       const invalidBooking = {
-        startDate: new Date(Date.now() - 10000).toISOString(), // 10 seconds in the past
+        startDate: new Date(Date.now() - 10_000).toISOString(), // 10 seconds in the past
         endDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
         carId: 13 as CarID,
       }
