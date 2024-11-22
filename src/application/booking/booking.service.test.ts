@@ -2,7 +2,6 @@ import {
   type DatabaseConnectionMock,
   mockDatabaseConnection,
 } from '../../mocks'
-import { AccessDeniedError } from '../access-denied.error'
 import { UserID } from '../user'
 
 import { BookingID } from './booking'
