@@ -116,8 +116,8 @@ describe('Booking Controller', () => {
   describe('create', () => {
     it('should create a new booking', async () => {
       const newBooking = {
-        startDate: new Date('2024-11-22'),
-        endDate: new Date('2024-11-23'),
+        startDate: new Date('2024-11-22T00:00:00.000Z'),
+        endDate: new Date('2024-11-23T00:00:00.000Z'),
         carId: 13 as CarID,
       }
 
@@ -126,8 +126,6 @@ describe('Booking Controller', () => {
         id: 100 as BookingID,
         renterId: user.id,
         state: BookingState.PENDING,
-        startDate: new Date('2024-11-22T00:00:00.000Z'),
-        endDate: new Date('2024-11-23T00:00:00.000Z'),
       }
 
       bookingServiceMock.create.mockResolvedValue(createdBooking)
@@ -140,8 +138,8 @@ describe('Booking Controller', () => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...createdBooking,
-              startDate: new Date('2024-11-22T00:00:00.000Z').toISOString(),
-              endDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
+              startDate: createdBooking.startDate,
+              endDate: createdBooking.endDate,
             }),
           )
         })
