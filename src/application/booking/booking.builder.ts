@@ -1,7 +1,7 @@
 import { type Except } from 'type-fest'
 
 import { CarID } from '../car'
-import { User, type UserID } from '../user'
+import { type UserID } from '../user'
 
 import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingState } from './booking-state'
@@ -9,17 +9,16 @@ import { BookingState } from './booking-state'
 type UntaggedBookingProperties = Except<
   BookingProperties,
   'id' | 'carId' | 'renterId'
-> & { id: number; carId: number; ownerId: number; renterId: number }
+> & { id: number; carId: number; renterId: number }
 
 export class BookingBuilder {
   private readonly properties: UntaggedBookingProperties = {
     id: 10 as BookingID,
     carId: 13 as CarID,
-    ownerId: 42 as UserID,
     renterId: 42 as UserID,
-    state: BookingState.ACCEPTED,
-    startDate: new Date('22-11-2024'),
-    endDate: new Date('22-11-2024'),
+    state: BookingState.PENDING,
+    startDate: new Date(),
+    endDate: new Date(),
   }
 
   public static from(
@@ -49,17 +48,13 @@ export class BookingBuilder {
     return this
   }
 
-  public withCar(data: number | CarID): this {
-    this.properties.carId = data
+  public withCarId(carId: CarID): this {
+    this.properties.carId = carId
     return this
   }
 
-  public withOwner(data: number | User): this {
-    this.properties.ownerId = typeof data === 'number' ? data : data.id
-    return this
-  }
-  public withRenter(data: number | User): this {
-    this.properties.ownerId = typeof data === 'number' ? data : data.id
+  public withRenterId(renterId: UserID): this {
+    this.properties.renterId = renterId
     return this
   }
 

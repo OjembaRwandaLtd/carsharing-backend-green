@@ -42,8 +42,8 @@ export class Booking {
 
   public constructor(data: BookingProperties) {
     this.id = data.id
-    this.startDate = data.startDate
-    this.endDate = data.endDate
+    this.startDate = new Date(data.startDate)
+    this.endDate = new Date(data.endDate)
     this.carId = data.carId
     this.renterId = data.renterId
     this.state = data.state
