@@ -116,7 +116,7 @@ export class CarController {
         throw new BadRequestException(error.message)
       }
       if (error instanceof CarTypeNotFoundError) {
-        throw new NotFoundException(error.message)
+        throw new BadRequestException(error.message)
       }
       if (error instanceof CarNotFoundError) {
         throw new NotFoundException(error.message)
@@ -148,7 +148,13 @@ export class CarController {
       const car = await this.carService.update(carId, data, user.id)
       return CarDTO.fromModel(car)
     } catch (error: unknown) {
+      if (error instanceof CarNotFoundError) {
+        throw new NotFoundException(error.message)
+      }
       if (error instanceof DuplicateLicensePlateError) {
+        throw new BadRequestException(error.message)
+      }
+      if (error instanceof CarTypeNotFoundError) {
         throw new BadRequestException(error.message)
       }
       throw error
