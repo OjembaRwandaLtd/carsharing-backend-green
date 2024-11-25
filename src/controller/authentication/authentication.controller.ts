@@ -24,13 +24,13 @@ import {
   IAuthenticationService,
   User,
 } from '../../application'
+import { Public } from '../../application/public.decorator'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 import { UserDTO } from '../user'
 
 import { LoginRequestDTO } from './login.request-dto'
 import { LoginResponseDTO } from './login.response-dto'
-import { Public } from '../../application/public.decorator'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *

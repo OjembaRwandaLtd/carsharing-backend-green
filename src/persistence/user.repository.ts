@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
+import { Role } from 'src/application/role.enum'
+
 import {
   type IUserRepository,
   User,
@@ -8,7 +10,6 @@ import {
 } from '../application'
 
 import { type Transaction } from './database-connection.interface'
-import { Role } from 'src/application/role.enum'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *

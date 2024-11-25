@@ -156,7 +156,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body.message).toBe(
             'End date must come after start date',
           )
@@ -188,7 +188,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(newBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
+        .expect((response: { body: { message: string[] } }) => {
           expect(response.body.message).toStrictEqual(
             expect.arrayContaining([
               'carId must be a positive number',
@@ -240,7 +240,7 @@ describe('Booking Controller', () => {
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
         .expect(response => {
-          expect(response.body.message).toBe(
+          expect(response.body?.message).toBe(
             'End date must come after start date',
           )
         })
