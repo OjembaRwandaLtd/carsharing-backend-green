@@ -12,7 +12,7 @@ import { type Request } from 'express'
 import { Reflector } from '@nestjs/core'
 
 import { type UserID, AuthenticationConfig, IUserService } from '../application'
-import { IS_PUBLIC_KEY } from 'src/application/public.decorator'
+import { IS_PUBLIC_KEY } from '../application/public.decorator'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
