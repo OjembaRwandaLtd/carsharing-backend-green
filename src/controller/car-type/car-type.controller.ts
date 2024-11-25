@@ -22,6 +22,7 @@ import {
 
 import { CarType, type CarTypeID, ICarTypeService } from '../../application'
 import { AuthenticationGuard } from '../authentication.guard'
+import { RolesGuard } from '../roles.guard'
 
 import { CarTypeDTO, CreateCarTypeDTO, PatchCarTypeDTO } from './car-type.dto'
 import { Roles } from '../roles.decorator'
@@ -36,7 +37,7 @@ import { Role } from '../../application/role.enum'
 @ApiInternalServerErrorResponse({
   description: 'An internal server error occurred.',
 })
-@UseGuards(AuthenticationGuard)
+@UseGuards(AuthenticationGuard, RolesGuard)
 @Controller('/car-types')
 export class CarTypeController {
   private readonly carTypeService: ICarTypeService
