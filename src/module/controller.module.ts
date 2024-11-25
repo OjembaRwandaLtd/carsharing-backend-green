@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { AuthenticationConfig } from '../application'
 import {
   AuthenticationController,
+  AuthenticationGuard,
   BookingController,
   CarController,
   CarTypeController,
@@ -39,6 +40,10 @@ import { RolesGuard } from 'src/controller/roles.guard'
     BookingController,
   ],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

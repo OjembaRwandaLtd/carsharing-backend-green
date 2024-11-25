@@ -8,6 +8,7 @@ import {
 } from '../application'
 
 import { type Transaction } from './database-connection.interface'
+import { Role } from 'src/application/role.enum'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
@@ -19,6 +20,7 @@ type Row = {
   id: number
   name: string
   password: string
+  role: Role
 }
 
 function rowToDomain(row: Row): User {
@@ -26,6 +28,7 @@ function rowToDomain(row: Row): User {
     id: row.id as UserID,
     name: row.name,
     passwordHash: row.password,
+    role: row.role,
   })
 }
 

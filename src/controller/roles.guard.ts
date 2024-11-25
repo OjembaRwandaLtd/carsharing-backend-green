@@ -3,12 +3,13 @@ import {
   ExecutionContext,
   HttpException,
   Injectable,
+  ForbiddenException,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { Observable } from 'rxjs'
+import { AuthenticationGuard } from './authentication.guard'
 import { ROLES_KEY } from './roles.decorator'
 import { Role } from 'src/application/role.enum'
-import { ValidationError } from 'class-validator'
+import { Observable } from 'rxjs'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -25,12 +26,19 @@ export class RolesGuard implements CanActivate {
       return true
     }
 
-    const user = context.switchToHttp().getRequest().user
-    if (!user || !user.role) {
-      throw new HttpException('User role is not defined', 400)
+    const request = context.switchToHttp().getRequest()
+    const user = request[AuthenticationGuard.USER_REQUEST_PROPERTY]
+
+    console.log(user)
+
+    if (!user) {
+      throw new ForbiddenException('User not found')
     }
 
-    const roles = [user.role]
-    return requiredRoles.some(role => roles.includes(role))
+    if (!requiredRoles.includes(user.role)) {
+      throw new ForbiddenException('User does not have the required role')
+    }
+
+    return true
   }
 }
