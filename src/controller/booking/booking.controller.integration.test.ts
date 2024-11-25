@@ -116,8 +116,8 @@ describe('Booking Controller', () => {
   describe('create', () => {
     it('should create a new booking', async () => {
       const newBooking = {
-        startDate: new Date(Date.now() + 100),
-        endDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        endDate: new Date('2025-11-25T00:00:00.000Z'),
+        startDate: new Date('2025-11-23T00:00:00.000Z'),
         carId: 13 as CarID,
       }
 
@@ -137,8 +137,8 @@ describe('Booking Controller', () => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...createdBooking,
-              startDate: new Date(Date.now() + 100).toISOString(),
-              endDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+              endDate: new Date('2025-11-25T00:00:00.000Z').toISOString(),
+              startDate: new Date('2025-11-23T00:00:00.000Z').toISOString(),
             }),
           )
         })
