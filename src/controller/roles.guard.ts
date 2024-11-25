@@ -1,8 +1,14 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
+import {
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  Injectable,
+} from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { Observable } from 'rxjs'
 import { ROLES_KEY } from './roles.decorator'
 import { Role } from 'src/application/role.enum'
+import { ValidationError } from 'class-validator'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -19,7 +25,12 @@ export class RolesGuard implements CanActivate {
       return true
     }
 
-    const { user } = context.switchToHttp().getRequest()
-    return requiredRoles.some(role => user.roles?.includes(role))
+    const user = context.switchToHttp().getRequest().user
+    if (!user || !user.roles) {
+      throw new HttpException('User roles are not defined', 400)
+    }
+
+    const roles = user.roles
+    return requiredRoles.some(role => roles.includes(role))
   }
 }
