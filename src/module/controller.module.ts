@@ -12,6 +12,8 @@ import {
 
 import { ConfigModule } from './config.module'
 import { ServiceModule } from './service.module'
+import { APP_GUARD } from '@nestjs/core'
+import { RolesGuard } from 'src/controller/roles.guard'
 
 @Module({
   imports: [
@@ -35,6 +37,12 @@ import { ServiceModule } from './service.module'
     CarTypeController,
     UserController,
     BookingController,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class ControllerModule {}
