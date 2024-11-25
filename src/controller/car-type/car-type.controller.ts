@@ -117,6 +117,7 @@ export class CarTypeController {
   @ApiNotFoundResponse({
     description: 'No car type with the given id was found.',
   })
+  @Roles(Role.ADMIN)
   @Patch(':id')
   public async patch(
     @Param('id', ParseIntPipe) carTypeId: CarTypeID,
