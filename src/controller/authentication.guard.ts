@@ -9,6 +9,8 @@ import {
 import { ModuleRef } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
 import { type Request } from 'express'
+import { Reflector } from '@nestjs/core'
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator'
 
 import { type UserID, AuthenticationConfig, IUserService } from '../application'
 
@@ -39,6 +41,7 @@ export class AuthenticationGuard implements CanActivate {
     authenticationConfig: AuthenticationConfig,
     moduleReference: ModuleRef,
     jwtService: JwtService,
+    private reflector: Reflector,
   ) {
     this.config = authenticationConfig
     this.jwtService = jwtService
@@ -52,6 +55,14 @@ export class AuthenticationGuard implements CanActivate {
   // This is the function called by Nest.js whenever a route is invoked which is protected by this guard. If it returns
   // false or throws an exception, access is denied.
   public async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ])
+    if (isPublic) {
+      return true
+    }
+
     const request = context.switchToHttp().getRequest<Request>()
     const token = this.extractTokenFromHeader(request)
     const userId = this.getUserIdFromJwt(token)
