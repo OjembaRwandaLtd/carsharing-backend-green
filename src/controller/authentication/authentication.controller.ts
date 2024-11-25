@@ -30,6 +30,7 @@ import { UserDTO } from '../user'
 
 import { LoginRequestDTO } from './login.request-dto'
 import { LoginResponseDTO } from './login.response-dto'
+import { Public } from 'src/application/public.decorator'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
@@ -46,6 +47,7 @@ import { LoginResponseDTO } from './login.response-dto'
 @ApiInternalServerErrorResponse({
   description: 'An internal server error occurred.',
 })
+@Public()
 @Controller('/auth')
 export class AuthenticationController {
   private readonly authenticationService: IAuthenticationService
