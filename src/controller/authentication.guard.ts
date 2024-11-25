@@ -10,9 +10,9 @@ import { ModuleRef } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
 import { type Request } from 'express'
 import { Reflector } from '@nestjs/core'
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator'
 
 import { type UserID, AuthenticationConfig, IUserService } from '../application'
+import { IS_PUBLIC_KEY } from 'src/application/public.decorator'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
