@@ -78,6 +78,7 @@ describe('AuthenticationGuard', () => {
     moduleReferenceMock.get.mockReturnValue(userServiceMock)
 
     const reflector = new Reflector()
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false)
 
     authenticationGuard = new AuthenticationGuard(
       config,
