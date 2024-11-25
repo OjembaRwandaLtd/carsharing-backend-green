@@ -18,11 +18,19 @@ import { configureGlobalEnhancers } from '../../setup-app'
 import { AuthenticationGuard } from '../authentication.guard'
 
 import { CarTypeController } from './car-type.controller'
+import { Role } from '../../application/role.enum'
 
 describe('CarTypeController', () => {
   const user = UserBuilder.from({
     id: 42,
     name: 'peter',
+    role: Role.USER,
+  }).build()
+
+  const admin = UserBuilder.from({
+    id: 43,
+    name: 'john',
+    role: Role.ADMIN,
   }).build()
 
   const carTypeOne = CarTypeBuilder.from({
@@ -119,13 +127,15 @@ describe('CarTypeController', () => {
   })
 
   // Re-enable this test when you're implementing "Rights and Roles - Module 1".
-  describe.skip('create', () => {
+  describe('create', () => {
     it('should fail if the user is not an administrator', async () => {
+      authenticationGuardMock.user = UserBuilder.from(user).build()
+
       await request(app.getHttpServer())
         .post(`/car-types`)
         .send({
           name: 'New name!',
-          imageUrl: null,
+          imageUrl: 'http://images.local/cartypes/13',
         })
         .expect(HttpStatus.FORBIDDEN)
 
@@ -137,7 +147,7 @@ describe('CarTypeController', () => {
       carTypeServiceMock.create.mockResolvedValue(newCarType)
 
       // TODO: You have to turn the user into an administrator here for the test to pass!
-      authenticationGuardMock.user = UserBuilder.from(user).build()
+      authenticationGuardMock.user = UserBuilder.from(admin).build()
 
       await request(app.getHttpServer())
         .post(`/car-types`)
