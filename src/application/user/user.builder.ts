@@ -26,12 +26,6 @@ export class UserBuilder {
     return new UserBuilder().with(properties)
   }
 
-  public static makeAdmin(
-    properties: User | Partial<UntaggedUserProperties>,
-  ): UserBuilder {
-    return new UserBuilder().with({ ...properties, role: Role.ADMIN })
-  }
-
   public with(properties: Partial<UntaggedUserProperties>): this {
     let key: keyof UntaggedUserProperties
 
@@ -65,6 +59,11 @@ export class UserBuilder {
 
   public withPasswordHash(passwordHash: string): this {
     this.properties.passwordHash = passwordHash
+    return this
+  }
+
+  public withRole(role: Role): this {
+    this.properties.role = role
     return this
   }
 
