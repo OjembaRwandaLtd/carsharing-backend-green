@@ -25,7 +25,7 @@ import { AuthenticationGuard } from '../authentication.guard'
 
 import { CarTypeDTO, CreateCarTypeDTO, PatchCarTypeDTO } from './car-type.dto'
 import { Roles } from '../roles.decorator'
-import { Role } from 'src/application/role.enum'
+import { Role } from '../../application/role.enum'
 
 @ApiTags(CarType.name)
 @ApiBearerAuth()
