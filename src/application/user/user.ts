@@ -8,6 +8,7 @@ import {
 import { type Opaque } from 'type-fest'
 
 import { validate } from '../../util'
+import { Role } from '../role.enum'
 
 export type UserID = Opaque<number, 'user-id'>
 
@@ -24,6 +25,8 @@ export class User {
 
   @IsHash('sha512')
   public readonly passwordHash: string
+
+  roles: Role[] = []
 
   public constructor(data: UserProperties) {
     this.id = data.id
