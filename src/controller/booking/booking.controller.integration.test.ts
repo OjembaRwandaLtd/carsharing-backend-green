@@ -137,7 +137,7 @@ describe('Booking Controller', () => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...createdBooking,
-              startDate: new Date(Date.now()).toISOString(),
+              startDate: new Date(Date.now() + 100).toISOString(),
               endDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
             }),
           )
