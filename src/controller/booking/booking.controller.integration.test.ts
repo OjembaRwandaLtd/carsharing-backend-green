@@ -116,7 +116,7 @@ describe('Booking Controller', () => {
   describe('create', () => {
     it('should create a new booking', async () => {
       const newBooking = {
-        startDate: new Date(Date.now()),
+        startDate: new Date(Date.now() + 100),
         endDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
         carId: 13 as CarID,
       }
