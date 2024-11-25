@@ -26,11 +26,11 @@ export class RolesGuard implements CanActivate {
     }
 
     const user = context.switchToHttp().getRequest().user
-    if (!user || !user.roles) {
-      throw new HttpException('User roles are not defined', 400)
+    if (!user || !user.role) {
+      throw new HttpException('User role is not defined', 400)
     }
 
-    const roles = user.roles
+    const roles = [user.role]
     return requiredRoles.some(role => roles.includes(role))
   }
 }
