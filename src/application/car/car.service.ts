@@ -84,7 +84,7 @@ export class CarService implements ICarService {
       }
 
       const carState = updates.state
-      if (!carState) throw new AccessDeniedError('car', car.id)
+      if (!carState) throw new AccessDeniedError('car denied instead', car.id)
       return new Car({
         ...car,
         state: carState,
