@@ -70,7 +70,6 @@ export class BookingController {
   })
   @Get()
   public async getAll(): Promise<BookingDTO[]> {
-    console.log('getAll')
     // eslint-disable-next-line unicorn/no-await-expression-member
     return (await this.bookingService.getAll()).map(booking =>
       BookingDTO.fromModel(booking),
