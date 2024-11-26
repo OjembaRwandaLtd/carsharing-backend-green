@@ -1,8 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsInt, IsNotEmpty, IsPositive, IsString } from 'class-validator'
+import { ApiProperty, PickType } from '@nestjs/swagger'
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsPositive,
+  IsString,
+} from 'class-validator'
 import { type Writable } from 'type-fest'
 
 import { User, type UserID } from '../../application'
+import { Role } from '../../application/role.enum'
 import { validate } from '../../util'
 
 export class UserDTO {
@@ -23,6 +30,15 @@ export class UserDTO {
   @IsNotEmpty()
   public readonly name!: string
 
+  @ApiProperty({
+    description: 'The role of user',
+    enum: Role,
+    example: Role.ADMIN,
+  })
+  @IsEnum(Role)
+  @IsNotEmpty()
+  public readonly role!: Role
+
   public static create(data: { id: UserID; name: string }): UserDTO {
     const instance = new UserDTO() as Writable<UserDTO>
 
@@ -38,3 +54,8 @@ export class UserDTO {
     return UserDTO.create(user)
   }
 }
+
+export class CreateUserDTO extends PickType(UserDTO, [
+  'name',
+  'role',
+] as const) {}
