@@ -97,9 +97,11 @@ export class BookingController {
     @Param('id', ParseIntPipe) id: BookingID,
     @CurrentUser() currentUser: User,
   ): Promise<BookingDTO> {
-    return BookingDTO.fromModel(await this.bookingService.get(id, currentUser.id))
+    return BookingDTO.fromModel(
+      await this.bookingService.get(id, currentUser.id),
+    )
   }
-  
+
   @Post()
   public async create(
     @CurrentUser() renter: User,

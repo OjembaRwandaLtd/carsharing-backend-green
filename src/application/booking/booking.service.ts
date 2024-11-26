@@ -88,8 +88,7 @@ export class BookingService {
       if (!booking) throw new BookingNotFoundError(id)
       const car = await this.carRepository.get(tx, booking.carId)
       if (currentUserId !== booking.renterId && currentUserId !== car.ownerId)
-        throw new AccessDeniedError(
-          'get booking', booking.id )
+        throw new AccessDeniedError('get booking', booking.id)
       return booking
     })
   }

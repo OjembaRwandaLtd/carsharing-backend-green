@@ -17,7 +17,7 @@ export abstract class IBookingService {
 
   public abstract getAll(): Promise<Booking[]>
 
-  public abstract get(id: BookingID, currnetUser:UserID): Promise<Booking>
+  public abstract get(id: BookingID, currnetUser: UserID): Promise<Booking>
 
   public abstract getByRenterId(renterId: UserID): Promise<Booking[]>
 }
