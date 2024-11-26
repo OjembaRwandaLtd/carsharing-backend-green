@@ -35,12 +35,18 @@ function rowToDomain(row: Row): Booking {
 
 @Injectable()
 export class BookingRepository implements IBookingRepository {
-  public async get(tx: Transaction, id: BookingID): Promise<Booking | null> {
+  public async find(tx: Transaction, id: BookingID): Promise<Booking | null> {
     const booking: Row[] = await tx.any(
       `SELECT * FROM bookings WHERE id = ${String(id)}`,
     )
     return booking ? booking.map(rowToDomain)[0] : null
   }
+
+  public async get(tx: Transaction, id: BookingID): Promise<Booking | null> {
+    const booking = await this.find(tx, id)
+    return booking
+  }
+  
 
   public async getAll(tx: Transaction): Promise<Booking[]> {
     const bookings: Row[] = await tx.query('SELECT * FROM bookings')

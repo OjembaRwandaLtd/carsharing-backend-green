@@ -6,6 +6,8 @@ import { CarID } from '../car/car'
 import { type Booking, type BookingID, type BookingProperties } from './booking'
 
 export abstract class IBookingRepository {
+  public abstract find(tx: Transaction, id: BookingID): Promise<Booking | null>
+
   public abstract get(tx: Transaction, id: BookingID): Promise<Booking | null>
 
   public abstract getAll(tx: Transaction): Promise<Booking[]>

@@ -88,17 +88,8 @@ export class BookingService {
     updates: Partial<Except<BookingProperties, 'id'>>,
   ): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
-      const booking = await this.get(bookingId)
-
-      if (
-        updates.state &&
-        !this.validateStateTransition(booking.state, updates.state)
-      ) {
-        throw new InvalidBookingStateTransitionError(
-          booking.state,
-          updates.state,
-        )
-      }
+      const booking = await this.bookingRepository.find(tx, bookingId)
+      if (!booking) throw new BookingNotFoundError(bookingId)
       const updatedBooking = new Booking({
         ...booking,
         ...updates,
