@@ -120,6 +120,7 @@ export class BookingService {
         tx,
         bookingId,
       )
+
       if (!deletedBooking) {
         throw new BadRequestException('No deleted bookings')
       }

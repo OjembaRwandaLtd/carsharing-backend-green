@@ -11,10 +11,7 @@ import {
   UserID,
 } from '../../application'
 import { BookingBuilder } from '../../application/booking/booking.builder'
-import {
-  BookingServiceMock,
-  mockBookingService,
-} from '../../application/booking/booking.service.mock'
+import { BookingServiceMock, mockBookingService } from '../../application/booking/booking.service.mock'
 import { UserBuilder } from '../../builders'
 import { configureGlobalEnhancers } from '../../setup-app'
 import { AuthenticationGuard } from '../authentication.guard'

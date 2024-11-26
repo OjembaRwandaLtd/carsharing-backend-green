@@ -120,11 +120,10 @@ export class BookingRepository implements IBookingRepository {
     bookingId: BookingID,
   ): Promise<Booking | null> {
     const row = await tx.oneOrNone<Row>(
-      'DELETE FROM bookings WHERE id = $(booingId)',
-      {
-        bookingId,
-      },
+      `DELETE FROM bookings WHERE id = $(bookingId) RETURNING *`,
+      { bookingId },
     )
+
     return row ? rowToDomain(row) : null
   }
 }
