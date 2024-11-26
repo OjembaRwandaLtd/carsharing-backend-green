@@ -46,7 +46,6 @@ export class BookingRepository implements IBookingRepository {
     const booking = await this.find(tx, id)
     return booking
   }
-  
 
   public async getAll(tx: Transaction): Promise<Booking[]> {
     const bookings: Row[] = await tx.query('SELECT * FROM bookings')
