@@ -3,6 +3,7 @@ import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 import { CarID } from '../car/car'
+import { UserID } from '../user'
 
 import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
@@ -105,6 +106,24 @@ export class BookingService {
         id: bookingId,
       })
       return await this.bookingRepository.update(tx, updatedBooking)
+    })
+  }
+
+  public async delete(bookingId: BookingID): Promise<Booking> {
+    return this.databaseConnection.transactional(async tx => {
+      const booking = await this.get(bookingId)
+
+      if (!booking || booking.state === BookingState.PICKED_UP) {
+        throw new BadRequestException('Booking can not be deleted')
+      }
+      const deletedBooking = await this.bookingRepository.deleteById(
+        tx,
+        bookingId,
+      )
+      if (!deletedBooking) {
+        throw new BadRequestException('No deleted bookings')
+      }
+      return deletedBooking
     })
   }
 }

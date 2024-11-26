@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -21,6 +22,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+import dayjs from 'dayjs'
 
 import {
   Booking,
@@ -36,7 +38,6 @@ import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
 import { BookingDTO, CreateBookingDTO, PatchBookingDTO } from './booking.dto'
-import dayjs from 'dayjs'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -178,6 +179,16 @@ export class BookingController {
       if (error instanceof InvalidBookingStateTransitionError) {
         throw new BadRequestException(error.message)
       }
+      throw error
+    }
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: BookingID) {
+    try {
+      const deletedBooking = await this.bookingService.delete(id)
+      return BookingDTO.fromModel(deletedBooking)
+    } catch (error) {
       throw error
     }
   }
