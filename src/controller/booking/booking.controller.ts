@@ -8,9 +8,9 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
+
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -31,12 +31,13 @@ import {
   type User,
   UserID,
 } from '../../application'
+
+import dayjs from 'dayjs'
 import { InvalidBookingStateTransitionError } from '../../application/booking/errors/invalid-booking-state-transition.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
 import { BookingDTO, CreateBookingDTO, PatchBookingDTO } from './booking.dto'
-import dayjs from 'dayjs'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
