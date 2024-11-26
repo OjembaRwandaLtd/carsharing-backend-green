@@ -12,7 +12,6 @@ import { type UserID } from '../user'
 
 import { Car, type CarID, type CarProperties } from './car'
 import { CarNotFoundError } from './car-not-found.error'
-import { CarState } from './car-state'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
 import { DuplicateLicensePlateError } from './error'
