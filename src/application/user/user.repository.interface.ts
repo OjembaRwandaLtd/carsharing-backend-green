@@ -13,4 +13,6 @@ export abstract class IUserRepository {
   public abstract get(tx: Transaction, id: UserID): Promise<User>
 
   public abstract getAll(tx: Transaction): Promise<User[]>
+
+  public abstract create(tx: Transaction, user: User): Promise<User>
 }
