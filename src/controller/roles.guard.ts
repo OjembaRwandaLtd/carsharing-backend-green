@@ -19,18 +19,18 @@ export class RolesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ])
+    const requiredRoles: Role[] | undefined = this.reflector.getAllAndOverride<
+      Role[]
+    >(ROLES_KEY, [context.getHandler(), context.getClass()])
+
     if (!requiredRoles) {
       return true
     }
 
     const request = context.switchToHttp().getRequest()
-    const user = request[AuthenticationGuard.USER_REQUEST_PROPERTY]
-
-    console.log(user)
+    const user = request[AuthenticationGuard.USER_REQUEST_PROPERTY] as
+      | { role: Role }
+      | undefined
 
     if (!user) {
       throw new ForbiddenException('User not found')
