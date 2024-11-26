@@ -84,7 +84,7 @@ export class CarService implements ICarService {
       }
 
       const carState = updates.state
-      if (!carState) throw new AccessDeniedError('car denied instead', car.id)
+      if (!carState) throw new AccessDeniedError('car denied ', car.id)
       return new Car({
         ...car,
         state: carState,
@@ -123,7 +123,7 @@ export class CarService implements ICarService {
         updates,
         currentUserId,
       )
-      const carUpdate =
+      const carUpdating =
         updatedCarState ||
         new Car({
           ...car,
@@ -131,7 +131,7 @@ export class CarService implements ICarService {
           id: carId,
         })
 
-      const updatedCar = await this.carRepository.update(tx, carUpdate)
+      const updatedCar = await this.carRepository.update(tx, carUpdating)
 
       return updatedCar
     })
