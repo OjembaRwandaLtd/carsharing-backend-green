@@ -1,5 +1,8 @@
+import { CarBuilder } from '../car/car.builder'
 import {
+  CarRepositoryMock,
   type DatabaseConnectionMock,
+  mockCarRepository,
   mockDatabaseConnection,
 } from '../../mocks'
 import { UserID } from '../user'
@@ -18,14 +21,17 @@ describe('BookingService', () => {
   let bookingService: BookingService
   let bookingRepositoryMock: BookingRepositoryMock
   let databaseConnectionMock: DatabaseConnectionMock
+  let carRepositoryMock: CarRepositoryMock
 
   beforeEach(() => {
     bookingRepositoryMock = mockBookingRepository()
     databaseConnectionMock = mockDatabaseConnection()
+    carRepositoryMock = mockCarRepository()
 
     bookingService = new BookingService(
       bookingRepositoryMock,
       databaseConnectionMock,
+      carRepositoryMock,
     )
   })
 
@@ -70,18 +76,21 @@ describe('BookingService', () => {
         .withId(1)
         .withRenterId(userId)
         .build()
-      bookingRepositoryMock.get.mockResolvedValue(booking)
+      const newCar = new CarBuilder().build()
 
-      const result = await bookingService.get(booking.id)
+      bookingRepositoryMock.get.mockResolvedValue(booking)
+      carRepositoryMock.get.mockResolvedValue(newCar)
+
+      const result = await bookingService.get(booking.id, userId)
       expect(result).toEqual(booking)
     })
 
     it('should throw BookingNotFoundError when the booking does not exist', async () => {
       const bookingId = 999 as BookingID
-
+      const userId = 1 as UserID
       bookingRepositoryMock.get.mockResolvedValue(null)
 
-      await expect(bookingService.get(bookingId)).rejects.toThrow(
+      await expect(bookingService.get(bookingId, userId)).rejects.toThrow(
         BookingNotFoundError,
       )
     })
