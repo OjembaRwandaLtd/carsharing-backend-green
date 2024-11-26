@@ -11,14 +11,16 @@ import {
   UserID,
 } from '../../application'
 import { BookingBuilder } from '../../application/booking/booking.builder'
-import { BookingServiceMock } from '../../application/booking/booking.service.mock'
+import {
+  BookingServiceMock,
+  mockBookingService,
+} from '../../application/booking/booking.service.mock'
 import { UserBuilder } from '../../builders'
 import { configureGlobalEnhancers } from '../../setup-app'
 import { AuthenticationGuard } from '../authentication.guard'
 import { AuthenticationGuardMock } from '../authentication.guard.mock'
 
 import { BookingController } from './booking.controller'
-import { mockBookingService } from './booking.service.mock'
 
 describe('Booking Controller', () => {
   const user = UserBuilder.from({
