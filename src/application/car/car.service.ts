@@ -12,10 +12,10 @@ import { type UserID } from '../user'
 
 import { Car, type CarID, type CarProperties } from './car'
 import { CarNotFoundError } from './car-not-found.error'
+import { CarState } from './car-state'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
 import { DuplicateLicensePlateError } from './error'
-import { CarState } from './car-state'
 
 @Injectable()
 export class CarService implements ICarService {
@@ -74,7 +74,7 @@ export class CarService implements ICarService {
     car: Car,
     updates: Partial<Except<CarProperties, 'id'>>,
     currentUserId: UserID,
-  ): Promise<Car|null> {
+  ): Promise<Car | null> {
     if (car.ownerId !== currentUserId) {
       const booking = await this.databaseConnection.transactional(tx =>
         this.bookingRepository.getByCarId(tx, car.id),
@@ -97,6 +97,7 @@ export class CarService implements ICarService {
   public async update(
     carId: CarID,
     updates: Partial<Except<CarProperties, 'id'>>,
+    currentUserId: UserID,
   ): Promise<Car> {
     return await this.databaseConnection.transactional(async tx => {
       const car = await this.carRepository.get(tx, carId)
@@ -117,11 +118,19 @@ export class CarService implements ICarService {
         await this.carTypeRepository.get(tx, updates.carTypeId)
       }
 
-      const carUpdate = new Car({
-        ...car,
-        ...updates,
-        id: carId,
-      })
+      const updatedCarState = await this.updateCarState(
+        tx,
+        car,
+        updates,
+        currentUserId,
+      )
+      const carUpdate =
+        updatedCarState ||
+        new Car({
+          ...car,
+          ...updates,
+          id: carId,
+        })
 
       const updatedCar = await this.carRepository.update(tx, carUpdate)
 
