@@ -25,5 +25,5 @@ export abstract class IBookingRepository {
   public abstract deleteById(
     tx: Transaction,
     bookingId: BookingID,
-  ): Promise<Booking | null>
+  ): Promise<Booking>
 }

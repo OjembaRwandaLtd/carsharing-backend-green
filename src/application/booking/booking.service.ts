@@ -113,16 +113,18 @@ export class BookingService {
       const booking = await this.get(bookingId)
 
       if (!booking || booking.state === BookingState.PICKED_UP) {
-        throw new BadRequestException('Booking can not be deleted')
+        throw new BadRequestException(
+          'The booking is not found or the car was picked up',
+        )
       }
       const deletedBooking = await this.bookingRepository.deleteById(
         tx,
         bookingId,
       )
 
-      if (!deletedBooking) {
-        throw new BadRequestException('No deleted bookings')
-      }
+      // if (!deletedBooking) {
+      //   throw new BadRequestException('No deleted bookings')
+      // }
       return deletedBooking
     })
   }
