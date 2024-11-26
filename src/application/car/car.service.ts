@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
-import { IDatabaseConnection } from '../../persistence/database-connection.interface'
+import {
+  IDatabaseConnection,
+  Transaction,
+} from '../../persistence/database-connection.interface'
 import { AccessDeniedError } from '../access-denied.error'
 import { IBookingRepository } from '../booking/booking.repository.interface'
 import { ICarTypeRepository } from '../car-type'
@@ -12,6 +15,7 @@ import { CarNotFoundError } from './car-not-found.error'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
 import { DuplicateLicensePlateError } from './error'
+import { CarState } from './car-state'
 
 @Injectable()
 export class CarService implements ICarService {
@@ -65,33 +69,39 @@ export class CarService implements ICarService {
     })
   }
 
+  private async updateCarState(
+    tx: Transaction,
+    car: Car,
+    updates: Partial<Except<CarProperties, 'id'>>,
+    currentUserId: UserID,
+  ): Promise<Car|null> {
+    if (car.ownerId !== currentUserId) {
+      const booking = await this.databaseConnection.transactional(tx =>
+        this.bookingRepository.getByCarId(tx, car.id),
+      )
+
+      if (!booking || booking.renterId !== currentUserId) {
+        throw new AccessDeniedError('car', car.id)
+      }
+
+      const carState = updates.state
+      if (!carState) throw new AccessDeniedError('car', car.id)
+      return new Car({
+        ...car,
+        state: carState,
+      })
+    }
+    return null
+  }
+
   public async update(
     carId: CarID,
     updates: Partial<Except<CarProperties, 'id'>>,
-    currentUserId: UserID,
   ): Promise<Car> {
     return await this.databaseConnection.transactional(async tx => {
       const car = await this.carRepository.get(tx, carId)
 
       if (!car) throw new CarNotFoundError(carId)
-
-      if (car.ownerId !== currentUserId) {
-        const booking = await this.databaseConnection.transactional(tx =>
-          this.bookingRepository.getByCarId(tx, carId),
-        )
-
-        if (!booking || booking.renterId !== currentUserId) {
-          throw new AccessDeniedError('car', carId)
-        }
-
-        const carState = updates.state
-        if (!carState) throw new AccessDeniedError('car', carId)
-        const updatedCar = new Car({
-          ...car,
-          state: carState,
-        })
-        return this.carRepository.update(tx, updatedCar)
-      }
 
       if (updates.licensePlate) {
         const existingCar = await this.carRepository.findByLicensePlate(
