@@ -48,7 +48,8 @@ export class BookingService {
     updates: Partial<Except<BookingProperties, 'id'>>,
   ): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
-      const booking = await this.get(bookingId)
+      const booking = await this.bookingRepository.find(tx, bookingId)
+      if (!booking) throw new BookingNotFoundError(bookingId)
       const updatedBooking = new Booking({
         ...booking,
         ...updates,
