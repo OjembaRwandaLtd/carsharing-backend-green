@@ -49,7 +49,7 @@ export class UserService implements IUserService {
   }
 
   public async create(user: Except<UserProperties, 'id'>): Promise<User> {
-    const passwordHash = createHash('sha256')
+    const passwordHash = createHash('sha512')
       .update(user.passwordHash)
       .digest('hex')
     return this.databaseConnection.transactional(tx =>

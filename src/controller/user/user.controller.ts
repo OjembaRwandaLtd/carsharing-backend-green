@@ -17,6 +17,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+import { Except } from 'type-fest'
 
 import { Role } from 'src/application/role.enum'
 
@@ -101,7 +102,7 @@ export class UserController {
   })
   @Roles(Role.ADMIN)
   @Post()
-  public async create(@Body() user: UserDTO): Promise<UserDTO> {
+  public async create(@Body() user: Except<UserDTO, 'id'>): Promise<UserDTO> {
     const newUser = await this.userService.create(user)
     return UserDTO.fromModel(newUser)
   }

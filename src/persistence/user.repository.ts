@@ -79,10 +79,9 @@ export class UserRepository implements IUserRepository {
     user: Except<User, 'id'>,
   ): Promise<User> {
     const row = await tx.one<Row>(
-      'INSERT INTO users (name, role, passwordHash) VALUES ($(name), $(role), $(passwordHash)) RETURNING *',
+      'INSERT INTO users (name, role, password) VALUES ($(name), $(role), $(passwordHash)) RETURNING *',
       { ...user },
     )
-    console.log(row)
     return rowToDomain(row)
   }
 }
