@@ -25,11 +25,10 @@ import { IUserService, User, type UserID } from '../../application'
 import { AuthenticationGuard } from '../authentication.guard'
 import { RolesGuard } from '../roles.guard'
 import { Roles } from '../roles.decorator'
-import { Role } from 'src/application/role.enum'
 
 import { UserDTO } from './user.dto'
 import { CurrentUser } from '../current-user.decorator'
-import { HTTP_CODE_METADATA } from '@nestjs/common/constants'
+import { Role } from 'src/application/role.enum'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *

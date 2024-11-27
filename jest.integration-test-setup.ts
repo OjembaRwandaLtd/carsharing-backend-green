@@ -21,7 +21,7 @@ import {
   type UserID,
 } from './src/application'
 import { DatabaseConnectionConfig, type Transaction } from './src/persistence'
-import { Role } from './src/application/role.enum'
+import { Role } from 'src/application/role.enum'
 
 const execFile = promisify(execFileCallback)
 
