@@ -20,7 +20,7 @@ type Row = {
   id: number
   name: string
   password: string
-  role: Role,
+  role: Role
   is_deleted: boolean
 }
 
@@ -38,7 +38,7 @@ function rowToDomain(row: Row): User {
 export class UserRepository implements IUserRepository {
   public async find(tx: Transaction, id: UserID): Promise<User | null> {
     const row = await tx.oneOrNone<Row>(
-      'SELECT * FROM users WHERE id = $(id)',
+      'SELECT * FROM users WHERE id = $(id) AND is_deleted = false',
       {
         id,
       },
@@ -49,7 +49,7 @@ export class UserRepository implements IUserRepository {
 
   public async findByName(tx: Transaction, name: string): Promise<User | null> {
     const row = await tx.oneOrNone<Row>(
-      'SELECT * FROM users WHERE name = $(name)',
+      'SELECT * FROM users WHERE name = $(name) AND is_deleted = false',
       {
         name,
       },
@@ -69,17 +69,18 @@ export class UserRepository implements IUserRepository {
   }
 
   public async getAll(tx: Transaction): Promise<User[]> {
-    const rows = await tx.any<Row>('SELECT * FROM users')
+    const rows = await tx.any<Row>('SELECT * FROM users AND is_deleted = false')
 
     return rows.map(row => rowToDomain(row))
   }
 
-  public async deleteById(tx: Transaction, id: UserID): Promise<User> {
-    const user = await this.find(tx, id)
-    if (!user) {
+  public async deleteById(tx: Transaction, id: UserID): Promise<void> {
+    const result = await tx.result(
+      `UPDATE users SET is_deleted = true WHERE id = $(id)`,
+      { id },
+    )
+    if (result.rowCount === 0) {
       throw new UserNotFoundError(id)
     }
-    await tx.none('DELETE FROM users WHERE id = $(id)', { id })
-    return user
   }
 }

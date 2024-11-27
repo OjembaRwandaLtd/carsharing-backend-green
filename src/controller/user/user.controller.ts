@@ -1,8 +1,19 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards, Delete } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  UseGuards,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -12,8 +23,13 @@ import {
 
 import { IUserService, User, type UserID } from '../../application'
 import { AuthenticationGuard } from '../authentication.guard'
+import { RolesGuard } from '../roles.guard'
+import { Roles } from '../roles.decorator'
+import { Role } from 'src/application/role.enum'
 
 import { UserDTO } from './user.dto'
+import { CurrentUser } from '../current-user.decorator'
+import { HTTP_CODE_METADATA } from '@nestjs/common/constants'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
@@ -30,7 +46,7 @@ import { UserDTO } from './user.dto'
 @ApiInternalServerErrorResponse({
   description: 'An internal server error occurred.',
 })
-@UseGuards(AuthenticationGuard)
+@UseGuards(AuthenticationGuard, RolesGuard)
 @Controller('/users')
 export class UserController {
   private readonly userService: IUserService
@@ -82,22 +98,27 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Retrieve a specific user.',
+    summary: 'Delete a user by ID',
   })
-  @ApiOkResponse({
-    description: 'The request was successful.',
-    type: UserDTO,
+  @ApiNoContentResponse({
+    description: 'User successfully deleted',
   })
-  @ApiBadRequestResponse({
-    description:
-      'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
+  @ApiConflictResponse({
+    description: 'Attempt to delete own user account',
   })
   @ApiNotFoundResponse({
-    description: 'No user with the given id was found.',
+    description: 'No user with the given id was found',
   })
-  @Delete('id')
-  public async deleteUser(@Param('id', ParseIntPipe) id: UserID): Promise<UserDTO>{
-    const user = await this.userService.deleteById(id)
-    return UserDTO.fromModel(user)
+  @ApiBadRequestResponse({
+    description: 'Invalid user ID',
+  })
+  @Roles(Role.ADMIN)
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async delete(
+    @Param('id', ParseIntPipe) id: UserID,
+    @CurrentUser() currentUser: User,
+  ) {
+    return await this.userService.deleteById(id, currentUser)
   }
 }

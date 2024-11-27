@@ -8,5 +8,6 @@ export function mockUserService(): UserServiceMock {
     getAll: jest.fn(),
     find: jest.fn(),
     findByName: jest.fn(),
+    deleteById: jest.fn(),
   }
 }

@@ -14,5 +14,5 @@ export abstract class IUserRepository {
 
   public abstract getAll(tx: Transaction): Promise<User[]>
 
-  public abstract deleteById(tx: Transaction, id: UserID): Promise<User>
+  public abstract deleteById(tx: Transaction, id: UserID): Promise<void>
 }

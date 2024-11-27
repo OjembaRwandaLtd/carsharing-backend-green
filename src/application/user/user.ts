@@ -4,7 +4,7 @@ import {
   IsNotEmpty,
   IsPositive,
   IsString,
-  IsBoolean
+  IsBoolean,
 } from 'class-validator'
 import { type Opaque } from 'type-fest'
 
@@ -17,7 +17,7 @@ export type UserProperties = {
   id: UserID
   name: string
   passwordHash: string
-  role: Role, 
+  role: Role
   isDeleted: boolean
 }
 
