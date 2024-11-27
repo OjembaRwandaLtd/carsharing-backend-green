@@ -26,6 +26,11 @@ export function up(pgm: MigrationBuilder): void {
       notNull: true,
       default: 'USER',
     },
+    is_deleted: {
+      type: 'boolean',
+      notNull: true,
+      default: false,
+    },
   })
 
   pgm.createTable('car_types', {
