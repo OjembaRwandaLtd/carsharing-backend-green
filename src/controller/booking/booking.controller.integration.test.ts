@@ -11,7 +11,10 @@ import {
   UserID,
 } from '../../application'
 import { BookingBuilder } from '../../application/booking/booking.builder'
-import { BookingServiceMock, mockBookingService } from '../../application/booking/booking.service.mock'
+import {
+  BookingServiceMock,
+  mockBookingService,
+} from '../../application/booking/booking.service.mock'
 import { UserBuilder } from '../../builders'
 import { configureGlobalEnhancers } from '../../setup-app'
 import { AuthenticationGuard } from '../authentication.guard'
@@ -155,7 +158,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body.message).toBe(
             'End date must come after start date',
           )
@@ -187,7 +190,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(newBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body.message).toStrictEqual(
             expect.arrayContaining([
               'carId must be a positive number',
@@ -208,7 +211,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body.message).toBe(
             'End date must come after start date',
           )
@@ -238,7 +241,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body.message).toBe(
             'End date must come after start date',
           )
@@ -256,7 +259,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(invalidBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body.message).toBe(
             'End date must come after start date',
           )
@@ -338,7 +341,7 @@ describe('Booking Controller', () => {
         .patch(`/bookings/${booking1.id}`)
         .send(updates)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body.message).toStrictEqual(
             expect.arrayContaining([
               'state must be one of the following values: ACCEPTED, PICKED_UP, RETURNED, DECLINED, PENDING',
@@ -360,7 +363,7 @@ describe('Booking Controller', () => {
         .patch(`/bookings/999`)
         .send(updates)
         .expect(HttpStatus.NOT_FOUND)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body.message).toBe('Booking not found')
         })
     })
