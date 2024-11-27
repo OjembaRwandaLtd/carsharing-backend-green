@@ -5,6 +5,8 @@ import { IDatabaseConnection } from '../../persistence/database-connection.inter
 import { type User, type UserID } from './user'
 import { IUserRepository } from './user.repository.interface'
 import { IUserService } from './user.service.interface'
+import { NotFoundError } from '../not-found.error'
+import { UserNotFoundError } from './user-not-found.error'
 
 @Injectable()
 export class UserService implements IUserService {
@@ -43,5 +45,11 @@ export class UserService implements IUserService {
     return this.databaseConnection.transactional(tx =>
       this.repository.findByName(tx, name),
     )
+  }
+
+  public async deleteById(id: UserID): Promise<User> {
+    return this.databaseConnection.transactional(tx => {
+      return this.repository.deleteById(tx, id)
+    })
   }
 }

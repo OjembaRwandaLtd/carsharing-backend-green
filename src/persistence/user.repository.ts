@@ -20,7 +20,8 @@ type Row = {
   id: number
   name: string
   password: string
-  role: Role
+  role: Role,
+  is_deleted: boolean
 }
 
 function rowToDomain(row: Row): User {
@@ -29,6 +30,7 @@ function rowToDomain(row: Row): User {
     name: row.name,
     passwordHash: row.password,
     role: row.role,
+    isDeleted: row.is_deleted,
   })
 }
 
@@ -70,5 +72,14 @@ export class UserRepository implements IUserRepository {
     const rows = await tx.any<Row>('SELECT * FROM users')
 
     return rows.map(row => rowToDomain(row))
+  }
+
+  public async deleteById(tx: Transaction, id: UserID): Promise<User> {
+    const user = await this.find(tx, id)
+    if (!user) {
+      throw new UserNotFoundError(id)
+    }
+    await tx.none('DELETE FROM users WHERE id = $(id)', { id })
+    return user
   }
 }

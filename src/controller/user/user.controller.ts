@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, ParseIntPipe, UseGuards, Delete } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -77,6 +77,27 @@ export class UserController {
   public async get(@Param('id', ParseIntPipe) id: UserID): Promise<UserDTO> {
     const user = await this.userService.get(id)
 
+    return UserDTO.fromModel(user)
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Retrieve a specific user.',
+  })
+  @ApiOkResponse({
+    description: 'The request was successful.',
+    type: UserDTO,
+  })
+  @ApiBadRequestResponse({
+    description:
+      'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
+  })
+  @ApiNotFoundResponse({
+    description: 'No user with the given id was found.',
+  })
+  @Delete('id')
+  public async deleteUser(@Param('id', ParseIntPipe) id: UserID): Promise<UserDTO>{
+    const user = await this.userService.deleteById(id)
     return UserDTO.fromModel(user)
   }
 }

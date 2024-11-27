@@ -18,6 +18,7 @@ export class UserBuilder {
     passwordHash:
       'b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86',
     role: Role.USER,
+    isDeleted: false,
   }
 
   public static from(
@@ -67,6 +68,10 @@ export class UserBuilder {
     return this
   }
 
+  public withIsDeleted(isDeleted: boolean): this {
+    this.properties.isDeleted = isDeleted
+    return this
+  }
   public build(): User {
     return new User({ ...this.properties, id: this.properties.id as UserID })
   }

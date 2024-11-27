@@ -8,4 +8,6 @@ export abstract class IUserService {
   public abstract find(id: UserID): Promise<User | null>
 
   public abstract findByName(name: string): Promise<User | null>
+
+  public abstract deleteById(id: UserID): Promise<User>
 }
