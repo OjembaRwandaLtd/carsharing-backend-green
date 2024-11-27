@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
 import {
@@ -78,10 +78,11 @@ export class CarService implements ICarService {
       const booking = await this.databaseConnection.transactional(tx =>
         this.bookingRepository.getByCarId(tx, car.id),
       )
+      if (!booking)
+        throw new NotFoundException(`Booking with id : ${car.id} not found`)
 
-      if (!booking || booking.renterId !== currentUserId) {
+      if (booking.renterId !== currentUserId)
         throw new AccessDeniedError('car', car.id)
-      }
 
       const carState = updates.state
       if (!carState) throw new AccessDeniedError('car denied ', car.id)
@@ -108,32 +109,26 @@ export class CarService implements ICarService {
           tx,
           updates.licensePlate,
         )
-        if (existingCar !== null && existingCar.id !== car.id) {
+        if (existingCar && existingCar.id !== car.id)
           throw new DuplicateLicensePlateError(updates.licensePlate)
-        }
       }
 
-      if (updates.carTypeId) {
-        await this.carTypeRepository.get(tx, updates.carTypeId)
+      let carUpdating = new Car({
+        ...car,
+        ...updates,
+        id: carId,
+      })
+      if (updates.state) {
+        const updatedCarState = await this.updateCarState(
+          tx,
+          car,
+          updates,
+          currentUserId,
+        )
+        carUpdating = { ...carUpdating, ...updatedCarState }
       }
 
-      const updatedCarState = await this.updateCarState(
-        tx,
-        car,
-        updates,
-        currentUserId,
-      )
-      const carUpdating =
-        updatedCarState ||
-        new Car({
-          ...car,
-          ...updates,
-          id: carId,
-        })
-
-      const updatedCar = await this.carRepository.update(tx, carUpdating)
-
-      return updatedCar
+      return await this.carRepository.update(tx, carUpdating)
     })
   }
 }
