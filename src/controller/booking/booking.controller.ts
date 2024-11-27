@@ -72,10 +72,15 @@ export class BookingController {
   })
   @Get()
   public async getAll(): Promise<BookingDTO[]> {
+<<<<<<< HEAD
     // eslint-disable-next-line unicorn/no-await-expression-member
     return (await this.bookingService.getAll()).map(booking =>
       BookingDTO.fromModel(booking),
     )
+=======
+    const allBookings = await this.bookingService.getAll()
+    return allBookings.map(booking => BookingDTO.fromModel(booking))
+>>>>>>> 6884c9283c1db308525d23e8baf23c01a7bab29a
   }
 
   @ApiBearerAuth()
