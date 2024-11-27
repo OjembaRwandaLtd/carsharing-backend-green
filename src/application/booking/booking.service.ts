@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
@@ -64,7 +64,7 @@ export class BookingService {
       if (
         !(await this.isCarAvailable(data.carId, data.startDate, data.endDate))
       ) {
-        throw new BadRequestError('Car is not available')
+        throw new BadRequestException('Car is not available')
       }
       return await this.bookingRepository.insert(tx, data)
     })
