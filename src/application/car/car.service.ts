@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { type Except } from 'type-fest'
 
 import {
@@ -6,6 +6,7 @@ import {
   Transaction,
 } from '../../persistence/database-connection.interface'
 import { AccessDeniedError } from '../access-denied.error'
+import { BookingNotFoundError } from '../booking'
 import { IBookingRepository } from '../booking/booking.repository.interface'
 import { ICarTypeRepository } from '../car-type'
 import { type UserID } from '../user'
@@ -79,8 +80,7 @@ export class CarService implements ICarService {
       const booking = await this.databaseConnection.transactional(tx =>
         this.bookingRepository.getByCarId(tx, car.id),
       )
-      if (!booking)
-        throw new NotFoundException(`Booking with id : ${car.id} not found`)
+      if (!booking) throw new BookingNotFoundError()
 
       if (booking.renterId !== currentUserId)
         throw new AccessDeniedError('car', car.id)
