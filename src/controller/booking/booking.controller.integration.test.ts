@@ -11,14 +11,16 @@ import {
   UserID,
 } from '../../application'
 import { BookingBuilder } from '../../application/booking/booking.builder'
-import { BookingServiceMock } from '../../application/booking/booking.service.mock'
+import {
+  BookingServiceMock,
+  mockBookingService,
+} from '../../application/booking/booking.service.mock'
 import { UserBuilder } from '../../builders'
 import { configureGlobalEnhancers } from '../../setup-app'
 import { AuthenticationGuard } from '../authentication.guard'
 import { AuthenticationGuardMock } from '../authentication.guard.mock'
 
 import { BookingController } from './booking.controller'
-import { mockBookingService } from './booking.service.mock'
 
 describe('Booking Controller', () => {
   const user = UserBuilder.from({
@@ -188,7 +190,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(newBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect((response: { body: { message: string } }) => {
+        .expect((response: { body: { message: string[] } }) => {
           expect(response.body.message).toStrictEqual(
             expect.arrayContaining([
               'carId must be a positive number',
@@ -286,7 +288,7 @@ describe('Booking Controller', () => {
         .patch(`/bookings/${booking1.id}`)
         .send(updates)
         .expect(HttpStatus.OK)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...updatedBooking,
