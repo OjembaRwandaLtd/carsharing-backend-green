@@ -118,8 +118,8 @@ describe('Booking Controller', () => {
   describe('create', () => {
     it('should create a new booking', async () => {
       const newBooking = {
-        endDate: new Date('2024-11-25T00:00:00.000Z'),
-        startDate: new Date('2024-11-23T00:00:00.000Z'),
+        endDate: new Date('2025-11-25T00:00:00.000Z'),
+        startDate: new Date('2025-11-23T00:00:00.000Z'),
         carId: 13 as CarID,
       }
 
@@ -139,8 +139,8 @@ describe('Booking Controller', () => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...createdBooking,
-              endDate: new Date('2024-11-25T00:00:00.000Z').toISOString(),
-              startDate: new Date('2024-11-23T00:00:00.000Z').toISOString(),
+              endDate: new Date('2025-11-25T00:00:00.000Z').toISOString(),
+              startDate: new Date('2025-11-23T00:00:00.000Z').toISOString(),
             }),
           )
         })
@@ -190,7 +190,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(newBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect((response: { body: { message: string } }) => {
+        .expect((response: { body: { message: string[] } }) => {
           expect(response.body.message).toStrictEqual(
             expect.arrayContaining([
               'carId must be a positive number',
@@ -288,7 +288,7 @@ describe('Booking Controller', () => {
         .patch(`/bookings/${booking1.id}`)
         .send(updates)
         .expect(HttpStatus.OK)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...updatedBooking,
