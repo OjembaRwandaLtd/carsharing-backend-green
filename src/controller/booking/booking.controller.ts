@@ -21,6 +21,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+import dayjs from 'dayjs'
 
 import {
   Booking,
@@ -36,7 +37,6 @@ import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
 import { BookingDTO, CreateBookingDTO, PatchBookingDTO } from './booking.dto'
-import dayjs from 'dayjs'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -70,11 +70,8 @@ export class BookingController {
   })
   @Get()
   public async getAll(): Promise<BookingDTO[]> {
-    console.log('getAll')
-    // eslint-disable-next-line unicorn/no-await-expression-member
-    return (await this.bookingService.getAll()).map(booking =>
-      BookingDTO.fromModel(booking),
-    )
+    const allBookings = await this.bookingService.getAll()
+    return allBookings.map(booking => BookingDTO.fromModel(booking))
   }
 
   @ApiBearerAuth()
