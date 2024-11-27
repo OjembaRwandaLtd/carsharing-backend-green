@@ -10,6 +10,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -96,9 +97,12 @@ export class UserController {
   @ApiOperation({
     summary: 'Create a new user.',
   })
-  @ApiOkResponse({
-    description: 'The request was successful.',
-    type: UserDTO,
+  @ApiCreatedResponse({
+    description: 'A new user was created.',
+  })
+  @ApiBadRequestResponse({
+    description:
+      'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
   })
   @Roles(Role.ADMIN)
   @Post()
