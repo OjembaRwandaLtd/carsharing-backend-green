@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common'
+import { Except } from 'type-fest'
+
+import { Role } from 'src/application/role.enum'
 
 import {
   type IUserRepository,
@@ -8,7 +11,6 @@ import {
 } from '../application'
 
 import { type Transaction } from './database-connection.interface'
-import { Role } from 'src/application/role.enum'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
@@ -70,5 +72,17 @@ export class UserRepository implements IUserRepository {
     const rows = await tx.any<Row>('SELECT * FROM users')
 
     return rows.map(row => rowToDomain(row))
+  }
+
+  public async insert(
+    tx: Transaction,
+    user: Except<User, 'id'>,
+  ): Promise<User> {
+    const row = await tx.one<Row>(
+      'INSERT INTO users (name, role, passwordHash) VALUES ($(name), $(role), $(passwordHash)) RETURNING *',
+      { ...user },
+    )
+    console.log(row)
+    return rowToDomain(row)
   }
 }

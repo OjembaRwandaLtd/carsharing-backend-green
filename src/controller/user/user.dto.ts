@@ -39,11 +39,26 @@ export class UserDTO {
   @IsNotEmpty()
   public readonly role!: Role
 
-  public static create(data: { id: UserID; name: string }): UserDTO {
+  @ApiProperty({
+    description: 'The password of the user.',
+    example: 'password',
+  })
+  @IsString()
+  @IsNotEmpty()
+  public readonly passwordHash!: string
+
+  public static create(data: {
+    id: UserID
+    name: string
+    passwordHash: string
+    role: Role
+  }): UserDTO {
     const instance = new UserDTO() as Writable<UserDTO>
 
     instance.id = data.id
     instance.name = data.name
+    instance.role = data.role
+    instance.passwordHash = data.passwordHash
 
     return validate(instance)
   }
@@ -58,4 +73,5 @@ export class UserDTO {
 export class CreateUserDTO extends PickType(UserDTO, [
   'name',
   'role',
+  'passwordHash',
 ] as const) {}

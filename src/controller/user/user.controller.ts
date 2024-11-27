@@ -1,4 +1,12 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Body,
+  UseGuards,
+} from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -10,8 +18,11 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
+import { Role } from 'src/application/role.enum'
+
 import { IUserService, User, type UserID } from '../../application'
 import { AuthenticationGuard } from '../authentication.guard'
+import { Roles } from '../roles.decorator'
 
 import { UserDTO } from './user.dto'
 
@@ -78,5 +89,20 @@ export class UserController {
     const user = await this.userService.get(id)
 
     return UserDTO.fromModel(user)
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Create a new user.',
+  })
+  @ApiOkResponse({
+    description: 'The request was successful.',
+    type: UserDTO,
+  })
+  @Roles(Role.ADMIN)
+  @Post()
+  public async create(@Body() user: UserDTO): Promise<UserDTO> {
+    const newUser = await this.userService.create(user)
+    return UserDTO.fromModel(newUser)
   }
 }
