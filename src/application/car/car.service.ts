@@ -12,6 +12,7 @@ import { type UserID } from '../user'
 
 import { Car, type CarID, type CarProperties } from './car'
 import { CarNotFoundError } from './car-not-found.error'
+import { CarState } from './car-state'
 import { ICarRepository } from './car.repository.interface'
 import { type ICarService } from './car.service.interface'
 import { DuplicateLicensePlateError } from './error'
@@ -71,7 +72,7 @@ export class CarService implements ICarService {
   private async updateCarState(
     tx: Transaction,
     car: Car,
-    updates: Partial<Except<CarProperties, 'id'>>,
+    state: CarState,
     currentUserId: UserID,
   ): Promise<Car | null> {
     if (car.ownerId !== currentUserId) {
@@ -84,8 +85,8 @@ export class CarService implements ICarService {
       if (booking.renterId !== currentUserId)
         throw new AccessDeniedError('car', car.id)
 
-      const carState = updates.state
-      if (!carState) throw new AccessDeniedError('car denied ', car.id)
+      const carState = state
+      if (!carState) throw new AccessDeniedError('car ', car.id)
       return new Car({
         ...car,
         state: carState,
@@ -122,7 +123,7 @@ export class CarService implements ICarService {
         const updatedCarState = await this.updateCarState(
           tx,
           car,
-          updates,
+          updates.state,
           currentUserId,
         )
         carUpdating = { ...carUpdating, ...updatedCarState }
