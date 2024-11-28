@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Except } from 'type-fest'
 
 import {
   type IUserRepository,
@@ -79,6 +80,7 @@ export class UserRepository implements IUserRepository {
     return rows.map(row => rowToDomain(row))
   }
 
+<<<<<<< HEAD
   public async deleteById(tx: Transaction, id: UserID): Promise<void> {
     const result = await tx.result(
       `UPDATE users SET is_deleted = true WHERE id = $(id)`,
@@ -87,5 +89,16 @@ export class UserRepository implements IUserRepository {
     if (result.rowCount === 0) {
       throw new UserNotFoundError(id)
     }
+=======
+  public async insert(
+    tx: Transaction,
+    user: Except<User, 'id'>,
+  ): Promise<User> {
+    const row = await tx.one<Row>(
+      'INSERT INTO users (name, role, password) VALUES ($(name), $(role), $(passwordHash)) RETURNING *',
+      { ...user },
+    )
+    return rowToDomain(row)
+>>>>>>> ft/delete-endpoint
   }
 }

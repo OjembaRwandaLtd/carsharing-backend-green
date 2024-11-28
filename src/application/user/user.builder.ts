@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto'
 
 import { type Except } from 'type-fest'
 
+import { Role } from '../role.enum'
+
 import { User, type UserID, type UserProperties } from './user'
 
 type UntaggedUserProperties = Except<UserProperties, 'id'> & {

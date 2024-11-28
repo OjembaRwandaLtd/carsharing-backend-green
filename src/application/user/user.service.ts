@@ -2,7 +2,7 @@ import { ConflictException, Injectable, Logger } from '@nestjs/common'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 
-import { type User, type UserID } from './user'
+import { User, UserID } from './user'
 import { IUserRepository } from './user.repository.interface'
 import { IUserService } from './user.service.interface'
 
