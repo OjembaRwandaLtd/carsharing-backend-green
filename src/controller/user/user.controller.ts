@@ -6,10 +6,12 @@ import {
   Post,
   Body,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -21,12 +23,13 @@ import {
 import { Except } from 'type-fest'
 
 import { Role } from 'src/application/role.enum'
+import { UserAlreadyExistError } from 'src/application/user/user-already-exist.error'
 
 import { IUserService, User, type UserID } from '../../application'
 import { AuthenticationGuard } from '../authentication.guard'
 import { Roles } from '../roles.decorator'
 
-import { UserDTO } from './user.dto'
+import { CreateUserDTO, UserDTO } from './user.dto'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
@@ -104,10 +107,18 @@ export class UserController {
     description:
       'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
   })
+  @ApiBody({ type: CreateUserDTO })
   @Roles(Role.ADMIN)
   @Post()
-  public async create(@Body() user: Except<UserDTO, 'id'>): Promise<UserDTO> {
-    const newUser = await this.userService.create(user)
-    return UserDTO.fromModel(newUser)
+  public async create(@Body() user: CreateUserDTO): Promise<UserDTO> {
+    try {
+      const newUser = await this.userService.create(user)
+      return UserDTO.fromModel(newUser)
+    } catch (error) {
+      if (error instanceof UserAlreadyExistError) {
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
 }
