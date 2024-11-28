@@ -96,7 +96,7 @@ export class AuthenticationGuard implements CanActivate {
   private extractTokenFromHeader(request: Request): string {
     const header = request.headers.authorization
 
-    if (!header || !header.startsWith('Bearer ')) {
+    if (!header?.startsWith('Bearer ')) {
       throw new UnauthorizedException(
         'Authentication header is missing or does not contain not a bearer token',
       )
