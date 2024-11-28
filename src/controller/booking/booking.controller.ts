@@ -24,8 +24,6 @@ import {
 } from '@nestjs/swagger'
 import dayjs from 'dayjs'
 
-import { BadRequestError } from 'src/application/bad-request.error'
-
 import {
   Booking,
   type BookingID,
@@ -35,6 +33,7 @@ import {
   type User,
   UserID,
 } from '../../application'
+import { BadRequestError } from '../../application/bad-request.error'
 import { InvalidBookingStateTransitionError } from '../../application/booking/errors/invalid-booking-state-transition.error'
 import { Role } from '../../application/role.enum'
 import { AuthenticationGuard } from '../authentication.guard'
