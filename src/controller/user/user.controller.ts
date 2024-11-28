@@ -21,10 +21,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { UserAlreadyExistError } from 'src/application/user/user-already-exist.error'
-
 import { IUserService, User, type UserID } from '../../application'
 import { Role } from '../../application/role.enum'
+import { UserAlreadyExistError } from '../../application/user/user-already-exist.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { Roles } from '../roles.decorator'
 
