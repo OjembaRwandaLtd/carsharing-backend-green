@@ -11,11 +11,15 @@ import { BookingState } from './booking-state'
 import { validTransitions } from './booking-state-transitions'
 import { IBookingRepository } from './booking.repository.interface'
 import { InvalidBookingStateTransitionError } from './errors/invalid-booking-state-transition.error'
+import { ICarRepository } from '../car'
+import { UserID } from '../user'
+import { AccessDeniedError } from '../access-denied.error'
 
 @Injectable()
 export class BookingService {
   private readonly bookingRepository: IBookingRepository
   private readonly databaseConnection: IDatabaseConnection
+  private readonly carRepository: ICarRepository
   private readonly logger: Logger
   private validateStateTransition(
     currentState: BookingState,
@@ -28,9 +32,11 @@ export class BookingService {
   public constructor(
     bookingRepository: IBookingRepository,
     databaseConnection: IDatabaseConnection,
+    carRepository: ICarRepository,
   ) {
     this.bookingRepository = bookingRepository
     this.databaseConnection = databaseConnection
+    this.carRepository = carRepository
     this.logger = new Logger(BookingService.name)
   }
   public async findCarId(carId: CarID): Promise<Booking[]> {
@@ -76,10 +82,14 @@ export class BookingService {
     })
   }
 
-  public async get(id: BookingID): Promise<Booking> {
+  public async get(id: BookingID, currentUserId: UserID): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
       const booking = await this.bookingRepository.get(tx, id)
+
       if (!booking) throw new BookingNotFoundError(id)
+      const car = await this.carRepository.get(tx, booking.carId)
+      if (currentUserId !== booking.renterId && currentUserId !== car.ownerId)
+        throw new AccessDeniedError('get booking', booking.id)
       return booking
     })
   }
@@ -89,17 +99,8 @@ export class BookingService {
     updates: Partial<Except<BookingProperties, 'id'>>,
   ): Promise<Booking> {
     return this.databaseConnection.transactional(async tx => {
-      const booking = await this.get(bookingId)
-
-      if (
-        updates.state &&
-        !this.validateStateTransition(booking.state, updates.state)
-      ) {
-        throw new InvalidBookingStateTransitionError(
-          booking.state,
-          updates.state,
-        )
-      }
+      const booking = await this.bookingRepository.find(tx, bookingId)
+      if (!booking) throw new BookingNotFoundError(bookingId)
       const updatedBooking = new Booking({
         ...booking,
         ...updates,
