@@ -21,7 +21,7 @@ export abstract class IBookingRepository {
     tx: Transaction,
     id: CarID,
   ): Promise<Booking | null>
-  
+
   public abstract deleteById(
     tx: Transaction,
     bookingId: BookingID,
