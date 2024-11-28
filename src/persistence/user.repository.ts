@@ -70,7 +70,9 @@ export class UserRepository implements IUserRepository {
   }
 
   public async getAll(tx: Transaction): Promise<User[]> {
-    const rows = await tx.any<Row>('SELECT * FROM users AND is_deleted = false')
+    const rows = await tx.any<Row>(
+      'SELECT * FROM users WHERE is_deleted = false',
+    )
 
     return rows.map(row => rowToDomain(row))
   }
