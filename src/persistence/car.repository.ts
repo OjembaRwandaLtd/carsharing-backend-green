@@ -27,6 +27,7 @@ type Row = {
 }
 
 // Please remove the next line when implementing this file.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function rowToDomain(row: Row): Car {
   return new Car({
     id: row.id as CarID,
@@ -42,85 +43,37 @@ function rowToDomain(row: Row): Car {
 }
 
 // Please remove the next line when implementing this file.
+/* eslint-disable @typescript-eslint/require-await */
 
 @Injectable()
 export class CarRepository implements ICarRepository {
-  public find(_tx: Transaction, _id: CarID): Promise<Car | null> {
+  public async find(_tx: Transaction, _id: CarID): Promise<Car | null> {
     throw new Error('Not implemented')
   }
 
-  public async get(tx: Transaction, _id: CarID): Promise<Car> {
-    const car: Row[] = await tx.any(
-      `SELECT * FROM cars WHERE id = ${String(_id)}`,
-    )
-    return car.map(rowToDomain)[0]
+  public async get(_tx: Transaction, _id: CarID): Promise<Car> {
+    throw new Error('Not implemented')
   }
 
-  public async getAll(tx: Transaction): Promise<Car[]> {
-    const cars: Row[] = await tx.query('SELECT * FROM cars')
-    return cars.map(rowToDomain)
+  public async getAll(_tx: Transaction): Promise<Car[]> {
+    throw new Error('Not implemented')
   }
 
   public async findByLicensePlate(
-    tx: Transaction,
-    licensePlate: string,
+    _tx: Transaction,
+    _licensePlate: string,
   ): Promise<Car | null> {
-    const maybeRow = await tx.oneOrNone<Row>(
-      'SELECT * FROM cars WHERE license_plate = $(licensePlate)',
-      {
-        licensePlate,
-      },
-    )
-    return maybeRow ? rowToDomain(maybeRow) : null
+    throw new Error('Not implemented')
   }
 
-  public async update(tx: Transaction, car: Car): Promise<Car | null> {
-    const row = await tx.oneOrNone<Row>(
-      `
-      UPDATE cars SET
-        car_type_id = $(carTypeId),
-        name = $(name),
-        state = $(state),
-        owner_id = $(ownerId),
-        fuel_type = $(fuelType),
-        horsepower = $(horsepower),
-        license_plate = $(licensePlate),
-        info = $(info)
-      WHERE
-        id = $(id)
-       RETURNING *`,
-      { ...car },
-    )
-
-    return row ? rowToDomain(row) : null
+  public async update(_tx: Transaction, _car: Car): Promise<Car> {
+    throw new Error('Not implemented')
   }
 
   public async insert(
-    tx: Transaction,
-    car: Except<CarProperties, 'id'>,
+    _tx: Transaction,
+    _car: Except<CarProperties, 'id'>,
   ): Promise<Car> {
-    const row: Row = await tx.one<Row>(
-      `INSERT INTO cars (
-        car_type_id,
-        owner_id, 
-        state, 
-        name,
-        fuel_type,
-        horsepower,
-        license_plate,
-        info
-      ) VALUES (
-        $(carTypeId),
-        $(ownerId),
-        $(state),
-        $(name),
-        $(fuelType),
-        $(horsepower),
-        $(licensePlate),
-        $(info)
-      ) RETURNING *`,
-      { ...car },
-    )
-    return rowToDomain(row)
+    throw new Error('Not implemented')
   }
 }
