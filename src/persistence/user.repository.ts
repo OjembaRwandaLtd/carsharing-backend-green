@@ -3,8 +3,6 @@ import { Except } from 'type-fest'
 
 import { Role } from 'src/application/role.enum'
 
-import { Role } from 'src/application/role.enum'
-
 import {
   type IUserRepository,
   User,
