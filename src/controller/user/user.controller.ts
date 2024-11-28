@@ -20,12 +20,11 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
-import { Except } from 'type-fest'
 
-import { Role } from 'src/application/role.enum'
 import { UserAlreadyExistError } from 'src/application/user/user-already-exist.error'
 
 import { IUserService, User, type UserID } from '../../application'
+import { Role } from '../../application/role.enum'
 import { AuthenticationGuard } from '../authentication.guard'
 import { Roles } from '../roles.decorator'
 
