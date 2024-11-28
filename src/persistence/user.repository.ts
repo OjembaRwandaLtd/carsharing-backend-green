@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { Except } from 'type-fest'
 
+import { Role } from 'src/application/role.enum'
+
 import {
   type IUserRepository,
   User,
@@ -20,11 +22,8 @@ type Row = {
   id: number
   name: string
   password: string
-<<<<<<< HEAD
   role: Role
   is_deleted: boolean
-=======
->>>>>>> be9b8611b843c197d394fd9140b470cb43a10e9a
 }
 
 function rowToDomain(row: Row): User {
@@ -32,11 +31,8 @@ function rowToDomain(row: Row): User {
     id: row.id as UserID,
     name: row.name,
     passwordHash: row.password,
-<<<<<<< HEAD
     role: row.role,
     isDeleted: row.is_deleted,
-=======
->>>>>>> be9b8611b843c197d394fd9140b470cb43a10e9a
   })
 }
 
@@ -80,7 +76,6 @@ export class UserRepository implements IUserRepository {
     return rows.map(row => rowToDomain(row))
   }
 
-<<<<<<< HEAD
   public async deleteById(tx: Transaction, id: UserID): Promise<void> {
     const result = await tx.result(
       `UPDATE users SET is_deleted = true WHERE id = $(id)`,
@@ -89,16 +84,5 @@ export class UserRepository implements IUserRepository {
     if (result.rowCount === 0) {
       throw new UserNotFoundError(id)
     }
-=======
-  public async insert(
-    tx: Transaction,
-    user: Except<User, 'id'>,
-  ): Promise<User> {
-    const row = await tx.one<Row>(
-      'INSERT INTO users (name, role, password) VALUES ($(name), $(role), $(passwordHash)) RETURNING *',
-      { ...user },
-    )
-    return rowToDomain(row)
->>>>>>> ft/delete-endpoint
   }
 }
