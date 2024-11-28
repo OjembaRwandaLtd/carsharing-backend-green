@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common'
 
-import { Role } from 'src/application/role.enum'
-
 import {
   type IUserRepository,
   User,
@@ -21,8 +19,11 @@ type Row = {
   id: number
   name: string
   password: string
+<<<<<<< HEAD
   role: Role
   is_deleted: boolean
+=======
+>>>>>>> be9b8611b843c197d394fd9140b470cb43a10e9a
 }
 
 function rowToDomain(row: Row): User {
@@ -30,8 +31,11 @@ function rowToDomain(row: Row): User {
     id: row.id as UserID,
     name: row.name,
     passwordHash: row.password,
+<<<<<<< HEAD
     role: row.role,
     isDeleted: row.is_deleted,
+=======
+>>>>>>> be9b8611b843c197d394fd9140b470cb43a10e9a
   })
 }
 

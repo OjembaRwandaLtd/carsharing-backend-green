@@ -9,7 +9,6 @@ import {
 import { type Opaque } from 'type-fest'
 
 import { validate } from '../../util'
-import { Role } from '../role.enum'
 
 export type UserID = Opaque<number, 'user-id'>
 
@@ -33,6 +32,7 @@ export class User {
   @IsHash('sha512')
   public readonly passwordHash: string
 
+<<<<<<< HEAD
   @IsString()
   @IsNotEmpty()
   public readonly role: Role
@@ -40,12 +40,17 @@ export class User {
   @IsBoolean()
   public readonly isDeleted: boolean
 
+=======
+>>>>>>> be9b8611b843c197d394fd9140b470cb43a10e9a
   public constructor(data: UserProperties) {
     this.id = data.id
     this.name = data.name
     this.passwordHash = data.passwordHash
+<<<<<<< HEAD
     this.role = data.role
     this.isDeleted = data.isDeleted
+=======
+>>>>>>> be9b8611b843c197d394fd9140b470cb43a10e9a
 
     validate(this)
   }

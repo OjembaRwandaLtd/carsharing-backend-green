@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   Get,
   NotFoundException,
   Param,
@@ -25,7 +24,6 @@ import {
 import dayjs from 'dayjs'
 
 import {
-  BadRequestError,
   Booking,
   type BookingID,
   BookingNotFoundError,
@@ -178,18 +176,6 @@ export class BookingController {
         throw new BadRequestException(error.message)
       }
       throw error
-    }
-  }
-
-  @Delete(':id')
-  async delete(@Param('id') id: BookingID) {
-    try {
-      const deletedBooking = await this.bookingService.delete(id)
-      return BookingDTO.fromModel(deletedBooking)
-    } catch (error) {
-      if (error instanceof BadRequestError) {
-        throw new BadRequestException(error.message)
-      }
     }
   }
 }
