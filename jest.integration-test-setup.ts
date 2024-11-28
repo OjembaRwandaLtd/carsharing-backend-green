@@ -22,7 +22,6 @@ import {
 } from './src/application'
 import { Role } from './src/application/role.enum'
 import { DatabaseConnectionConfig, type Transaction } from './src/persistence'
-
 const execFile = promisify(execFileCallback)
 
 const IMAGE_NAME = 'postgres:15-alpine'

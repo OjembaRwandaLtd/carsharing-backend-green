@@ -1,5 +1,4 @@
 import {
-  IsEnum,
   IsHash,
   IsInt,
   IsNotEmpty,
@@ -12,7 +11,6 @@ import { validate } from '../../util'
 import { Role } from '../role.enum'
 
 export type UserID = Opaque<number, 'user-id'>
-
 export type UserProperties = {
   id: UserID
   name: string
@@ -32,7 +30,7 @@ export class User {
   @IsHash('sha512')
   public readonly passwordHash: string
 
-  @IsEnum(Role)
+  @IsString()
   @IsNotEmpty()
   public readonly role: Role
 
@@ -41,7 +39,6 @@ export class User {
     this.name = data.name
     this.passwordHash = data.passwordHash
     this.role = data.role
-
     validate(this)
   }
 }

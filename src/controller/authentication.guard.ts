@@ -12,7 +12,6 @@ import { type Request } from 'express'
 
 import { type UserID, AuthenticationConfig, IUserService } from '../application'
 import { IS_PUBLIC_KEY } from '../application/public.decorator'
-
 /**********************************************************************************************************************\
  *                                                                                                                     *
  *     ██╗     PROCEED WITH CAUTION                                                                                    *

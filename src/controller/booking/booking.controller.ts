@@ -25,7 +25,6 @@ import {
 import dayjs from 'dayjs'
 
 import {
-  BadRequestError,
   Booking,
   type BookingID,
   BookingNotFoundError,
@@ -34,6 +33,7 @@ import {
   type User,
   UserID,
 } from '../../application'
+import { BadRequestError } from '../../application/bad-request.error'
 import { InvalidBookingStateTransitionError } from '../../application/booking/errors/invalid-booking-state-transition.error'
 import { Role } from '../../application/role.enum'
 import { AuthenticationGuard } from '../authentication.guard'
@@ -182,7 +182,6 @@ export class BookingController {
       throw error
     }
   }
-
   @Roles(Role.ADMIN)
   @Delete(':id')
   async delete(@Param('id') id: BookingID) {

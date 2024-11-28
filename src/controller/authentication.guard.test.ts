@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common'
-import { Reflector, type ModuleRef } from '@nestjs/core'
+import { type ModuleRef, Reflector } from '@nestjs/core'
 import { type JwtService } from '@nestjs/jwt'
 import { type UnknownRecord } from 'type-fest'
 
@@ -14,8 +14,7 @@ import {
   mockUserService,
   type UserServiceMock,
 } from '../application/user/user.service.mock'
-
-import { AuthenticationGuard } from './authentication.guard'
+import { AuthenticationGuard } from '../controller/authentication.guard'
 
 type RequestMock = UnknownRecord & { headers: UnknownRecord }
 type ModuleReferenceMock = jest.Mocked<ModuleRef>

@@ -10,13 +10,13 @@ import {
 } from '../../application'
 import { Role } from '../../application/role.enum'
 import { CarTypeBuilder, UserBuilder } from '../../builders'
+import { AuthenticationGuard } from '../../controller/authentication.guard'
 import {
   AuthenticationGuardMock,
   type CarTypeServiceMock,
   mockCarTypeService,
 } from '../../mocks'
 import { configureGlobalEnhancers } from '../../setup-app'
-import { AuthenticationGuard } from '../authentication.guard'
 
 import { CarTypeController } from './car-type.controller'
 
@@ -24,6 +24,7 @@ describe('CarTypeController', () => {
   const user = UserBuilder.from({
     id: 42,
     name: 'peter',
+    role: Role.USER,
   }).build()
 
   const carTypeOne = CarTypeBuilder.from({
@@ -123,11 +124,6 @@ describe('CarTypeController', () => {
   describe('create', () => {
     it('should fail if the user is not an administrator', async () => {
       const newCarType = new CarTypeBuilder().withId(42).build()
-      carTypeServiceMock.create.mockResolvedValue(newCarType)
-      authenticationGuardMock.user = UserBuilder.from(user)
-        .withRole(Role.USER)
-        .build()
-
       await request(app.getHttpServer())
         .post(`/car-types`)
         .send({
@@ -144,9 +140,7 @@ describe('CarTypeController', () => {
       carTypeServiceMock.create.mockResolvedValue(newCarType)
 
       // TODO: You have to turn the user into an administrator here for the test to pass!
-      authenticationGuardMock.user = UserBuilder.from(user)
-        .withRole(Role.ADMIN)
-        .build()
+      authenticationGuardMock.user = UserBuilder.from(user).build()
 
       await request(app.getHttpServer())
         .post(`/car-types`)

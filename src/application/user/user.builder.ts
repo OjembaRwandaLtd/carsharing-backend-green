@@ -4,7 +4,7 @@ import { type Except } from 'type-fest'
 
 import { Role } from '../role.enum'
 
-import { User, type UserID, type UserProperties } from './user'
+import { User, type UserID, type UserProperties } from '../user'
 
 type UntaggedUserProperties = Except<UserProperties, 'id'> & {
   id: number
@@ -67,7 +67,6 @@ export class UserBuilder {
     this.properties.role = role
     return this
   }
-
   public build(): User {
     return new User({ ...this.properties, id: this.properties.id as UserID })
   }
