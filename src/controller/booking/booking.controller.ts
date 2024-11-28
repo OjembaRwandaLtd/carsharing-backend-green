@@ -39,6 +39,8 @@ import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 
 import { BookingDTO, CreateBookingDTO, PatchBookingDTO } from './booking.dto'
+import { Roles } from '../roles.decorator'
+import { Role } from 'src/application/role.enum'
 
 @ApiTags(Booking.name)
 @ApiBearerAuth()
@@ -180,7 +182,7 @@ export class BookingController {
       throw error
     }
   }
-
+  @Roles(Role.ADMIN)
   @Delete(':id')
   async delete(@Param('id') id: BookingID) {
     try {
