@@ -21,10 +21,7 @@ import {
 } from '@nestjs/swagger'
 
 import { CarType, type CarTypeID, ICarTypeService } from '../../application'
-import { Role } from '../../application/role.enum'
 import { AuthenticationGuard } from '../authentication.guard'
-import { Roles } from '../roles.decorator'
-import { RolesGuard } from '../roles.guard'
 
 import { CarTypeDTO, CreateCarTypeDTO, PatchCarTypeDTO } from './car-type.dto'
 
@@ -37,7 +34,7 @@ import { CarTypeDTO, CreateCarTypeDTO, PatchCarTypeDTO } from './car-type.dto'
 @ApiInternalServerErrorResponse({
   description: 'An internal server error occurred.',
 })
-@UseGuards(AuthenticationGuard, RolesGuard)
+@UseGuards(AuthenticationGuard)
 @Controller('/car-types')
 export class CarTypeController {
   private readonly carTypeService: ICarTypeService
@@ -95,7 +92,6 @@ export class CarTypeController {
     description:
       'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
   })
-  @Roles(Role.ADMIN)
   @Post()
   public async create(@Body() data: CreateCarTypeDTO): Promise<CarTypeDTO> {
     const carType = await this.carTypeService.create(data)
@@ -118,7 +114,6 @@ export class CarTypeController {
   @ApiNotFoundResponse({
     description: 'No car type with the given id was found.',
   })
-  @Roles(Role.ADMIN)
   @Patch(':id')
   public async patch(
     @Param('id', ParseIntPipe) carTypeId: CarTypeID,

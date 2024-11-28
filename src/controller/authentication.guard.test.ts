@@ -4,7 +4,7 @@ import {
   ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common'
-import { type ModuleRef, Reflector } from '@nestjs/core'
+import { type ModuleRef } from '@nestjs/core'
 import { type JwtService } from '@nestjs/jwt'
 import { type UnknownRecord } from 'type-fest'
 
@@ -77,14 +77,10 @@ describe('AuthenticationGuard', () => {
     userServiceMock = mockUserService()
     moduleReferenceMock.get.mockReturnValue(userServiceMock)
 
-    const reflector = new Reflector()
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(false)
-
     authenticationGuard = new AuthenticationGuard(
       config,
       moduleReferenceMock,
       jwtServiceMock,
-      reflector,
     )
   })
 
