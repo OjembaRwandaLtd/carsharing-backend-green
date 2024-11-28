@@ -8,7 +8,8 @@ import { Reflector } from '@nestjs/core'
 import { Observable } from 'rxjs'
 
 import { CustomRequest } from 'src/application/custom-request-interface'
-import { Role } from 'src/application/role.enum'
+
+import { Role } from '../application/role.enum'
 
 import { AuthenticationGuard } from './authentication.guard'
 import { ROLES_KEY } from './roles.decorator'
