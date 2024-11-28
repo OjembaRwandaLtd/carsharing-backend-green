@@ -10,8 +10,6 @@ import {
 import * as glob from 'glob'
 import pgPromise, { IDatabase } from 'pg-promise'
 
-import { Role } from 'src/application/role.enum'
-
 import {
   Car,
   type CarID,
@@ -22,6 +20,7 @@ import {
   User,
   type UserID,
 } from './src/application'
+import { Role } from './src/application/role.enum'
 import { DatabaseConnectionConfig, type Transaction } from './src/persistence'
 
 const execFile = promisify(execFileCallback)
