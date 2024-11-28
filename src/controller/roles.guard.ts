@@ -7,6 +7,7 @@ import {
 import { Reflector } from '@nestjs/core'
 import { Observable } from 'rxjs'
 
+import { CustomRequest } from 'src/application/custom-request-interface'
 import { Role } from 'src/application/role.enum'
 
 import { AuthenticationGuard } from './authentication.guard'
@@ -27,7 +28,7 @@ export class RolesGuard implements CanActivate {
       return true
     }
 
-    const request = context.switchToHttp().getRequest()
+    const request = context.switchToHttp().getRequest<CustomRequest>()
     const user = request[AuthenticationGuard.USER_REQUEST_PROPERTY] as
       | { role: Role }
       | undefined
