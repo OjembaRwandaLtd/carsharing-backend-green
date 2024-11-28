@@ -39,7 +39,7 @@ function rowToDomain(row: Row): User {
 export class UserRepository implements IUserRepository {
   public async find(tx: Transaction, id: UserID): Promise<User | null> {
     const row = await tx.oneOrNone<Row>(
-      'SELECT * FROM users WHERE id = $(id) AND is_deleted = false',
+      'SELECT * FROM users WHERE id = $(id) WHERE is_deleted = false',
       {
         id,
       },
@@ -50,7 +50,7 @@ export class UserRepository implements IUserRepository {
 
   public async findByName(tx: Transaction, name: string): Promise<User | null> {
     const row = await tx.oneOrNone<Row>(
-      'SELECT * FROM users WHERE name = $(name) AND is_deleted = false',
+      'SELECT * FROM users WHERE name = $(name) WHERE is_deleted = false',
       {
         name,
       },
