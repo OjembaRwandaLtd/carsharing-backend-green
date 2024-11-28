@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsHash,
   IsInt,
   IsNotEmpty,
@@ -8,10 +9,16 @@ import {
 import { type Opaque } from 'type-fest'
 
 import { validate } from '../../util'
+import { Role } from '../role.enum'
 
 export type UserID = Opaque<number, 'user-id'>
 
-export type UserProperties = { id: UserID; name: string; passwordHash: string }
+export type UserProperties = {
+  id: UserID
+  name: string
+  passwordHash: string
+  role: Role
+}
 
 export class User {
   @IsInt()
@@ -25,10 +32,15 @@ export class User {
   @IsHash('sha512')
   public readonly passwordHash: string
 
+  @IsEnum(Role)
+  @IsNotEmpty()
+  public readonly role: Role
+
   public constructor(data: UserProperties) {
     this.id = data.id
     this.name = data.name
     this.passwordHash = data.passwordHash
+    this.role = data.role
 
     validate(this)
   }

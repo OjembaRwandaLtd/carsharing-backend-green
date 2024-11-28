@@ -9,7 +9,7 @@ import {
 import { type Writable } from 'type-fest'
 
 import { User, type UserID } from '../../application'
-import { Role } from '../../application/role.enum.ts'
+import { Role } from '../../application/role.enum'
 import { validate } from '../../util'
 
 export class UserDTO {
