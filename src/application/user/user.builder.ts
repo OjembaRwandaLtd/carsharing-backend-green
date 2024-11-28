@@ -63,6 +63,11 @@ export class UserBuilder {
     return this
   }
 
+  public withRole(role: Role): this {
+    this.properties.role = role
+    return this
+  }
+
   public build(): User {
     return new User({ ...this.properties, id: this.properties.id as UserID })
   }

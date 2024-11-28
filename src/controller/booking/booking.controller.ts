@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -24,6 +25,7 @@ import {
 import dayjs from 'dayjs'
 
 import {
+  BadRequestError,
   Booking,
   type BookingID,
   BookingNotFoundError,
@@ -33,8 +35,10 @@ import {
   UserID,
 } from '../../application'
 import { InvalidBookingStateTransitionError } from '../../application/booking/errors/invalid-booking-state-transition.error'
+import { Role } from '../../application/role.enum'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
+import { Roles } from '../roles.decorator'
 
 import { BookingDTO, CreateBookingDTO, PatchBookingDTO } from './booking.dto'
 
@@ -176,6 +180,19 @@ export class BookingController {
         throw new BadRequestException(error.message)
       }
       throw error
+    }
+  }
+
+  @Roles(Role.ADMIN)
+  @Delete(':id')
+  async delete(@Param('id') id: BookingID) {
+    try {
+      const deletedBooking = await this.bookingService.delete(id)
+      return BookingDTO.fromModel(deletedBooking)
+    } catch (error) {
+      if (error instanceof BadRequestError) {
+        throw new BadRequestException(error.message)
+      }
     }
   }
 }

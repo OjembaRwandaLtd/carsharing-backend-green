@@ -1,6 +1,7 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import {
   IsEnum,
+  IsHash,
   IsInt,
   IsNotEmpty,
   IsPositive,
@@ -43,7 +44,7 @@ export class UserDTO {
     description: 'The password of the user.',
     example: 'password',
   })
-  @IsString()
+  @IsHash('sha512')
   @IsNotEmpty()
   public readonly passwordHash!: string
 

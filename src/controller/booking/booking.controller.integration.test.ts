@@ -188,7 +188,7 @@ describe('Booking Controller', () => {
         .post('/bookings')
         .send(newBooking)
         .expect(HttpStatus.BAD_REQUEST)
-        .expect((response: { body: { message: string } }) => {
+        .expect((response: { body: { message: string[] } }) => {
           expect(response.body.message).toStrictEqual(
             expect.arrayContaining([
               'carId must be a positive number',
@@ -286,7 +286,7 @@ describe('Booking Controller', () => {
         .patch(`/bookings/${booking1.id}`)
         .send(updates)
         .expect(HttpStatus.OK)
-        .expect(response => {
+        .expect((response: { body: { message: string } }) => {
           expect(response.body).toEqual(
             expect.objectContaining({
               ...updatedBooking,

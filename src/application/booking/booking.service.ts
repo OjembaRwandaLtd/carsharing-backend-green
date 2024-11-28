@@ -4,6 +4,7 @@ import { Except } from 'type-fest'
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 import { CarID } from '../car/car'
 
+import { BadRequestError } from './../bad-request-error'
 import { Booking, BookingID, BookingProperties } from './booking'
 import { BookingNotFoundError } from './booking-not-found.error'
 import { BookingState } from './booking-state'
@@ -105,6 +106,20 @@ export class BookingService {
         id: bookingId,
       })
       return await this.bookingRepository.update(tx, updatedBooking)
+    })
+  }
+  public async delete(bookingId: BookingID): Promise<Booking> {
+    return this.databaseConnection.transactional(async tx => {
+      const booking = await this.get(bookingId)
+
+      if (booking.state === BookingState.PICKED_UP) {
+        throw new BadRequestError('can not delete booking with picked up state')
+      }
+      const deletedBooking = await this.bookingRepository.deleteById(
+        tx,
+        bookingId,
+      )
+      return deletedBooking
     })
   }
 }

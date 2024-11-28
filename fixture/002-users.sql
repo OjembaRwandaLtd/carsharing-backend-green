@@ -1,4 +1,4 @@
-INSERT INTO users (name, password) VALUES
+INSERT INTO users (name, password,role) VALUES
     (
       -- id 1
       'Beatrice',

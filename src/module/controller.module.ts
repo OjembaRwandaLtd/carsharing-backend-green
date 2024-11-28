@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 
 import { AuthenticationConfig } from '../application'
 import {
   AuthenticationController,
+  AuthenticationGuard,
   BookingController,
   CarController,
   CarTypeController,
   UserController,
 } from '../controller'
+import { RolesGuard } from '../controller/roles.guard'
 
 import { ConfigModule } from './config.module'
 import { ServiceModule } from './service.module'
@@ -35,6 +38,16 @@ import { ServiceModule } from './service.module'
     CarTypeController,
     UserController,
     BookingController,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class ControllerModule {}
