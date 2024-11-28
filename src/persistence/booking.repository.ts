@@ -114,4 +114,15 @@ export class BookingRepository implements IBookingRepository {
     )
     return row ? rowToDomain(row) : null
   }
+
+  public async deleteById(
+    tx: Transaction,
+    bookingId: BookingID,
+  ): Promise<Booking> {
+    const row = await tx.one<Row>(
+      `DELETE FROM bookings WHERE id = $(bookingId) RETURNING *`,
+      { bookingId },
+    )
+    return rowToDomain(row)
+  }
 }
