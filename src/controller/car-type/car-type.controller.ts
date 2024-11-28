@@ -21,12 +21,12 @@ import {
 } from '@nestjs/swagger'
 
 import { CarType, type CarTypeID, ICarTypeService } from '../../application'
+import { Role } from '../../application/role.enum'
 import { AuthenticationGuard } from '../authentication.guard'
+import { Roles } from '../roles.decorator'
 import { RolesGuard } from '../roles.guard'
 
 import { CarTypeDTO, CreateCarTypeDTO, PatchCarTypeDTO } from './car-type.dto'
-import { Roles } from '../roles.decorator'
-import { Role } from '../../application/role.enum'
 
 @ApiTags(CarType.name)
 @ApiBearerAuth()

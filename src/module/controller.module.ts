@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
+
+import { RolesGuard } from 'src/controller/roles.guard'
 
 import { AuthenticationConfig } from '../application'
 import {
@@ -13,8 +16,6 @@ import {
 
 import { ConfigModule } from './config.module'
 import { ServiceModule } from './service.module'
-import { APP_GUARD } from '@nestjs/core'
-import { RolesGuard } from 'src/controller/roles.guard'
 
 @Module({
   imports: [

@@ -8,6 +8,7 @@ import {
   CarTypeNotFoundError,
   ICarTypeService,
 } from '../../application'
+import { Role } from '../../application/role.enum'
 import { CarTypeBuilder, UserBuilder } from '../../builders'
 import {
   AuthenticationGuardMock,
@@ -18,7 +19,6 @@ import { configureGlobalEnhancers } from '../../setup-app'
 import { AuthenticationGuard } from '../authentication.guard'
 
 import { CarTypeController } from './car-type.controller'
-import { Role } from '../../application/role.enum'
 
 describe('CarTypeController', () => {
   const user = UserBuilder.from({

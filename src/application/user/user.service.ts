@@ -5,8 +5,6 @@ import { IDatabaseConnection } from '../../persistence/database-connection.inter
 import { type User, type UserID } from './user'
 import { IUserRepository } from './user.repository.interface'
 import { IUserService } from './user.service.interface'
-import { NotFoundError } from '../not-found.error'
-import { UserNotFoundError } from './user-not-found.error'
 
 @Injectable()
 export class UserService implements IUserService {
