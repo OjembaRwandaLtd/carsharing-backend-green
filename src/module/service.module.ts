@@ -1,10 +1,15 @@
 import { Module } from '@nestjs/common'
 
+import { BookingRepository } from 'src/persistence/booking.repository'
+
 import {
   AuthenticationService,
+  BookingService,
   CarService,
   CarTypeService,
   IAuthenticationService,
+  IBookingRepository,
+  IBookingService,
   ICarService,
   ICarTypeService,
   IUserService,
@@ -33,7 +38,22 @@ import { RepositoryModule } from './repository.module'
       provide: IUserService,
       useClass: UserService,
     },
+    {
+      provide: IBookingService,
+      useClass: BookingService,
+    },
+    {
+      provide: IBookingRepository,
+      useClass: BookingRepository,
+    },
   ],
-  exports: [IAuthenticationService, ICarService, ICarTypeService, IUserService],
+  exports: [
+    IAuthenticationService,
+    ICarService,
+    ICarTypeService,
+    IUserService,
+    IBookingService,
+    IBookingRepository,
+  ],
 })
 export class ServiceModule {}
