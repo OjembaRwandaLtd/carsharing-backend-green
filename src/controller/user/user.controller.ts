@@ -21,14 +21,15 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
+import { Role } from 'src/application/role.enum'
+
 import { IUserService, User, type UserID } from '../../application'
 import { AuthenticationGuard } from '../authentication.guard'
-import { RolesGuard } from '../roles.guard'
+import { CurrentUser } from '../current-user.decorator'
 import { Roles } from '../roles.decorator'
+import { RolesGuard } from '../roles.guard'
 
 import { UserDTO } from './user.dto'
-import { CurrentUser } from '../current-user.decorator'
-import { Role } from 'src/application/role.enum'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
