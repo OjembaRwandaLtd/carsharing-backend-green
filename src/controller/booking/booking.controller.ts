@@ -24,8 +24,9 @@ import {
 } from '@nestjs/swagger'
 import dayjs from 'dayjs'
 
+import { BadRequestError } from 'src/application/bad-request.error'
+
 import {
-  BadRequestError,
   Booking,
   type BookingID,
   BookingNotFoundError,

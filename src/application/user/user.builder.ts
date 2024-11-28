@@ -2,8 +2,6 @@ import { createHash } from 'node:crypto'
 
 import { type Except } from 'type-fest'
 
-import { Role } from '../role.enum'
-
 import { User, type UserID, type UserProperties } from './user'
 
 type UntaggedUserProperties = Except<UserProperties, 'id'> & {
@@ -18,7 +16,6 @@ export class UserBuilder {
     name: 'Beatrice',
     passwordHash:
       'b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86',
-    role: Role.USER,
   }
 
   public static from(
@@ -60,11 +57,6 @@ export class UserBuilder {
 
   public withPasswordHash(passwordHash: string): this {
     this.properties.passwordHash = passwordHash
-    return this
-  }
-
-  public withRole(role: Role): this {
-    this.properties.role = role
     return this
   }
 

@@ -24,7 +24,6 @@ import {
   IAuthenticationService,
   User,
 } from '../../application'
-import { Public } from '../../application/public.decorator'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 import { UserDTO } from '../user'
@@ -47,7 +46,6 @@ import { LoginResponseDTO } from './login.response-dto'
 @ApiInternalServerErrorResponse({
   description: 'An internal server error occurred.',
 })
-@Public()
 @Controller('/auth')
 export class AuthenticationController {
   private readonly authenticationService: IAuthenticationService

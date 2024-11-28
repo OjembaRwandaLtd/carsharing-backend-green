@@ -21,11 +21,6 @@ export function up(pgm: MigrationBuilder): void {
       type: 'timestamp',
       default: pgm.func('current_timestamp'),
     },
-    role: {
-      type: 'text',
-      notNull: true,
-      default: 'USER',
-    },
   })
 
   pgm.createTable('car_types', {

@@ -8,7 +8,6 @@ import {
   CarTypeNotFoundError,
   ICarTypeService,
 } from '../../application'
-import { Role } from '../../application/role.enum'
 import { CarTypeBuilder, UserBuilder } from '../../builders'
 import {
   AuthenticationGuardMock,
@@ -24,7 +23,6 @@ describe('CarTypeController', () => {
   const user = UserBuilder.from({
     id: 42,
     name: 'peter',
-    role: Role.USER,
   }).build()
 
   const carTypeOne = CarTypeBuilder.from({
@@ -121,19 +119,13 @@ describe('CarTypeController', () => {
   })
 
   // Re-enable this test when you're implementing "Rights and Roles - Module 1".
-  describe('create', () => {
+  describe.skip('create', () => {
     it('should fail if the user is not an administrator', async () => {
-      const newCarType = new CarTypeBuilder().withId(42).build()
-      carTypeServiceMock.create.mockResolvedValue(newCarType)
-      authenticationGuardMock.user = UserBuilder.from(user)
-        .withRole(Role.USER)
-        .build()
-
       await request(app.getHttpServer())
         .post(`/car-types`)
         .send({
-          name: newCarType.name,
-          imageUrl: newCarType.imageUrl,
+          name: 'New name!',
+          imageUrl: null,
         })
         .expect(HttpStatus.FORBIDDEN)
 
@@ -145,9 +137,7 @@ describe('CarTypeController', () => {
       carTypeServiceMock.create.mockResolvedValue(newCarType)
 
       // TODO: You have to turn the user into an administrator here for the test to pass!
-      authenticationGuardMock.user = UserBuilder.from(user)
-        .withRole(Role.ADMIN)
-        .build()
+      authenticationGuardMock.user = UserBuilder.from(user).build()
 
       await request(app.getHttpServer())
         .post(`/car-types`)
@@ -162,72 +152,6 @@ describe('CarTypeController', () => {
         name: newCarType.name,
         imageUrl: newCarType.imageUrl,
       })
-    })
-  })
-
-  describe('update', () => {
-    const newCarType = new CarTypeBuilder().withId(42).build()
-
-    it('should fail if the user is not an administrator', async () => {
-      const updatedCarType = {
-        id: newCarType.id,
-        name: 'Updated CarType',
-        imageUrl: newCarType.imageUrl,
-      }
-      authenticationGuardMock.user = UserBuilder.from(user)
-        .withRole(Role.USER)
-        .build()
-
-      await request(app.getHttpServer())
-        .patch(`/car-types/${carTypeOne.id}`)
-        .send(updatedCarType)
-        .expect(HttpStatus.FORBIDDEN)
-
-      expect(carTypeServiceMock.update).not.toHaveBeenCalled()
-    })
-
-    it('should update a car type if the user is an administrator', async () => {
-      const updatedCarType = {
-        name: 'Updated CarType',
-        imageUrl: 'https://images.local/moni-electric.png',
-      }
-
-      carTypeServiceMock.update.mockResolvedValue({
-        ...updatedCarType,
-        id: carTypeOne.id,
-      })
-      authenticationGuardMock.user = UserBuilder.from(user)
-        .withRole(Role.ADMIN)
-        .build()
-
-      await request(app.getHttpServer())
-        .patch(`/car-types/${carTypeOne.id}`)
-        .send(updatedCarType)
-        .expect(HttpStatus.OK)
-        .expect({ ...updatedCarType, id: carTypeOne.id })
-
-      expect(carTypeServiceMock.update).toHaveBeenCalledWith(carTypeOne.id, {
-        name: updatedCarType.name,
-        imageUrl: updatedCarType.imageUrl,
-      })
-    })
-
-    it('should return a 404 if the car type does not exist', async () => {
-      const carTypeId = 99 as CarTypeID
-      carTypeServiceMock.update.mockRejectedValue(
-        new CarTypeNotFoundError(carTypeId),
-      )
-      authenticationGuardMock.user = UserBuilder.from(user)
-        .withRole(Role.ADMIN)
-        .build()
-
-      await request(app.getHttpServer())
-        .put(`/car-types/${carTypeId}`)
-        .send({
-          name: 'Non-existent CarType',
-          imageUrl: 'http://images.local/cartypes/99',
-        })
-        .expect(HttpStatus.NOT_FOUND)
     })
   })
 })
