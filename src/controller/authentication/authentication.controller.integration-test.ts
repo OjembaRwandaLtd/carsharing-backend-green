@@ -57,6 +57,8 @@ describe('AuthenticationController', () => {
         .expect({
           id: user.id,
           name: user.name,
+          role: user.role,
+          passwordHash: user.passwordHash,
         })
     })
   })
