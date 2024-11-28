@@ -7,6 +7,7 @@ import {
   type UserID,
   UserNotFoundError,
 } from '../application'
+import { Role } from '../application/role.enum'
 
 import { type Transaction } from './database-connection.interface'
 
@@ -20,6 +21,7 @@ type Row = {
   id: number
   name: string
   password: string
+  role: Role
 }
 
 function rowToDomain(row: Row): User {
@@ -27,6 +29,7 @@ function rowToDomain(row: Row): User {
     id: row.id as UserID,
     name: row.name,
     passwordHash: row.password,
+    role: row.role,
   })
 }
 
