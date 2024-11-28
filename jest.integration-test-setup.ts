@@ -75,7 +75,7 @@ export const users = {
     name: 'Bob',
     passwordHash:
       '19f58557744d2a919c47266f092e21dbe5fbfd7c930599033562420cb471abf4454442f4e097304523d462e7770a3fe2a0ac04e1e11a13a32932f1c0db886ffd',
-    role: Role.USER,
+    role: Role.ADMIN,
   }),
   izzedin: new User({
     id: 3 as UserID,
