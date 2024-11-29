@@ -1,4 +1,6 @@
-import { type User, type UserID } from './user'
+import { Except } from 'type-fest'
+
+import { type User, type UserID, type UserProperties } from './user'
 
 export abstract class IUserService {
   public abstract get(id: UserID): Promise<User>
@@ -8,4 +10,6 @@ export abstract class IUserService {
   public abstract find(id: UserID): Promise<User | null>
 
   public abstract findByName(name: string): Promise<User | null>
+
+  public abstract create(user: Except<UserProperties, 'id'>): Promise<User>
 }
