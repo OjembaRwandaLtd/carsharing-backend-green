@@ -9,5 +9,6 @@ export function mockUserService(): UserServiceMock {
     find: jest.fn(),
     findByName: jest.fn(),
     deleteById: jest.fn(),
+    create: jest.fn(),
   }
 }

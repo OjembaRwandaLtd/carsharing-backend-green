@@ -1,8 +1,7 @@
 import { Request } from 'express'
 
+import { Role } from 'src/application/role.enum'
 import { AuthenticationGuard } from 'src/controller/authentication.guard'
-
-import { Role } from '../application/role.enum'
 
 export interface User {
   role: Role

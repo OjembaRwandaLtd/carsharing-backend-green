@@ -20,4 +20,6 @@ export abstract class IBookingService {
   public abstract get(id: BookingID): Promise<Booking>
 
   public abstract getByRenterId(renterId: UserID): Promise<Booking[]>
+
+  public abstract delete(bookingId: BookingID): Promise<Booking>
 }

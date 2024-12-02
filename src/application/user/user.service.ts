@@ -1,8 +1,12 @@
+import { createHash } from 'node:crypto'
+
 import { ConflictException, Injectable, Logger } from '@nestjs/common'
+import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 
-import { User, UserID } from './user'
+import { UserProperties, type User, type UserID } from './user'
+import { UserAlreadyExistError } from './user-already-exist.error'
 import { IUserRepository } from './user.repository.interface'
 import { IUserService } from './user.service.interface'
 
@@ -54,5 +58,17 @@ export class UserService implements IUserService {
         `User with id: ${id} has been deleted by admin: ${currentUser.id}`,
       )
     })
+  }
+  public async create(user: Except<UserProperties, 'id'>): Promise<User> {
+    const existingUser = await this.findByName(user.name)
+    if (existingUser) {
+      throw new UserAlreadyExistError(user.name)
+    }
+    const passwordHash = createHash('sha512')
+      .update(user.passwordHash)
+      .digest('hex')
+    return this.databaseConnection.transactional(tx =>
+      this.repository.insert(tx, { ...user, passwordHash }),
+    )
   }
 }

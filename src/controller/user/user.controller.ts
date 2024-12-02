@@ -1,17 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Controller,
   Get,
   Param,
   ParseIntPipe,
-  UseGuards,
   Delete,
   HttpCode,
   HttpStatus,
+  Post,
+  Body,
+  UseGuards,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
+  ApiBody,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -23,12 +29,13 @@ import {
 
 import { IUserService, User, type UserID } from '../../application'
 import { Role } from '../../application/role.enum'
+import { UserAlreadyExistError } from '../../application/user/user-already-exist.error'
 import { AuthenticationGuard } from '../authentication.guard'
 import { CurrentUser } from '../current-user.decorator'
 import { Roles } from '../roles.decorator'
 import { RolesGuard } from '../roles.guard'
 
-import { UserDTO } from './user.dto'
+import { CreateUserDTO, UserDTO } from './user.dto'
 
 /**********************************************************************************************************************\
  *                                                                                                                     *
@@ -119,5 +126,31 @@ export class UserController {
     @CurrentUser() currentUser: User,
   ) {
     return await this.userService.deleteById(id, currentUser)
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Create a new user.',
+  })
+  @ApiCreatedResponse({
+    description: 'A new user was created.',
+  })
+  @ApiBadRequestResponse({
+    description:
+      'The request was malformed, e.g. missing or invalid parameter or property in the request body.',
+  })
+  @ApiBody({ type: CreateUserDTO })
+  @Roles(Role.ADMIN)
+  @Post()
+  public async create(@Body() user: CreateUserDTO): Promise<UserDTO> {
+    try {
+      const newUser = await this.userService.create(user)
+      return UserDTO.fromModel(newUser)
+    } catch (error) {
+      if (error instanceof UserAlreadyExistError) {
+        throw new BadRequestException(error.message)
+      }
+      throw error
+    }
   }
 }

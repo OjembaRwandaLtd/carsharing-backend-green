@@ -12,7 +12,6 @@ import { validate } from '../../util'
 import { Role } from '../role.enum'
 
 export type UserID = Opaque<number, 'user-id'>
-
 export type UserProperties = {
   id: UserID
   name: string

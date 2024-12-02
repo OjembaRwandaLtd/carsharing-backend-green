@@ -74,4 +74,10 @@ export class CreateUserDTO extends PickType(UserDTO, [
   'name',
   'role',
   'passwordHash',
-] as const) {}
+] as const) {
+  @ApiProperty({
+    description: 'Indicates if the user is deleted.',
+    default: false,
+  })
+  public readonly isDeleted: boolean = false 
+}

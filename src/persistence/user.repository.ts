@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { Except } from 'type-fest'
 
 import { Role } from 'src/application/role.enum'
 
@@ -85,5 +86,15 @@ export class UserRepository implements IUserRepository {
     if (result.rowCount === 0) {
       throw new UserNotFoundError(id)
     }
+  }
+  public async insert(
+    tx: Transaction,
+    user: Except<User, 'id'>,
+  ): Promise<User> {
+    const row = await tx.one<Row>(
+      'INSERT INTO users (name, role, password) VALUES ($(name), $(role), $(passwordHash)) RETURNING *',
+      { ...user },
+    )
+    return rowToDomain(row)
   }
 }
