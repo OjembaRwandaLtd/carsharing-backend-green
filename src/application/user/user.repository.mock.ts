@@ -8,7 +8,7 @@ export function mockUserRepository(): UserRepositoryMock {
     findByName: jest.fn(),
     get: jest.fn(),
     getAll: jest.fn(),
-    deleteById: jest.fn(),
     insert: jest.fn(),
+    deleteById: jest.fn(),
   }
 }

@@ -16,7 +16,6 @@ import { Role } from 'src/application/role.enum'
 import { AuthenticationGuard } from './authentication.guard'
 import { ROLES_KEY } from './roles.decorator'
 
-
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}

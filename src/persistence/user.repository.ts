@@ -77,16 +77,6 @@ export class UserRepository implements IUserRepository {
 
     return rows.map(row => rowToDomain(row))
   }
-
-  public async deleteById(tx: Transaction, id: UserID): Promise<void> {
-    const result = await tx.result(
-      `UPDATE users SET is_deleted = true WHERE id = $(id)`,
-      { id },
-    )
-    if (result.rowCount === 0) {
-      throw new UserNotFoundError(id)
-    }
-  }
   public async insert(
     tx: Transaction,
     user: Except<User, 'id'>,
@@ -96,5 +86,15 @@ export class UserRepository implements IUserRepository {
       { ...user },
     )
     return rowToDomain(row)
+  }
+
+  public async deleteById(tx: Transaction, id: UserID): Promise<void> {
+    const result = await tx.result(
+      `UPDATE users SET is_deleted = true WHERE id = $(id)`,
+      { id },
+    )
+    if (result.rowCount === 0) {
+      throw new UserNotFoundError(id)
+    }
   }
 }

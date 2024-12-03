@@ -104,32 +104,6 @@ export class UserController {
 
   @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Delete a user by ID',
-  })
-  @ApiNoContentResponse({
-    description: 'User successfully deleted',
-  })
-  @ApiConflictResponse({
-    description: 'Attempt to delete own user account',
-  })
-  @ApiNotFoundResponse({
-    description: 'No user with the given id was found',
-  })
-  @ApiBadRequestResponse({
-    description: 'Invalid user ID',
-  })
-  @Roles(Role.ADMIN)
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  public async delete(
-    @Param('id', ParseIntPipe) id: UserID,
-    @CurrentUser() currentUser: User,
-  ) {
-    return await this.userService.deleteById(id, currentUser)
-  }
-
-  @ApiBearerAuth()
-  @ApiOperation({
     summary: 'Create a new user.',
   })
   @ApiCreatedResponse({
@@ -152,5 +126,31 @@ export class UserController {
       }
       throw error
     }
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete a user by ID',
+  })
+  @ApiNoContentResponse({
+    description: 'User successfully deleted',
+  })
+  @ApiConflictResponse({
+    description: 'Attempt to delete own user account',
+  })
+  @ApiNotFoundResponse({
+    description: 'No user with the given id was found',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid user ID',
+  })
+  @Roles(Role.ADMIN)
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async delete(
+    @Param('id', ParseIntPipe) id: UserID,
+    @CurrentUser() currentUser: User,
+  ) {
+    return await this.userService.deleteById(id, currentUser)
   }
 }

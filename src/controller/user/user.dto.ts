@@ -79,5 +79,5 @@ export class CreateUserDTO extends PickType(UserDTO, [
     description: 'Indicates if the user is deleted.',
     default: false,
   })
-  public readonly isDeleted: boolean = false 
+  public readonly isDeleted: boolean = false
 }

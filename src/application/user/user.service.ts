@@ -49,16 +49,6 @@ export class UserService implements IUserService {
     )
   }
 
-  public async deleteById(id: UserID, currentUser: User): Promise<void> {
-    return this.databaseConnection.transactional(async tx => {
-      if (currentUser.id === id)
-        throw new ConflictException("You can't delete your own user account.")
-      await this.repository.deleteById(tx, id)
-      this.logger.verbose(
-        `User with id: ${id} has been deleted by admin: ${currentUser.id}`,
-      )
-    })
-  }
   public async create(user: Except<UserProperties, 'id'>): Promise<User> {
     const existingUser = await this.findByName(user.name)
     if (existingUser) {
@@ -70,5 +60,15 @@ export class UserService implements IUserService {
     return this.databaseConnection.transactional(tx =>
       this.repository.insert(tx, { ...user, passwordHash }),
     )
+  }
+  public async deleteById(id: UserID, currentUser: User): Promise<void> {
+    return this.databaseConnection.transactional(async tx => {
+      if (currentUser.id === id)
+        throw new ConflictException("You can't delete your own user account.")
+      await this.repository.deleteById(tx, id)
+      this.logger.verbose(
+        `User with id: ${id} has been deleted by admin: ${currentUser.id}`,
+      )
+    })
   }
 }

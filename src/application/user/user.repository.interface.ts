@@ -16,9 +16,10 @@ export abstract class IUserRepository {
 
   public abstract getAll(tx: Transaction): Promise<User[]>
 
-  public abstract deleteById(tx: Transaction, id: UserID): Promise<void>
   public abstract insert(
     tx: Transaction,
     user: Except<UserProperties, 'id'>,
   ): Promise<User>
+
+  public abstract deleteById(tx: Transaction, id: UserID): Promise<void>
 }
