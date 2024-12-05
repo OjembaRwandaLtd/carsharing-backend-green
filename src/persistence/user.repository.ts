@@ -88,13 +88,12 @@ export class UserRepository implements IUserRepository {
     return rowToDomain(row)
   }
 
-  public async deleteById(tx: Transaction, id: UserID): Promise<void> {
-    const result = await tx.result(
-      `UPDATE users SET is_deleted = true WHERE id = $(id)`,
+  public async deleteById(tx: Transaction, id: UserID): Promise<User> {
+    const row = await tx.one<Row>(
+      `UPDATE users SET is_deleted = true WHERE id = $(id) RETURNING *`,
       { id },
     )
-    if (result.rowCount === 0) {
-      throw new UserNotFoundError(id)
-    }
+
+    return rowToDomain(row)
   }
 }

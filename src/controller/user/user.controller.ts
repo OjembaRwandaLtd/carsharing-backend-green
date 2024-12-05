@@ -10,6 +10,7 @@ import {
   Body,
   UseGuards,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
@@ -26,7 +27,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { IUserService, User, type UserID } from '../../application'
+import {
+  IUserService,
+  User,
+  UserNotFoundError,
+  type UserID,
+} from '../../application'
 import { Role } from '../../application/role.enum'
 import { UserAlreadyExistError } from '../../application/user/user-already-exist.error'
 import { AuthenticationGuard } from '../authentication.guard'
@@ -150,6 +156,11 @@ export class UserController {
     @Param('id', ParseIntPipe) id: UserID,
     @CurrentUser() currentUser: User,
   ) {
-    return await this.userService.deleteById(id, currentUser)
+    try {
+      return await this.userService.deleteById(id, currentUser)
+    } catch (error) {
+      if (error instanceof UserNotFoundError)
+        throw new NotFoundException(error.message)
+    }
   }
 }
