@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsPositive,
   IsString,
+  IsBoolean,
 } from 'class-validator'
 import { type Opaque } from 'type-fest'
 
@@ -16,6 +17,7 @@ export type UserProperties = {
   name: string
   passwordHash: string
   role: Role
+  isDeleted: boolean
 }
 
 export class User {
@@ -34,11 +36,16 @@ export class User {
   @IsNotEmpty()
   public readonly role: Role
 
+  @IsBoolean()
+  public readonly isDeleted: boolean
+
   public constructor(data: UserProperties) {
     this.id = data.id
     this.name = data.name
     this.passwordHash = data.passwordHash
     this.role = data.role
+    this.isDeleted = data.isDeleted
+
     validate(this)
   }
 }
