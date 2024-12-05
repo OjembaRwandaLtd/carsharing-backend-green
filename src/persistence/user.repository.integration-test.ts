@@ -3,7 +3,7 @@ import { type UserID, UserNotFoundError } from '../application'
 
 import { UserRepository } from './user.repository'
 
-describe.skip('UserRepository', () => {
+describe('UserRepository', () => {
   const { execute } = setupIntegrationTest()
 
   let userRepository: UserRepository
@@ -12,7 +12,7 @@ describe.skip('UserRepository', () => {
     userRepository = new UserRepository()
   })
 
-  describe.skip('getAll', () => {
+  describe('getAll', () => {
     it('should return all users', async () => {
       const actual = await execute(tx => userRepository.getAll(tx))
 
@@ -20,7 +20,7 @@ describe.skip('UserRepository', () => {
     })
   })
 
-  describe.skip('get', () => {
+  describe('get', () => {
     it('should return a user', async () => {
       const actual = await execute(tx =>
         userRepository.get(tx, users.beatrice.id),
@@ -36,7 +36,7 @@ describe.skip('UserRepository', () => {
     })
   })
 
-  describe.skip('find', () => {
+  describe('find', () => {
     it('should return a user', async () => {
       const actual = await execute(tx =>
         userRepository.find(tx, users.beatrice.id),
