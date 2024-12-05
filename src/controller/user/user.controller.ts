@@ -3,17 +3,23 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Delete,
+  HttpCode,
+  HttpStatus,
   Post,
   Body,
   UseGuards,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -21,11 +27,18 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
-import { IUserService, User, type UserID } from '../../application'
+import {
+  IUserService,
+  User,
+  UserNotFoundError,
+  type UserID,
+} from '../../application'
 import { Role } from '../../application/role.enum'
 import { UserAlreadyExistError } from '../../application/user/user-already-exist.error'
 import { AuthenticationGuard } from '../authentication.guard'
+import { CurrentUser } from '../current-user.decorator'
 import { Roles } from '../roles.decorator'
+import { RolesGuard } from '../roles.guard'
 
 import { CreateUserDTO, UserDTO } from './user.dto'
 
@@ -44,7 +57,7 @@ import { CreateUserDTO, UserDTO } from './user.dto'
 @ApiInternalServerErrorResponse({
   description: 'An internal server error occurred.',
 })
-@UseGuards(AuthenticationGuard)
+@UseGuards(AuthenticationGuard, RolesGuard)
 @Controller('/users')
 export class UserController {
   private readonly userService: IUserService
@@ -117,6 +130,37 @@ export class UserController {
         throw new BadRequestException(error.message)
       }
       throw error
+    }
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete a user by ID',
+  })
+  @ApiNoContentResponse({
+    description: 'User successfully deleted',
+  })
+  @ApiConflictResponse({
+    description: 'Attempt to delete own user account',
+  })
+  @ApiNotFoundResponse({
+    description: 'No user with the given id was found',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid user ID',
+  })
+  @Roles(Role.ADMIN)
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async delete(
+    @Param('id', ParseIntPipe) id: UserID,
+    @CurrentUser() currentUser: User,
+  ) {
+    try {
+      return await this.userService.deleteById(id, currentUser)
+    } catch (error) {
+      if (error instanceof UserNotFoundError)
+        throw new NotFoundException(error.message)
     }
   }
 }

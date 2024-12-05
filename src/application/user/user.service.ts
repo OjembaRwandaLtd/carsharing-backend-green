@@ -1,12 +1,13 @@
 import { createHash } from 'node:crypto'
 
-import { Injectable, Logger } from '@nestjs/common'
+import { ConflictException, Injectable, Logger } from '@nestjs/common'
 import { Except } from 'type-fest'
 
 import { IDatabaseConnection } from '../../persistence/database-connection.interface'
 
 import { UserProperties, type User, type UserID } from './user'
 import { UserAlreadyExistError } from './user-already-exist.error'
+import { UserNotFoundError } from './user-not-found.error'
 import { IUserRepository } from './user.repository.interface'
 import { IUserService } from './user.service.interface'
 
@@ -60,5 +61,22 @@ export class UserService implements IUserService {
     return this.databaseConnection.transactional(tx =>
       this.repository.insert(tx, { ...user, passwordHash }),
     )
+  }
+  public async deleteById(id: UserID, currentUser: User): Promise<void> {
+    return this.databaseConnection.transactional(async tx => {
+      const userExists = await this.repository.find(tx, id)
+
+      if (!userExists) throw new UserNotFoundError(id)
+
+      if (currentUser.id === id)
+        throw new ConflictException("You can't delete your own user account.")
+
+      const userDeleted = await this.repository.deleteById(tx, id)
+
+      if (userDeleted)
+        this.logger.verbose(
+          `User with id: ${id} has been deleted by admin: ${currentUser.id}`,
+        )
+    })
   }
 }

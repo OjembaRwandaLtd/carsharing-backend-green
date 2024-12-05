@@ -12,4 +12,6 @@ export abstract class IUserService {
   public abstract findByName(name: string): Promise<User | null>
 
   public abstract create(user: Except<UserProperties, 'id'>): Promise<User>
+
+  public abstract deleteById(id: UserID, currentUser: User): Promise<void>
 }
