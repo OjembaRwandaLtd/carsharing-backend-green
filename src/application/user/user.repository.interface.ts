@@ -20,4 +20,6 @@ export abstract class IUserRepository {
     tx: Transaction,
     user: Except<UserProperties, 'id'>,
   ): Promise<User>
+
+  public abstract deleteById(tx: Transaction, id: UserID): Promise<User>
 }

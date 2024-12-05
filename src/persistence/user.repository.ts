@@ -23,6 +23,7 @@ type Row = {
   name: string
   password: string
   role: Role
+  is_deleted: boolean
 }
 
 function rowToDomain(row: Row): User {
@@ -31,6 +32,7 @@ function rowToDomain(row: Row): User {
     name: row.name,
     passwordHash: row.password,
     role: row.role,
+    isDeleted: row.is_deleted,
   })
 }
 
@@ -38,7 +40,7 @@ function rowToDomain(row: Row): User {
 export class UserRepository implements IUserRepository {
   public async find(tx: Transaction, id: UserID): Promise<User | null> {
     const row = await tx.oneOrNone<Row>(
-      'SELECT * FROM users WHERE id = $(id)',
+      'SELECT * FROM users WHERE id = $(id) AND is_deleted = false',
       {
         id,
       },
@@ -49,7 +51,7 @@ export class UserRepository implements IUserRepository {
 
   public async findByName(tx: Transaction, name: string): Promise<User | null> {
     const row = await tx.oneOrNone<Row>(
-      'SELECT * FROM users WHERE name = $(name)',
+      'SELECT * FROM users WHERE name = $(name) AND is_deleted = false',
       {
         name,
       },
@@ -69,11 +71,12 @@ export class UserRepository implements IUserRepository {
   }
 
   public async getAll(tx: Transaction): Promise<User[]> {
-    const rows = await tx.any<Row>('SELECT * FROM users')
+    const rows = await tx.any<Row>(
+      'SELECT * FROM users WHERE is_deleted = false',
+    )
 
     return rows.map(row => rowToDomain(row))
   }
-
   public async insert(
     tx: Transaction,
     user: Except<User, 'id'>,
@@ -82,6 +85,15 @@ export class UserRepository implements IUserRepository {
       'INSERT INTO users (name, role, password) VALUES ($(name), $(role), $(passwordHash)) RETURNING *',
       { ...user },
     )
+    return rowToDomain(row)
+  }
+
+  public async deleteById(tx: Transaction, id: UserID): Promise<User> {
+    const row = await tx.one<Row>(
+      `UPDATE users SET is_deleted = true WHERE id = $(id) RETURNING *`,
+      { id },
+    )
+
     return rowToDomain(row)
   }
 }
